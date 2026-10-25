@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Dhanvi Finserv - modern UI additions
+   ========================================================================== */
+
+.skip-link {
+    position: absolute;
+    top: -60px;
+    left: 16px;
+    z-index: 3000;
+    background: #15549a;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 3px;
+    font-weight: 500;
+    transition: top .2s ease;
+}
+.skip-link:focus { top: 12px; color: #fff; }
+
+.legal-links { margin-left: 10px; }
+.legal-links a { color: #778191; text-decoration: underline; }
+.legal-links a:hover { color: #15549a; }
+
+/* Documents -------------------------------------------------------------- */
+.doc-notes { margin-bottom: 40px; }
+.doc-note {
+    background: #f4f7fb; border: 1px solid #e3e9f0; border-radius: 6px;
+    padding: 24px; height: 100%;
+}
+.doc-note i { color: #15549a; font-size: 22px; margin-bottom: 12px; display: inline-block; }
+.doc-note h3 { font-size: 16px; margin: 0 0 8px; color: #34415c; }
+.doc-note p { margin: 0; font-size: 14px; line-height: 1.6; }
+
+.doc-tabs {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;
+    border-bottom: 1px solid #e3e9f0; padding-bottom: 16px;
+}
+.doc-tab {
+    border: 1px solid #d7e0ea; background: #fff; color: #4a5a74;
+    padding: 10px 18px; border-radius: 40px; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all .2s ease;
+}
+.doc-tab:hover { border-color: #15549a; color: #15549a; }
+.doc-tab.active { background: #15549a; border-color: #15549a; color: #fff; }
+.doc-tab:focus { outline: 2px solid #f51f8a; outline-offset: 2px; }
+
+.doc-panel { display: none; }
+.doc-panel.active { display: block; animation: docFade .25s ease; }
+@keyframes docFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.doc-card {
+    background: #fff; border: 1px solid #e3e9f0; border-radius: 6px;
+    padding: 26px; height: 100%; box-shadow: 0 1px 2px rgba(16, 63, 115, .04);
+}
+.doc-card h3 {
+    font-size: 16px; color: #34415c; margin: 0 0 16px;
+    padding-bottom: 12px; border-bottom: 1px solid #eef2f7;
+}
+.doc-card h4 { font-size: 14px; color: #15549a; margin: 18px 0 10px; }
+.doc-card h4:first-of-type { margin-top: 0; }
+.doc-list { list-style: none; margin: 0; padding: 0; }
+.doc-list li {
+    position: relative; padding-left: 26px; margin-bottom: 10px;
+    font-size: 14px; line-height: 1.55; color: #5d6b80;
+}
+.doc-list li:last-child { margin-bottom: 0; }
+.doc-list li:before {
+    content: "\f00c"; font-family: FontAwesome; position: absolute; left: 0; top: 1px;
+    color: #10a874; font-size: 13px;
+}
+.doc-tag {
+    display: inline-block; font-size: 11px; text-transform: uppercase;
+    letter-spacing: .5px; color: #15549a; background: #e8f0fa;
+    border-radius: 30px; padding: 3px 10px; margin-left: 6px; vertical-align: middle;
+}
+.doc-help { margin-top: 26px; padding: 20px 24px; background: #fff7fb; border: 1px solid #f8d7e8; border-radius: 6px; }
+.doc-help p { margin: 0; font-size: 14px; }
+.doc-toolbar { margin-bottom: 26px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.doc-toolbar .btn { margin: 0; }
+.doc-toolbar small { color: #7b8798; }
+
+/* Wizard ----------------------------------------------------------------- */
+.doc-wizard {
+    margin-top: 50px; padding: 40px; border-radius: 8px;
+    background: #103f73; color: #dfe8f2;
+}
+.doc-wizard h2 { color: #fff; margin-top: 0; }
+.doc-wizard p.wizard-intro { color: #c9d8e8; margin-bottom: 26px; }
+.doc-wizard label { color: #fff; font-weight: 500; font-size: 14px; margin-bottom: 6px; display: block; }
+.doc-wizard .form-control { height: 48px; }
+.doc-wizard .btn { margin-top: 22px; }
+.doc-wizard .btn-primary { background: #fff; color: #103f73; border-color: #fff; }
+.doc-wizard .btn-primary:hover { background: #e8f0fa; border-color: #e8f0fa; color: #103f73; }
+.wizard-result {
+    margin-top: 30px; background: #fff; color: #5d6b80; border-radius: 6px; padding: 28px;
+}
+.wizard-result h3 { color: #34415c; margin-top: 0; }
+.wizard-result .doc-list li { color: #5d6b80; }
+.wizard-result .wizard-note { font-size: 13px; color: #8794a6; margin: 18px 0 0; }
+
+/* Process steps ---------------------------------------------------------- */
+.process-steps { display: flex; flex-wrap: wrap; margin: 0 -12px; }
+.process-step { flex: 0 0 25%; max-width: 25%; padding: 0 12px; margin-bottom: 24px; position: relative; }
+.process-step-inner {
+    background: #fff; border: 1px solid #e3e9f0; border-radius: 6px;
+    padding: 26px; height: 100%; position: relative;
+}
+.process-step .step-num {
+    display: inline-block; width: 42px; height: 42px; line-height: 42px;
+    text-align: center; border-radius: 50%; background: #e8f0fa; color: #15549a;
+    font-weight: 600; font-size: 17px; margin-bottom: 16px;
+}
+.process-step h3 { font-size: 16px; margin: 0 0 8px; color: #34415c; }
+.process-step p { margin: 0; font-size: 13px; line-height: 1.6; }
+.process-step:after {
+    content: "\f061"; font-family: FontAwesome; position: absolute; right: -20px; top: 50%;
+    transform: translateY(-50%); color: #c4d1e0; font-size: 15px;
+}
+.process-step:last-child:after { display: none; }
+
+/* Mini EMI --------------------------------------------------------------- */
+.mini-emi {
+    background: #f4f7fb; border: 1px solid #e3e9f0; border-radius: 8px;
+    padding: 40px;
+}
+.mini-emi h2 { margin-top: 0; }
+.emi-sub { font-size: 14px; margin-bottom: 28px; }
+.emi-field { margin-bottom: 22px; }
+.emi-field label {
+    display: flex; justify-content: space-between; font-size: 14px;
+    color: #34415c; font-weight: 500; margin-bottom: 8px;
+}
+.emi-field label strong { color: #15549a; }
+.emi-field input[type="range"] {
+    width: 100%; margin: 0; accent-color: #15549a; height: 6px;
+}
+.emi-result { background: #103f73; color: #dfe8f2; border-radius: 8px; padding: 32px; }
+.emi-result .emi-label { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: #b9cbe0; }
+.emi-result .emi-value { font-size: 40px; line-height: 1.2; color: #fff; font-weight: 600; margin: 6px 0 22px; }
+.emi-result .emi-meta {
+    display: flex; justify-content: space-between; padding: 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, .15); font-size: 14px;
+}
+.emi-result .emi-meta strong { color: #fff; }
+.emi-result .btn { margin-top: 22px; }
+.emi-disclaimer { display: block; margin-top: 18px; font-size: 12px; color: #8794a6; }
+
+/* Inline value editing --------------------------------------------------- */
+.emi-field label strong.emi-value-edit {
+    cursor: text; user-select: none;
+    border-bottom: 1px dashed transparent; transition: border-color .15s ease;
+}
+.emi-field label strong.emi-value-edit:hover {
+    border-bottom-color: rgba(21, 84, 154, .45);
+}
+.emi-inline-input {
+    width: 110px; height: 30px; padding: 2px 8px;
+    border: 1.5px solid #15549a; border-radius: 6px;
+    background: #fff; color: #15549a; font-size: 14px; font-weight: 600;
+    text-align: right; outline: none; box-shadow: 0 0 0 3px rgba(21, 84, 154, .10);
+}
+.emi-inline-input::-webkit-outer-spin-button,
+.emi-inline-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.emi-inline-input { -moz-appearance: textfield; }
+
+/* Legal pages ------------------------------------------------------------ */
+.legal-page h2 { margin-top: 40px; font-size: 24px; }
+.legal-page h2:first-of-type { margin-top: 0; }
+.legal-page h3 { margin-top: 26px; font-size: 18px; }
+.legal-page p, .legal-page li { line-height: 1.75; }
+.legal-page .legal-meta { font-size: 13px; color: #8794a6; margin-bottom: 30px; }
+.legal-page ul { padding-left: 20px; }
+.legal-page ul li { margin-bottom: 8px; }
+
+/* Forms ------------------------------------------------------------------ */
+.modern-form-note { font-size: 13px; color: #8794a6; margin-top: 10px; }
+form .form-control.touched:invalid { border-color: #e14b4b; box-shadow: 0 0 0 2px rgba(225, 75, 75, .12); }
+
+/* Floating mobile action bar -------------------------------------------- */
+.mobile-action-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2500;
+    display: none; background: #fff; border-top: 1px solid #e3e9f0;
+    box-shadow: 0 -6px 18px rgba(16, 63, 115, .12);
+}
+.mobile-action-bar a {
+    flex: 1; text-align: center; padding: 11px 6px; font-size: 13px;
+    font-weight: 500; color: #34415c; text-decoration: none;
+    border-right: 1px solid #eef2f7;
+}
+.mobile-action-bar a:last-child { border-right: 0; }
+.mobile-action-bar a i { display: block; font-size: 17px; margin-bottom: 3px; color: #15549a; }
+.mobile-action-bar a.wa i { color: #25d366; }
+.mobile-action-bar a.apply { background: #f51f8a; color: #fff; }
+.mobile-action-bar a.apply i { color: #fff; }
+
+/* Responsive ------------------------------------------------------------- */
+@media (max-width: 991px) {
+    .process-step { flex: 0 0 50%; max-width: 50%; }
+    .process-step:nth-child(2n):after { display: none; }
+    .mini-emi { padding: 28px; }
+    .emi-result { margin-top: 26px; }
+}
+@media (max-width: 767px) {
+    .doc-wizard { padding: 26px; }
+    .process-step { flex: 0 0 100%; max-width: 100%; }
+    .process-step:after { display: none; }
+    .mini-emi { padding: 22px; }
+    .emi-result .emi-value { font-size: 30px; }
+    .mobile-action-bar { display: flex; }
+    body { padding-bottom: 66px; }
+    .cd-top { bottom: 84px; }
+    .legal-links { display: block; margin: 6px 0 0; }
+}
+@media print {
+    .header, .top-bar, .page-header, .footer, .tiny-footer, .cd-top,
+    .mobile-action-bar, .doc-tabs, .doc-wizard, .doc-toolbar, .doc-help,
+    .widget-share, .sub-nav { display: none !important; }
+    body { background: #fff !important; padding: 0 !important; }
+    .wrapper-content { padding: 0 !important; box-shadow: none !important; }
+    .doc-panel { display: block !important; page-break-inside: avoid; }
+    .doc-panel:not(.active) { margin-top: 24px; }
+    .doc-card { border: 1px solid #ccc !important; box-shadow: none !important; }
+    a[href]:after { content: ""; }
+}
+
+.wizard-side h3 { color: #fff; margin-top: 0; }
+.wizard-side .doc-list li { color: #c9d8e8; }
+.wizard-side .doc-list li:before { color: #6ee7b7; }
+/* Contact map ------------------------------------------------------------ */
+.map { border-radius: 4px; overflow: hidden; }
+.map iframe { width: 100%; height: 100%; border: 0; display: block; }
+.map-directions { margin: 14px 0 0; font-size: 14px; }
+.map-directions a { color: #15549a; font-weight: 500; }

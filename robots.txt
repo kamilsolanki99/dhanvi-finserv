@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /_backup_before_rebuild/
+Disallow: /_demo_backup/
+Disallow: /admin-login.html
+Disallow: /admin-dashboard.html
+
+Sitemap: https://www.dhanvifinserv.com/sitemap.xml

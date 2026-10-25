@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Dhanvi Finserv - Lightweight Branded Preloader
+   ========================================================================== */
+
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Anti-flicker: hidden initially; becomes visible only if loading exceeds 120ms */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-loader.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.page-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.page-loader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    max-width: 320px;
+    width: 90%;
+    box-sizing: border-box;
+}
+
+/* Brand Logo Area */
+.loader-logo-area {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-logo {
+    max-width: 170px;
+    height: auto;
+    display: block;
+    animation: dhanviLogoBreathe 2s ease-in-out infinite;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Fallback brand text if logo fails to render */
+.loader-logo-fallback {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0b2b4c;
+    letter-spacing: 0.5px;
+    display: none;
+}
+
+/* Spinner Box */
+.loader-spinner-box {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-spinner-ring {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid rgba(11, 43, 76, 0.08);
+    border-top-color: #f51f8a;
+    border-right-color: #15549a;
+    animation: dhanviSpin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+    box-sizing: border-box;
+}
+
+/* Tagline / Subtitle */
+.loader-subtitle {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #55657c;
+    margin: 0 0 14px 0;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+}
+
+/* Subtle Shimmer Track */
+.loader-shimmer-bar {
+    width: 130px;
+    height: 3px;
+    background: rgba(11, 43, 76, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-shimmer-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, #15549a 0%, #f51f8a 100%);
+    border-radius: 3px;
+    animation: dhanviBarShimmer 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Keyframe Animations */
+@keyframes dhanviSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dhanviLogoBreathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.96;
+    }
+    50% {
+        transform: scale(1.025);
+        opacity: 1;
+    }
+}
+
+@keyframes dhanviBarShimmer {
+    0% {
+        left: -40%;
+        width: 35%;
+    }
+    50% {
+        left: 35%;
+        width: 45%;
+    }
+    100% {
+        left: 100%;
+        width: 35%;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 576px) {
+    .loader-logo {
+        max-width: 145px;
+    }
+    .loader-spinner-box {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 14px;
+    }
+    .loader-spinner-ring {
+        width: 38px;
+        height: 38px;
+        border-width: 2.5px;
+    }
+    .loader-subtitle {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+    .loader-shimmer-bar {
+        width: 110px;
+    }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .page-loader {
+        transition: none !important;
+    }
+    .loader-logo,
+    .loader-spinner-ring,
+    .loader-shimmer-bar::after {
+        animation: none !important;
+    }
+}
+
+/* Fallback if JavaScript is disabled */
+@media (scripting: none) {
+    .page-loader {
+        display: none !important;
+    }
+}
