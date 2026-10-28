@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Loan Applications | Dhanvi Finserv Admin</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <style>
+        /* Reuse Base Styles from Dashboard */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fb;
+            color: #5d6b80;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 { color: #34415c; font-weight: 600; }
+        a { text-decoration: none; }
+
+        /* Sidebar */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #103f73;
+            z-index: 1040;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        .admin-sidebar .sidebar-logo {
+            padding: 24px 28px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .admin-sidebar .sidebar-logo img {
+            max-width: 160px;
+            height: auto;
+        }
+        .admin-sidebar .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+        .admin-sidebar .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 13px 28px;
+            color: rgba(255,255,255,0.65);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .admin-sidebar .sidebar-nav a:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+        .admin-sidebar .sidebar-nav a.active {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            border-left-color: #f5a623;
+        }
+        .admin-sidebar .sidebar-nav a i {
+            width: 22px;
+            margin-right: 14px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .admin-sidebar .sidebar-footer {
+            padding: 16px 28px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .admin-sidebar .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            color: rgba(255,255,255,0.55);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .admin-sidebar .sidebar-footer a:hover { color: #e14b4b; }
+        .admin-sidebar .sidebar-footer a i { margin-right: 12px; font-size: 16px; }
+
+        .admin-main {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Top Navbar */
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .admin-topbar .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .admin-topbar .topbar-left h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .topbar-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #34415c;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .admin-topbar .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .topbar-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .topbar-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #15549a;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .topbar-profile-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #34415c;
+        }
+
+        /* Content */
+        .admin-content {
+            padding: 24px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+        .page-title p {
+            margin: 0;
+            font-size: 13px;
+            color: #8e9ab4;
+        }
+
+        /* Table Styles */
+        .dash-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .dash-card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dash-card-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .dash-card-body { padding: 22px; }
+        .dash-card-body.no-pad { padding: 0; }
+
+        .table-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .table-filters input[type="text"], .table-filters select {
+            border: 1px solid #dce1ea;
+            border-radius: 6px;
+            padding: 7px 14px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+        }
+        .table-filters input[type="text"] { width: 220px; }
+
+        .table-responsive { overflow-x: auto; }
+        .app-table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+        .app-table thead th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5d6b80;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #edf0f5;
+            text-align: left;
+        }
+        .app-table tbody td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #34415c;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+        }
+        .app-table tbody tr:hover { background: #f8fafc; }
+
+        /* Status Badges */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-approved     { background: rgba(16,168,116,0.12); color: #10a874; }
+        .badge-pending      { background: rgba(245,166,35,0.12); color: #c98a10; }
+        .badge-under-review { background: rgba(33,150,243,0.12); color: #2196f3; }
+        .badge-rejected     { background: rgba(225,75,75,0.12);  color: #e14b4b; }
+        .badge-docs-pending { background: rgba(245,166,35,0.15); color: #e08e0b; }
+
+        .btn-view {
+            background: #15549a;
+            color: #fff;
+            border: none;
+            padding: 5px 16px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-view:hover { background: #103f73; color: #fff; }
+
+        /* Modal */
+        .modal-content { border: none; border-radius: 10px; }
+        .modal-header {
+            background: #15549a;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 16px 22px;
+        }
+        .modal-header .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-header .close { color: #fff; opacity: 0.8; }
+        .modal-body { padding: 24px; }
+        .modal-footer { border-top: 1px solid #edf0f5; padding: 14px 22px; }
+        .detail-group { margin-bottom: 20px; }
+        .detail-group h6 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #15549a;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #edf0f5;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .detail-label { width: 150px; color: #5d6b80; font-weight: 500; }
+        .detail-value { color: #34415c; font-weight: 500; }
+        .btn-save {
+            background: #10a874;
+            color: #fff;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-close-modal {
+            background: #edf0f5;
+            color: #5d6b80;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-save[disabled] { opacity: 0.65; cursor: not-allowed; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .3px; }
+        .muted { color: #8e9ab4; font-size: 12px; font-weight: 400; }
+        .admin-note { font-size: 12px; color: #8e9ab4; line-height: 1.6; }
+        .admin-note a { color: #15549a; text-decoration: underline; }
+        .admin-chip {
+            display: inline-block;
+            background: #eef5fd;
+            color: #1c4b80;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .admin-alert {
+            display: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            border: 1px solid transparent;
+            line-height: 1.6;
+        }
+        .admin-alert.show { display: block; }
+        .admin-alert-error { background: #fdf0f0; border-color: #f3c9c9; color: #a12f2f; }
+        .admin-alert-success { background: #eefaf4; border-color: #c5ecd9; color: #0d7a53; }
+        .empty-state { text-align: center; padding: 42px 20px; color: #8e9ab4; font-size: 13px; }
+        .empty-state i { display: block; font-size: 30px; color: #c3cdda; margin-bottom: 10px; }
+        .empty-state strong { display: block; color: #5d6b80; margin-bottom: 4px; }
+        .loading-state { text-align: center; padding: 40px 20px; color: #8e9ab4; font-size: 13px; }
+        .loading-state i { margin-right: 8px; }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+            .topbar-hamburger { display: block; }
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1035;
+        }
+        .sidebar-overlay.show { display: block; }
+    </style>
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body>
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box"><div class="loader-spinner-ring"></div></div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},2000);</script>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-logo">
+            <a href="admin-dashboard.html"><img src="images/logo.png" alt="Dhanvi Finserv"></a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a>
+            <a href="admin-applications.html" class="active"><i class="fa fa-file-text"></i> Loan Applications</a>
+            <a href="admin-leads.html"><i class="fa fa-users"></i> Customer Leads</a>
+            <a href="admin-documents.html"><i class="fa fa-folder-open"></i> Documents</a>
+            <a href="admin-followups.html"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
+            <a href="admin-callbacks.html"><i class="fa fa-phone"></i> Callbacks</a>
+            <a href="admin-support.html"><i class="fa fa-life-ring"></i> Support Requests</a>
+            <a href="admin-complaints.html"><i class="fa fa-exclamation-circle"></i> Complaints</a>
+            <a href="admin-settings.html"><i class="fa fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" style="margin-bottom: 12px;"><i class="fa fa-globe"></i> View Website</a>
+            <a href="admin-login.html"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="topbar-hamburger" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+                <h4>Loan Applications</h4>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile">
+                    <div class="topbar-avatar">...</div>
+                    <span class="topbar-profile-name">Loading...</span>
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Manage Applications</h2>
+                    <p>Review, update, and track all submitted loan requests.</p>
+                </div>
+            </div>
+
+            <div class="admin-alert" id="appsAlert"></div>
+
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h4>All Applications</h4>
+                    <div class="table-filters">
+                        <input type="text" id="searchInput" placeholder="Search reference, name or mobile...">
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="New">New</option>
+                            <option value="Contacted">Contacted</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Documents Pending">Documents Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dash-card-body no-pad">
+                    <div class="table-responsive">
+                        <table class="app-table" id="applicationsTable">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Applicant</th>
+                                    <th>Mobile</th>
+                                    <th>Loan Type</th>
+                                    <th>Amount</th>
+                                    <th>Applied</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading applications…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-user" style="margin-right:8px;"></i> <span id="modalTitle">Details</span></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="modalAlert"></div>
+
+                    <div class="detail-group">
+                        <h6>Applicant Information</h6>
+                        <div class="detail-row"><span class="detail-label">Reference</span><span class="detail-value mono" id="modalReference">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Full Name</span><span class="detail-value" id="modalName">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Mobile</span><span class="detail-value" id="modalMobile">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="modalEmail">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Applicant type</span><span class="detail-value" id="modalApplicantType">—</span></div>
+                        <div class="detail-row" id="modalNriRow" style="display:none;"><span class="detail-label">NRI details</span><span class="detail-value" id="modalNriDetails">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Consent</span><span class="detail-value" id="modalConsent">—</span></div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Loan Details</h6>
+                        <div class="detail-row"><span class="detail-label">Loan Type</span><span class="detail-value" id="modalLoanType">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Amount</span><span class="detail-value" id="modalAmount">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Requirements</span><span class="detail-value" id="modalPurpose">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Applied on</span><span class="detail-value" id="modalDate">—</span></div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Co-applicants &amp; Guarantors</h6>
+                        <div id="modalApplicants"><p class="admin-note" style="margin:0;">None added.</p></div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Documents</h6>
+                        <div id="modalDocs"><p class="admin-note" style="margin:0;">No documents uploaded yet.</p></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Update Status</label>
+                                <select class="form-control" id="modalStatusSelect">
+                                    <option value="New">New</option>
+                                    <option value="Contacted">Contacted</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Documents Pending">Documents Pending</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Admin Notes</label>
+                        <textarea class="form-control" id="modalNotes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn-save" id="saveApplicationBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js"></script>
+    <script src="js/admin-layout.js"></script>
+    <script>
+        let applications = [];
+
+        const APPLICATIONS_QUERY =
+            'query AdminApplications {' +
+            '  loan_leads(order_by: {created_at: desc}) {' +
+            '    id reference_no created_at full_name mobile email loan_type loan_amount message' +
+            '    status admin_notes applicant_type country_of_residence residency_status' +
+            '    employment_type consent_given consent_at' +
+            '  }' +
+            '  loan_applicants {' +
+            '    id loan_lead_id role applicant_type full_name relationship mobile' +
+            '    employment_type monthly_income income_currency country_of_residence' +
+            '  }' +
+            '  loan_documents {' +
+            '    id loan_lead_id document_type status file_name created_at' +
+            '  }' +
+            '}';
+
+        const UPDATE_APPLICATION_MUTATION =
+            'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
+            '  update_loan_leads_by_pk(pk_columns: {id: $id}, _set: {status: $status, admin_notes: $notes}) { id }' +
+            '}';
+
+        function backend() {
+            return window.DhanviBackend;
+        }
+
+        function esc(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function prettyDate(value) {
+            if (!value) { return '—'; }
+            const d = new Date(value);
+            return isNaN(d.getTime()) ? esc(value) : d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function money(value) {
+            const number = Number(value);
+            return isNaN(number) ? '—' : '₹' + number.toLocaleString('en-IN');
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'Approved': return 'badge-approved';
+                case 'Under Review': return 'badge-under-review';
+                case 'Documents Pending': return 'badge-docs-pending';
+                case 'Rejected': return 'badge-rejected';
+                case 'Closed': return 'badge-closed';
+                case 'New': return 'badge-new';
+                case 'In Progress':
+                case 'Contacted': return 'badge-progress';
+                default: return 'badge-pending';
+            }
+        }
+
+        function showPageAlert(type, message) {
+            const el = document.getElementById('appsAlert');
+            el.className = 'admin-alert admin-alert-' + type + ' show';
+            el.innerHTML = message;
+        }
+
+        function hidePageAlert() {
+            const el = document.getElementById('appsAlert');
+            el.className = 'admin-alert';
+            el.innerHTML = '';
+        }
+
+        function showModalAlert(type, message) {
+            const el = document.getElementById('modalAlert');
+            el.className = 'admin-alert admin-alert-' + type + ' show';
+            el.innerHTML = message;
+        }
+
+        function hideModalAlert() {
+            const el = document.getElementById('modalAlert');
+            el.className = 'admin-alert';
+            el.innerHTML = '';
+        }
+
+        function groupByLead(rows) {
+            const map = {};
+            (rows || []).forEach(function (row) {
+                if (!map[row.loan_lead_id]) { map[row.loan_lead_id] = []; }
+                map[row.loan_lead_id].push(row);
+            });
+            return map;
+        }
+
+        async function fetchApplications() {
+            const tbody = $('#applicationsTable tbody');
+            tbody.html('<tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading applications…</td></tr>');
+            hidePageAlert();
+
+            try {
+                const data = await backend().adminGql(APPLICATIONS_QUERY);
+                const leads = (data && data.loan_leads) || [];
+                const applicantsByLead = groupByLead(data && data.loan_applicants);
+                const documentsByLead = groupByLead(data && data.loan_documents);
+
+                applications = leads.map(function (lead) {
+                    lead.loan_applicants = applicantsByLead[lead.id] || [];
+                    lead.loan_documents = documentsByLead[lead.id] || [];
+                    return lead;
+                });
+                renderTable();
+            } catch (err) {
+                console.error('Error loading applications:', err);
+                tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
+                showPageAlert('error', 'Applications could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+            }
+        }
+
+        function renderTable() {
+            const tbody = $('#applicationsTable tbody');
+            tbody.empty();
+
+            if (!applications.length) {
+                tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-file-text-o"></i><strong>No applications yet</strong>New applications from the website will appear here.</td></tr>');
+                return;
+            }
+
+            applications.forEach((app, idx) => {
+                const badgeClass = getStatusBadgeClass(app.status);
+                const tr = $('<tr>');
+                tr.attr('data-status', app.status);
+                tr.html(
+                    '<td class="ref-cell mono">' + esc(app.reference_no || '—') + '</td>' +
+                    '<td>' + esc(app.full_name) + (app.applicant_type === 'nri' ? ' <span class="admin-chip">NRI</span>' : '') + '</td>' +
+                    '<td>' + esc(app.mobile) + '</td>' +
+                    '<td>' + esc(app.loan_type) + '</td>' +
+                    '<td>' + esc(money(app.loan_amount)) + '</td>' +
+                    '<td>' + esc(prettyDate(app.created_at)) + '</td>' +
+                    '<td><span class="badge-status ' + badgeClass + '">' + esc(app.status) + '</span></td>' +
+                    '<td><button class="btn-view" data-index="' + idx + '">View</button></td>'
+                );
+                tbody.append(tr);
+            });
+
+            tbody.find('.btn-view').on('click', function () {
+                openModal(Number($(this).attr('data-index')));
+            });
+        }
+
+        function renderApplicants(app) {
+            const list = Array.isArray(app.loan_applicants) ? app.loan_applicants : [];
+            if (!list.length) {
+                $('#modalApplicants').html('<p class="admin-note" style="margin:0;">No co-applicants or guarantors added.</p>');
+                return;
+            }
+
+            const rows = list.map(function (person) {
+                const role = person.role === 'guarantor' ? 'Guarantor' : 'Co-applicant';
+                const type = person.applicant_type === 'nri' ? 'NRI' : 'Resident';
+                const details = [
+                    person.relationship ? 'Relationship: ' + person.relationship : '',
+                    person.mobile ? 'Mobile: ' + person.mobile : '',
+                    person.employment_type ? 'Employment: ' + person.employment_type : '',
+                    person.monthly_income ? 'Income: ' + money(person.monthly_income) + ' (' + (person.income_currency || 'INR') + ')' : '',
+                    person.country_of_residence ? 'Country: ' + person.country_of_residence : ''
+                ].filter(Boolean).join(' · ');
+
+                return '<div class="detail-row" style="align-items:flex-start;">' +
+                    '<span class="detail-label">' + esc(role) + '</span>' +
+                    '<span class="detail-value">' + esc(person.full_name) + ' <span class="admin-chip">' + esc(type) + '</span>' +
+                    (details ? '<div class="admin-note" style="margin:2px 0 0;">' + esc(details) + '</div>' : '') +
+                    '</span></div>';
+            });
+
+            $('#modalApplicants').html(rows.join(''));
+        }
+
+        function renderDocuments(app) {
+            const list = Array.isArray(app.loan_documents) ? app.loan_documents : [];
+            if (!list.length) {
+                $('#modalDocs').html('<p class="admin-note" style="margin:0;">No documents uploaded yet. Customer uploads appear in the <a href="admin-documents.html">Documents</a> module.</p>');
+                return;
+            }
+
+            const rows = list.map(function (doc) {
+                const statusClass = doc.status === 'Verified' ? 'badge-verified' : (doc.status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+                return '<div class="detail-row">' +
+                    '<span class="detail-label">' + esc(doc.document_type) + '</span>' +
+                    '<span class="detail-value">' + esc(doc.file_name || 'Uploaded file') +
+                    ' <span class="badge-status ' + statusClass + '">' + esc(doc.status) + '</span>' +
+                    '<div class="admin-note" style="margin:2px 0 0;">Uploaded ' + esc(prettyDate(doc.created_at)) + '</div>' +
+                    '</span></div>';
+            });
+
+            $('#modalDocs').html(rows.join('') + '<p class="admin-note" style="margin:10px 0 0;"><a href="admin-documents.html">Open the Documents module</a> to review files securely.</p>');
+        }
+
+        function openModal(idx) {
+            const app = applications[idx];
+            if (!app) { return; }
+            hideModalAlert();
+
+            const nri = app.applicant_type === 'nri';
+            const nriDetails = [app.country_of_residence, app.residency_status, app.employment_type].filter(Boolean).join(' · ');
+
+            $('#modalTitle').text((app.full_name || 'Application') + ' — ' + (app.loan_type || ''));
+            $('#modalReference').text(app.reference_no || '—');
+            $('#modalName').text(app.full_name || '—');
+            $('#modalMobile').text(app.mobile || '—');
+            $('#modalEmail').text(app.email || 'N/A');
+            $('#modalApplicantType').text(nri ? 'NRI' : 'Resident Indian');
+            $('#modalNriRow').toggle(nri);
+            $('#modalNriDetails').text(nriDetails || '—');
+            $('#modalConsent').text(app.consent_given ? 'Given on ' + prettyDate(app.consent_at) : 'Not recorded');
+            $('#modalLoanType').text(app.loan_type || '—');
+            $('#modalAmount').text(money(app.loan_amount));
+            $('#modalPurpose').text(app.message || 'No requirements specified');
+            $('#modalDate').text(prettyDate(app.created_at));
+            $('#modalStatusSelect').val(app.status);
+            $('#modalNotes').val(app.admin_notes || '');
+            renderApplicants(app);
+            renderDocuments(app);
+            $('#viewModal').data('app-id', app.id);
+            $('#viewModal').modal('show');
+        }
+
+        async function saveModal() {
+            const id = $('#viewModal').data('app-id');
+            const status = $('#modalStatusSelect').val();
+            const notes = $('#modalNotes').val().trim();
+            const btn = $('#saveApplicationBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(UPDATE_APPLICATION_MUTATION, {
+                    id: id,
+                    status: status,
+                    notes: notes || null
+                });
+
+                $('#viewModal').modal('hide');
+                showPageAlert('success', 'Application updated successfully.');
+                await fetchApplications();
+            } catch (err) {
+                console.error('Application update failed:', err);
+                showModalAlert('error', esc(err.message || 'Could not update the application.'));
+            } finally {
+                btn.prop('disabled', false).text('Save Changes');
+            }
+        }
+
+        window.DhanviAdminReady.then(function () {
+            fetchApplications();
+            $('#searchInput').on('keyup', filterTable);
+            $('#statusFilter').on('change', filterTable);
+            $('#saveApplicationBtn').on('click', saveModal);
+
+            $('#sidebarToggle').on('click', function() {
+                $('#adminSidebar').toggleClass('open');
+                $('#sidebarOverlay').toggleClass('show');
+            });
+            $('#sidebarOverlay').on('click', function() {
+                $('#adminSidebar').removeClass('open');
+                $('#sidebarOverlay').removeClass('show');
+            });
+        });
+
+        function filterTable() {
+            const search = $('#searchInput').val().toLowerCase();
+            const status = $('#statusFilter').val();
+            $('#applicationsTable tbody tr').each(function() {
+                const row = $(this);
+                if (!row.attr('data-status')) { return; }
+                const text = row.text().toLowerCase();
+                const rowStatus = row.attr('data-status');
+                const matchSearch = !search || text.indexOf(search) > -1;
+                const matchStatus = !status || rowStatus === status;
+                row.toggle(matchSearch && matchStatus);
+            });
+        }
+    </script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

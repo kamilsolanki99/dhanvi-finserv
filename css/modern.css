@@ -41,7 +41,7 @@
 }
 .doc-tab:hover { border-color: #15549a; color: #15549a; }
 .doc-tab.active { background: #15549a; border-color: #15549a; color: #fff; }
-.doc-tab:focus { outline: 2px solid #f51f8a; outline-offset: 2px; }
+.doc-tab:focus { outline: 2px solid #F5B51B; outline-offset: 2px; }
 
 .doc-panel { display: none; }
 .doc-panel.active { display: block; animation: docFade .25s ease; }
@@ -72,7 +72,7 @@
     letter-spacing: .5px; color: #15549a; background: #e8f0fa;
     border-radius: 30px; padding: 3px 10px; margin-left: 6px; vertical-align: middle;
 }
-.doc-help { margin-top: 26px; padding: 20px 24px; background: #fff7fb; border: 1px solid #f8d7e8; border-radius: 6px; }
+.doc-help { margin-top: 26px; padding: 20px 24px; background: #FFFAEF; border: 1px solid #FFF0CC; border-radius: 6px; }
 .doc-help p { margin: 0; font-size: 14px; }
 .doc-toolbar { margin-bottom: 26px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .doc-toolbar .btn { margin: 0; }
@@ -189,8 +189,8 @@ form .form-control.touched:invalid { border-color: #e14b4b; box-shadow: 0 0 0 2p
 .mobile-action-bar a:last-child { border-right: 0; }
 .mobile-action-bar a i { display: block; font-size: 17px; margin-bottom: 3px; color: #15549a; }
 .mobile-action-bar a.wa i { color: #25d366; }
-.mobile-action-bar a.apply { background: #f51f8a; color: #fff; }
-.mobile-action-bar a.apply i { color: #fff; }
+.mobile-action-bar a.apply { background: #F5B51B; color: #0B2440; }
+.mobile-action-bar a.apply i { color: #0B2440; }
 
 /* Responsive ------------------------------------------------------------- */
 @media (max-width: 991px) {

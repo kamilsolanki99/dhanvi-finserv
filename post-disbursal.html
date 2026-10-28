@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="Post-disbursal support for Dhanvi Finserv customers: repayment schedules, foreclosure and part-payment queries, balance transfer, top-up and annual loan reviews.">
+    <title>Post-Disbursal Support - Dhanvi Finserv</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/fontello.css" rel="stylesheet">
+   
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700%7CMerriweather:300,300i,400,400i,700,700i" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/modern.css" rel="stylesheet">
+    <link href="css/layout.css" rel="stylesheet">
+    <link href="css/customer-portal.css" rel="stylesheet">
+    <!-- Open Graph / social preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Dhanvi Finserv">
+    <meta property="og:title" content="Post-Disbursal Support - Dhanvi Finserv">
+    <meta property="og:description" content="Request a repayment schedule, foreclosure or part-payment help, balance transfer review, top-up or annual loan review.">
+    <meta property="og:image" content="https://www.dhanvifinserv.com/images/hero-img-1.jpg">
+    <meta property="og:locale" content="en_IN">
+    <meta name="twitter:card" content="summary_large_image">
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Page Preloader -->
+    <div id="page-loader" class="page-loader" aria-live="polite" role="status">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60" onerror="handleDhanviLogoError(this)">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box">
+                <div class="loader-spinner-ring"></div>
+            </div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},3000);</script>
+    <noscript><style>#page-loader { display: none !important; }</style></noscript>
+    <div class="top-bar">
+        <!-- top-bar -->
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6 col-6 d-none d-xl-block d-lg-block">
+                    <p class="mail-text">Welcome to Dhanvi Finserv</p>
+                </div>
+                <div class="col-xl-8 col-lg-7 col-md-12 col-sm-12 col-12 text-right">
+                    <div class="top-nav"> <span class="top-text"><a href="contact-us.html">View Locations</a> </span> <span class="top-text"><a href="tel:+919925002324">+91 99250 02324</a></span> <span class="top-text"><a href="loan-calculator.html">EMI calculator</a></span> <span class="top-text"><a href="documents.html">Documents</a></span> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.top-bar -->
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-6 col-6">
+                    <!-- logo -->
+                    <div class="logo">
+                        <a href="index.html"><img src="images/logo.png" alt="Dhanvi Finserv - Loan Company"></a>
+                    </div>
+                </div>
+                <!-- logo -->
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-12">
+                        <div id="navigation">
+                        <!-- navigation start-->
+                        <ul>
+                            <li><a href="index.html" class="animsition-link">Home</a></li>
+                            <li><a href="services.html" class="animsition-link">Loan Services</a>
+                                <ul>
+                                    <li><a href="home-loan.html" class="animsition-link">Home Loan</a></li>
+                                    <li><a href="home-loan-top-up.html" class="animsition-link">Home Loan Top-Up</a></li>
+                                    <li><a href="home-loan-takeover.html" class="animsition-link">Home Loan Takeover</a></li>
+                                    <li><a href="loan-against-property.html" class="animsition-link">Loan Against Property (LAP)</a></li>
+                                    <li><a href="education-loan.html" class="animsition-link">Education Loan</a></li>
+                                    <li><a href="vehicle-loan.html" class="animsition-link">Vehicle Loan</a></li>
+                                    <li><a href="business-loan.html" class="animsition-link">Business Loan</a></li>
+                                    <li><a href="personal-loan.html" class="animsition-link">Personal Loan</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="itr-filing.html" class="animsition-link">ITR Filing</a></li>
+                            <li><a href="loan-calculator.html" class="animsition-link">Tools</a>
+                                <ul>
+                                    <li><a href="loan-calculator.html" class="animsition-link">EMI Calculator</a></li>
+                                    <li><a href="loan-eligibility.html" class="animsition-link">Check Eligibility</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="about.html" class="animsition-link">About Us</a></li>
+                            <li><a href="blog-listing.html" class="animsition-link">Blog</a></li>
+                            <li><a href="faq.html" class="animsition-link">FAQ</a></li>
+                            <li><a href="contact-us.html" class="animsition-link">Contact Us</a></li>
+                            <li><a href="apply-loan.html" class="btn btn-default btn-sm animsition-link btn-nav-cta">Apply for Loan</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.navigation start-->
+                </div>
+
+            </div>
+        </div>
+    </div>
+        <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li><a href="index.html">Home</a></li>
+                            <li class="active">Post-Disbursal Support</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside30">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-9 col-sm-12 col-12">
+                                <h1 class="page-title">Post-Disbursal Support</h1>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-3 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div class="btn-action"> <a href="upload-documents.html" class="btn btn-default">Upload Documents</a> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sub-nav" id="sub-nav">
+                        <ul class="nav nav-justified">
+                            <li class="nav-item"><a href="documents.html" class="nav-link">Documents Required</a></li>
+                            <li class="nav-item"><a href="loan-calculator.html" class="nav-link">EMI Calculator</a></li>
+                            <li class="nav-item"><a href="contact-us.html#callback" class="nav-link">Give me call back</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="wrapper-content bg-white pinside40">
+                        <span class="cp-eyebrow">Existing customers</span>
+                        <h2 class="cp-title">Help after your loan is disbursed</h2>
+                        <p class="cp-sub" style="margin-bottom:28px;">Request a repayment schedule, ask about foreclosure or part payment, explore a balance transfer or top-up, or book an annual loan review. Our team will coordinate with your lender and revert with the next steps.</p>
+
+                        <div class="cp-service-grid">
+                            <div class="cp-service">
+                                <i class="fa fa-calendar"></i>
+                                <h4>Repayment schedule</h4>
+                                <p>Get a copy of your amortisation schedule or EMI due dates.</p>
+                            </div>
+                            <div class="cp-service">
+                                <i class="fa fa-unlock-alt"></i>
+                                <h4>Foreclosure</h4>
+                                <p>Understand the foreclosure process and the documents your lender needs.</p>
+                            </div>
+                            <div class="cp-service">
+                                <i class="fa fa-pie-chart"></i>
+                                <h4>Part payment</h4>
+                                <p>Ask how a part prepayment may affect your tenure or EMI.</p>
+                            </div>
+                            <div class="cp-service">
+                                <i class="fa fa-exchange"></i>
+                                <h4>Balance transfer / takeover</h4>
+                                <p>Explore whether transferring your loan could reduce your rate.</p>
+                            </div>
+                            <div class="cp-service">
+                                <i class="fa fa-plus-circle"></i>
+                                <h4>Top-up request</h4>
+                                <p>Check eligibility for additional finance against your existing loan.</p>
+                            </div>
+                            <div class="cp-service">
+                                <i class="fa fa-search"></i>
+                                <h4>Annual loan review</h4>
+                                <p>Review your rate, tenure and overall borrowing once a year.</p>
+                            </div>
+                        </div>
+
+                        <div class="cp-card" id="support-request" style="box-shadow:none;border-color:#e1e8f1;">
+                            <div class="cp-card-head">
+                                <span class="cp-eyebrow">Support request</span>
+                                <h2 class="cp-title">Tell us what you need</h2>
+                                <p class="cp-sub">We will record your request and contact you using the details you provide. Please have your loan account number or application reference ready.</p>
+                            </div>
+
+                            <div class="cp-alert" id="pdAlert"></div>
+
+                            <form id="postDisbursalForm" novalidate data-wa-ignore>
+                                <div class="cp-grid">
+                                    <div class="cp-col-4">
+                                        <div class="cp-field">
+                                            <label for="pdName">Full name <span class="cp-req">*</span></label>
+                                            <input type="text" class="form-control" id="pdName" autocomplete="name" placeholder="Enter your full name">
+                                        </div>
+                                    </div>
+                                    <div class="cp-col-4">
+                                        <div class="cp-field">
+                                            <label for="pdMobile">Mobile number <span class="cp-req">*</span></label>
+                                            <input type="tel" class="form-control" id="pdMobile" autocomplete="tel" placeholder="Enter your contact number">
+                                        </div>
+                                    </div>
+                                    <div class="cp-col-4">
+                                        <div class="cp-field">
+                                            <label for="pdEmail">Email</label>
+                                            <input type="email" class="form-control" id="pdEmail" autocomplete="email" placeholder="Enter your email address">
+                                        </div>
+                                    </div>
+                                    <div class="cp-col-6">
+                                        <div class="cp-field">
+                                            <label for="pdLoanRef">Loan account / application reference <span class="cp-req">*</span></label>
+                                            <input type="text" class="form-control" id="pdLoanRef" placeholder="Loan account number or DF-2026-00001">
+                                            <span class="cp-help">Found on your sanction letter, statement or application confirmation.</span>
+                                        </div>
+                                    </div>
+                                    <div class="cp-col-6">
+                                        <div class="cp-field">
+                                            <label for="pdRequestType">Request type <span class="cp-req">*</span></label>
+                                            <select class="form-control" id="pdRequestType">
+                                                <option value="">Select a request</option>
+                                                <option value="Repayment schedule">Repayment schedule</option>
+                                                <option value="Foreclosure">Foreclosure</option>
+                                                <option value="Part payment">Part payment</option>
+                                                <option value="Balance transfer / takeover">Balance transfer / takeover</option>
+                                                <option value="Top-up">Top-up</option>
+                                                <option value="Annual loan review">Annual loan review</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="cp-col-12">
+                                        <div class="cp-field">
+                                            <label for="pdDescription">Tell us about your request <span class="cp-req">*</span></label>
+                                            <textarea class="form-control" id="pdDescription" placeholder="Include the lender name, loan type and what you would like us to check. Please do not include passwords, OTPs or full card numbers."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cp-consent">
+                                    <input type="checkbox" id="pdConsent">
+                                    <label for="pdConsent">I confirm I am the borrower or an authorised representative and consent to Dhanvi Finserv processing this request, as described in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a>. <span class="cp-req">*</span></label>
+                                </div>
+
+                                <div class="cp-actions">
+                                    <button type="submit" class="cp-btn" id="pdSubmit"><span class="cp-spinner"></span> Submit request</button>
+                                    <span class="cp-help" style="margin:0;">You will receive a support reference immediately.</span>
+                                </div>
+                            </form>
+
+                            <div class="cp-success" id="pdSuccess">
+                                <div class="cp-success-icon"><i class="fa fa-check"></i></div>
+                                <h3>Support request received</h3>
+                                <p>Our team will review your request and contact you using the details you provided.</p>
+                                <div class="cp-ref-box">
+                                    <span>Support reference</span>
+                                    <strong id="pdReference">&mdash;</strong>
+                                </div>
+                                <div class="cp-actions">
+                                    <button type="button" class="cp-btn cp-btn-outline" id="pdReset">Submit another request</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cp-disclaimer">
+                            <strong>Important:</strong> Final loan calculations, eligibility, approval and foreclosure statements are issued by the actual lending bank or NBFC. Dhanvi Finserv is a loan advisory and cannot guarantee a particular rate, fee, tenure or settlement. Always confirm the final figures in your lender's official statement or sanction letter before acting on them.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- /.content end -->
+   <div class="footer section-space100">
+        <!-- footer -->
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="footer-logo">
+                        <!-- Footer Logo -->
+                        <img src="images/ft-logo.png" alt="Dhanvi Finserv - Loan Company"> </div>
+                    <!-- /.Footer Logo -->
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                    <div class="row">
+                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                        <h3 class="newsletter-title">Signup Our Newsletter</h3>
+                    </div>
+                    <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+                        <div class="newsletter-form">
+                            <!-- Newsletter Form -->
+                            <form action="#" method="post">
+                                <div class="input-group">
+                                    <input type="email" class="form-control" id="newsletter" name="newsletter" placeholder="Write E-Mail Address" required>
+                                    <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Go!</button>
+                </span> </div>
+                                <!-- /input-group -->
+                            </form>
+                        </div>
+                        <!-- /.Newsletter Form -->
+                    </div>
+                </div>
+                    <!-- /.col-lg-6 -->
+                </div>
+            </div>
+            <hr class="dark-line">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="widget-text mt40">
+                        <!-- widget text -->
+                        <p>Dhanvi Finserv is your trusted financial partner in Ahmedabad, helping you get Home, Business, Education, Vehicle, Personal and Property loans from leading nationalised banks, private banks &amp; NBFCs - with expert guidance and end-to-end support.</p>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="address-text"><span><i class="icon-placeholder-3 icon-1x"></i> </span>Ahmedabad, Gujarat, India </p>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="call-text"><span><i class="icon-phone-call icon-1x"></i></span>+91 99250 02324</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.widget text -->
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <!-- widget footer -->
+                        <ul class="listnone">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="services.html">Loan Services</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="blog-listing.html">Blog</a></li>
+                            <li><a href="faq.html">FAQ</a></li>
+                            <li><a href="contact-us.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.widget footer -->
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <!-- widget footer -->
+                        <ul class="listnone">
+                            <li><a href="vehicle-loan.html">Vehicle Loan</a></li>
+                            <li><a href="personal-loan.html">Personal Loan</a></li>
+                            <li><a href="education-loan.html">Education Loan</a></li>
+                            <li><a href="business-loan.html">Business Loan</a></li>
+                            <li><a href="home-loan.html">Home Loan</a></li>
+                            <li><a href="loan-against-property.html">Loan Against Property</a></li>
+                            <li><a href="itr-filing.html">ITR Filing</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.widget footer -->
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-social mt40">
+                        <!-- widget footer -->
+                        <ul class="listnone">
+                            <li><a href="#"><i class="fa fa-facebook"></i>Facebook</a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i>Instagram</a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i>Twitter</a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i>Linked In</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.widget footer -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.footer -->
+    <div class="tiny-footer">
+        <!-- tiny footer -->
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                    <p>&copy; Dhanvi Finserv. All rights reserved. <span class="legal-links"><a href="documents.html">Documents</a> &middot; <a href="post-disbursal.html">Post-Disbursal</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="disclaimer.html">Disclaimer</a> &middot; <a href="grievance.html">Grievance</a></span></p>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 text-right">
+                    <p>Grow your dreams with the right financial support.</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.tiny footer -->
+    <!-- back to top icon -->
+    <a href="#0" class="cd-top" title="Go to top">Top</a>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/menumaker.js"></script>
+  
+    <!-- sticky header -->
+    <script type="text/javascript" src="js/jquery.sticky.js"></script>
+    <script type="text/javascript" src="js/sticky-header.js"></script>
+    <!-- Faq Accordion -->
+    <script src="js/accordion.js" type="text/javascript"></script>
+    <!-- Back to top script -->
+    <script src="js/back-to-top.js" type="text/javascript"></script>
+    <script src="js/wa-forms.js"></script>
+    <script src="js/modern.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js"></script>
+    <script src="js/public-api.js"></script>
+    <script src="js/customer-services.js"></script>
+    <script src="js/interactions.js"></script>
+</body>
+
+
+</html>
+

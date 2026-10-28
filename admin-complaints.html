@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Complaint Tickets | Dhanvi Finserv Admin</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/admin.css" rel="stylesheet">
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body>
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box"><div class="loader-spinner-ring"></div></div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},2000);</script>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-logo">
+            <a href="admin-dashboard.html"><img src="images/logo.png" alt="Dhanvi Finserv"></a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a>
+            <a href="admin-applications.html"><i class="fa fa-file-text"></i> Loan Applications</a>
+            <a href="admin-leads.html"><i class="fa fa-users"></i> Customer Leads</a>
+            <a href="admin-documents.html"><i class="fa fa-folder-open"></i> Documents</a>
+            <a href="admin-followups.html"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
+            <a href="admin-callbacks.html"><i class="fa fa-phone"></i> Callbacks</a>
+            <a href="admin-support.html"><i class="fa fa-life-ring"></i> Support Requests</a>
+            <a href="admin-complaints.html" class="active"><i class="fa fa-exclamation-circle"></i> Complaints</a>
+            <a href="admin-settings.html"><i class="fa fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" style="margin-bottom: 12px;"><i class="fa fa-globe"></i> View Website</a>
+            <a href="admin-login.html"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="topbar-hamburger" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+                <h4>Complaint Tickets</h4>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile">
+                    <div class="topbar-avatar">...</div>
+                    <span class="topbar-profile-name">Loading...</span>
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Complaints</h2>
+                    <p>Track complaint tickets, update status and record resolution details.</p>
+                </div>
+            </div>
+
+            <div class="admin-alert" id="pageAlert"></div>
+
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h4>All Complaint Tickets</h4>
+                    <div class="table-filters">
+                        <input type="text" id="searchInput" placeholder="Search name, ticket or loan reference...">
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="Loan application">Loan application</option>
+                            <option value="Documentation">Documentation</option>
+                            <option value="Interest rate or charges">Interest rate or charges</option>
+                            <option value="Disbursement delay">Disbursement delay</option>
+                            <option value="Staff conduct">Staff conduct</option>
+                            <option value="Post-disbursal support">Post-disbursal support</option>
+                            <option value="Data privacy">Data privacy</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="Open">Open</option>
+                            <option value="Acknowledged">Acknowledged</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dash-card-body no-pad">
+                    <div class="table-responsive">
+                        <table class="app-table" id="complaintsTable">
+                            <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Customer</th>
+                                    <th>Category</th>
+                                    <th>Loan Ref.</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="7" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading complaints…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="complaintModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-exclamation-circle" style="margin-right:8px;"></i> <span id="modalTitle">Complaint ticket</span></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="modalAlert"></div>
+
+                    <div class="detail-group">
+                        <h6>Customer</h6>
+                        <div class="detail-row"><span class="detail-label">Ticket number</span><span class="detail-value mono" id="modalTicket">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value" id="modalName">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Mobile</span><span class="detail-value" id="modalMobile">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="modalEmail">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Loan reference</span><span class="detail-value" id="modalLoanRef">—</span></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6>Complaint</h6>
+                        <div class="detail-row"><span class="detail-label">Category</span><span class="detail-value" id="modalCategory">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value" id="modalDescription">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Submitted</span><span class="detail-value" id="modalCreated">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Resolved</span><span class="detail-value" id="modalResolved">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Last updated</span><span class="detail-value" id="modalUpdated">—</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="modalStatus">Complaint status</label>
+                                <select class="form-control" id="modalStatus">
+                                    <option value="Open">Open</option>
+                                    <option value="Acknowledged">Acknowledged</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalResolution">Resolution details</label>
+                        <textarea class="form-control" id="modalResolution" rows="4" placeholder="Record what was investigated and how the complaint was resolved..."></textarea>
+                    </div>
+
+                    <p class="admin-note" style="margin:0;">Do not record unverified promises, lender decisions or regulatory outcomes here. Only verified resolution details should be saved.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn-save" id="saveComplaint">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js"></script>
+    <script src="js/admin-layout.js"></script>
+    <script>
+        var complaints = [];
+
+        var COMPLAINTS_QUERY =
+            'query AdminComplaints {' +
+            '  complaints(order_by: {created_at: desc}) {' +
+            '    id ticket_no full_name mobile email loan_reference_no category description' +
+            '    status resolution_details resolved_at created_at updated_at' +
+            '  }' +
+            '}';
+
+        var UPDATE_COMPLAINT_MUTATION =
+            'mutation UpdateComplaint($id: uuid!, $status: String!, $resolution: String, $resolvedAt: timestamptz) {' +
+            '  update_complaints_by_pk(pk_columns: {id: $id}, _set: {status: $status, resolution_details: $resolution, resolved_at: $resolvedAt}) { id }' +
+            '}';
+
+        function backend() {
+            return window.DhanviBackend;
+        }
+
+        function esc(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function prettyDateTime(value) {
+            if (!value) { return '—'; }
+            var d = new Date(value);
+            return isNaN(d.getTime()) ? esc(value) : d.toLocaleString('en-GB');
+        }
+
+        function badgeClass(status) {
+            switch (status) {
+                case 'Resolved': return 'badge-resolved';
+                case 'Closed': return 'badge-closed';
+                case 'In Progress': return 'badge-progress';
+                case 'Acknowledged': return 'badge-acknowledged';
+                default: return 'badge-open';
+            }
+        }
+
+        function showAlert(id, type, message) {
+            var el = document.getElementById(id);
+            el.className = 'admin-alert admin-alert-' + type + ' show';
+            el.innerHTML = message;
+        }
+
+        function hideAlert(id) {
+            var el = document.getElementById(id);
+            el.className = 'admin-alert';
+            el.innerHTML = '';
+        }
+
+        async function fetchComplaints() {
+            var tbody = $('#complaintsTable tbody');
+            try {
+                var data = await backend().adminGql(COMPLAINTS_QUERY);
+                complaints = (data && data.complaints) || [];
+                renderTable();
+            } catch (err) {
+                console.error('Could not load complaints:', err);
+                tbody.html('<tr><td colspan="7" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load complaints</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
+            }
+        }
+
+        function renderTable() {
+            var tbody = $('#complaintsTable tbody');
+            tbody.empty();
+
+            if (!complaints.length) {
+                tbody.html('<tr><td colspan="7" class="empty-state"><i class="fa fa-check-circle-o"></i><strong>No complaints recorded</strong>New complaint tickets will appear here.</td></tr>');
+                return;
+            }
+
+            complaints.forEach(function (item, index) {
+                var tr = $('<tr>');
+                tr.attr('data-status', item.status);
+                tr.attr('data-category', item.category);
+                tr.html(
+                    '<td class="ref-cell mono">' + esc(item.ticket_no) + '</td>' +
+                    '<td>' + esc(item.full_name) + '<div class="muted">' + esc(item.mobile) + '</div></td>' +
+                    '<td>' + esc(item.category) + '</td>' +
+                    '<td>' + esc(item.loan_reference_no || '—') + '</td>' +
+                    '<td>' + esc(prettyDateTime(item.created_at)) + '</td>' +
+                    '<td><span class="badge-status ' + badgeClass(item.status) + '">' + esc(item.status) + '</span></td>' +
+                    '<td><button class="btn-view" data-index="' + index + '">View</button></td>'
+                );
+                tbody.append(tr);
+            });
+
+            tbody.find('.btn-view').on('click', function () {
+                openModal(Number($(this).attr('data-index')));
+            });
+        }
+
+        function openModal(index) {
+            var item = complaints[index];
+            if (!item) { return; }
+            hideAlert('modalAlert');
+            $('#modalTitle').text('Complaint ' + (item.ticket_no || ''));
+            $('#modalTicket').text(item.ticket_no || '—');
+            $('#modalName').text(item.full_name || '—');
+            $('#modalMobile').text(item.mobile || '—');
+            $('#modalEmail').text(item.email || '—');
+            $('#modalLoanRef').text(item.loan_reference_no || '—');
+            $('#modalCategory').text(item.category || '—');
+            $('#modalDescription').text(item.description || '—');
+            $('#modalCreated').text(prettyDateTime(item.created_at));
+            $('#modalResolved').text(prettyDateTime(item.resolved_at));
+            $('#modalUpdated').text(prettyDateTime(item.updated_at));
+            $('#modalStatus').val(item.status);
+            $('#modalResolution').val(item.resolution_details || '');
+            $('#complaintModal').data('index', index);
+            $('#complaintModal').modal('show');
+        }
+
+        $('#saveComplaint').on('click', async function () {
+            var index = $('#complaintModal').data('index');
+            var item = complaints[index];
+            if (!item) { return; }
+
+            var status = $('#modalStatus').val();
+            var resolution = $('#modalResolution').val().trim();
+            var resolvedAt = null;
+
+            if (status === 'Resolved' || status === 'Closed') {
+                resolvedAt = item.resolved_at || new Date().toISOString();
+                if (!resolution) {
+                    showAlert('modalAlert', 'error', 'Please record resolution details before resolving or closing the complaint.');
+                    return;
+                }
+            }
+
+            var btn = $(this);
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(UPDATE_COMPLAINT_MUTATION, {
+                    id: item.id,
+                    status: status,
+                    resolution: resolution || null,
+                    resolvedAt: resolvedAt
+                });
+
+                $('#complaintModal').modal('hide');
+                showAlert('pageAlert', 'success', 'Complaint updated successfully.');
+                await fetchComplaints();
+            } catch (err) {
+                console.error('Complaint update failed:', err);
+                showAlert('modalAlert', 'error', esc(err.message || 'Could not update the complaint.'));
+            } finally {
+                btn.prop('disabled', false).text('Save changes');
+            }
+        });
+
+        function filterTable() {
+            var search = $('#searchInput').val().toLowerCase();
+            var status = $('#statusFilter').val();
+            var category = $('#categoryFilter').val();
+            $('#complaintsTable tbody tr').each(function () {
+                var row = $(this);
+                if (!row.attr('data-status')) { return; }
+                var text = row.text().toLowerCase();
+                var matchSearch = !search || text.indexOf(search) > -1;
+                var matchStatus = !status || row.attr('data-status') === status;
+                var matchCategory = !category || row.attr('data-category') === category;
+                row.toggle(matchSearch && matchStatus && matchCategory);
+            });
+        }
+
+        window.DhanviAdminReady.then(function () {
+            fetchComplaints();
+            $('#searchInput').on('keyup', filterTable);
+            $('#statusFilter').on('change', filterTable);
+            $('#categoryFilter').on('change', filterTable);
+            $('#sidebarToggle').on('click', function () {
+                $('#adminSidebar').toggleClass('open');
+                $('#sidebarOverlay').toggleClass('show');
+            });
+            $('#sidebarOverlay').on('click', function () {
+                $('#adminSidebar').removeClass('open');
+                $('#sidebarOverlay').removeClass('show');
+            });
+        });
+    </script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

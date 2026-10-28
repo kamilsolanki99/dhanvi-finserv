@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
     <title>Admin Login | Dhanvi Finserv</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
@@ -135,7 +136,7 @@
 
         .remember-row .forgot-link {
             font-size: 12px;
-            color: #f51f8a;
+            color: #A96500;
             text-decoration: none;
             font-weight: 500;
         }
@@ -201,7 +202,7 @@
         }
 
         .card-footer-text a:hover {
-            color: #f51f8a;
+            color: #A96500;
             text-decoration: underline;
         }
     </style>
@@ -274,36 +275,144 @@
         </div>
     </div>
 
+    <!-- Nhost JS SDK + project configuration -->
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js"></script>
     <script>
         (function () {
             var form = document.getElementById('adminLoginForm');
             var errorMsg = document.getElementById('errorMsg');
+            var submitBtn = form.querySelector('button[type="submit"]');
 
-            form.addEventListener('submit', function (e) {
+            function showError(message) {
+                errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> ' +
+                    String(message || 'Invalid email or password')
+                        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                errorMsg.classList.add('show');
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+            }
+
+            function setBusy(busy) {
+                if (!submitBtn) { return; }
+                submitBtn.disabled = busy;
+                submitBtn.innerHTML = busy
+                    ? '<i class="fa fa-circle-o-notch fa-spin"></i> Signing in…'
+                    : 'Sign In <i class="fa fa-arrow-right"></i>';
+            }
+
+            // Show the message left by the admin auth guard, if any.
+            try {
+                var guardMessage = window.sessionStorage.getItem('dhanviAdminLoginMessage');
+                if (guardMessage) {
+                    window.sessionStorage.removeItem('dhanviAdminLoginMessage');
+                    showError(guardMessage);
+                }
+            } catch (err) { /* sessionStorage may be unavailable */ }
+
+            // If an administrator session is already active, skip the form.
+            (async function redirectIfSignedIn() {
+                var backend = window.DhanviBackend;
+                var nhost = backend && backend.getClient();
+                if (!nhost) { return; }
+                var session = nhost.getUserSession();
+                if (!session || !session.user) { return; }
+                if (!Array.isArray(session.user.roles) || session.user.roles.indexOf('admin') === -1) { return; }
+
+                try {
+                    var data = await backend.adminGql(
+                        'query AdminLoginCheck($userId: uuid!) {' +
+                        '  admin_profiles_by_pk(user_id: $userId) { role }' +
+                        '}',
+                        { userId: session.user.id }
+                    );
+                    var profile = data && data.admin_profiles_by_pk;
+                    if (profile && profile.role === 'admin') {
+                        window.location.replace('admin-dashboard.html');
+                        return;
+                    }
+                    await backend.signOut();
+                } catch (err) {
+                    await backend.signOut();
+                }
+            })();
+
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                hideError();
 
                 var email = document.getElementById('adminEmail').value.trim();
                 var password = document.getElementById('adminPassword').value;
 
-                // Hardcoded demo credentials
-                if (email === 'admin@dhanvifinserv.com' && password === 'admin123') {
-                    errorMsg.classList.remove('show');
+                var backend = window.DhanviBackend;
+                if (!backend) {
+                    showError('The secure sign-in service could not be loaded. Please refresh the page.');
+                    return;
+                }
+                var nhost = backend.getClient();
+                if (!nhost) {
+                    showError('The secure sign-in service is not configured. Please contact the site administrator.');
+                    return;
+                }
+
+                setBusy(true);
+                try {
+                    var response = await nhost.auth.signInEmailPassword({
+                        email: email,
+                        password: password
+                    });
+                    var body = (response && response.body) || {};
+
+                    if (!body.session) {
+                        if (body.mfa) {
+                            throw new Error('Multi-factor authentication is enabled for this account. Please sign in with the Nhost dashboard or disable MFA for the admin portal.');
+                        }
+                        throw new Error('Sign-in did not return a session. Please try again.');
+                    }
+
+                    var user = body.session.user;
+                    if (!user || !Array.isArray(user.roles) || user.roles.indexOf('admin') === -1) {
+                        await backend.signOut();
+                        throw new Error('Access denied. This account does not have administrator privileges.');
+                    }
+
+                    // Confirm the application-level admin profile row too.
+                    var data;
+                    try {
+                        data = await backend.adminGql(
+                            'query AdminLoginGuard($userId: uuid!) {' +
+                            '  admin_profiles_by_pk(user_id: $userId) { role }' +
+                            '}',
+                            { userId: user.id }
+                        );
+                    } catch (err) {
+                        await backend.signOut();
+                        throw new Error('Access denied. The administrator profile could not be verified.');
+                    }
+
+                    var profile = data && data.admin_profiles_by_pk;
+                    if (!profile || profile.role !== 'admin') {
+                        await backend.signOut();
+                        throw new Error('Access denied. The administrator profile could not be verified.');
+                    }
+
                     window.location.href = 'admin-dashboard.html';
-                } else {
-                    errorMsg.classList.add('show');
+                } catch (err) {
+                    console.error('Admin sign-in failed:', err);
+                    showError(backend.errorMessage(err));
+                } finally {
+                    setBusy(false);
                 }
             });
 
-            // Hide error when user starts typing again
-            document.getElementById('adminEmail').addEventListener('input', function () {
-                errorMsg.classList.remove('show');
-            });
-            document.getElementById('adminPassword').addEventListener('input', function () {
-                errorMsg.classList.remove('show');
+            ['adminEmail', 'adminPassword'].forEach(function (id) {
+                document.getElementById(id).addEventListener('input', hideError);
             });
         })();
     </script>
-
     <script src="js/interactions.js"></script>
 </body>
 </html>

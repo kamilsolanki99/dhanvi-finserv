@@ -14,21 +14,21 @@
 }
 
 .slider > .dragger {
-  background: #f51f8a;
-  background: -webkit-linear-gradient(top, #f51f8a, #f51f8a);
-  background: -moz-linear-gradient(top, #f51f8a, #f51f8a);
-  background: linear-gradient(top, #f51f8a, #f51f8a);
+  background: #F5B51B;
+  background: -webkit-linear-gradient(top, #F5B51B, #F5B51B);
+  background: -moz-linear-gradient(top, #F5B51B, #F5B51B);
+  background: linear-gradient(top, #F5B51B, #F5B51B);
   
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 20px;
-  border: 1px solid #bb0d64;
+  border: 1px solid #F39A24;
   width: 16px;
   height: 16px;
 }
 
 .slider > .dragger:hover {
-  background: -webkit-linear-gradient(top, #f51f8a, #f51f8a);
+  background: -webkit-linear-gradient(top, #F5B51B, #F5B51B);
 }
 
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
     <title>Admin Dashboard | Dhanvi Finserv</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
@@ -244,6 +245,60 @@
             margin-top: 2px;
         }
 
+        /* ===== Service Desk ===== */
+        .service-desk-row { margin-bottom: 24px; }
+        .service-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px 18px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .service-card:hover {
+            box-shadow: 0 6px 18px rgba(16,63,115,0.10);
+            transform: translateY(-2px);
+        }
+        .service-card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex: 0 0 auto;
+            background: rgba(21,84,154,0.10);
+            color: #15549a;
+        }
+        .service-card.amber .service-card-icon { background: rgba(245,166,35,0.14); color: #c98a10; }
+        .service-card.red .service-card-icon { background: rgba(225,75,75,0.12); color: #e14b4b; }
+        .service-card.green .service-card-icon { background: rgba(16,168,116,0.12); color: #10a874; }
+        .service-card-info { flex: 1; min-width: 0; }
+        .service-card-info h5 {
+            margin: 0 0 1px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #5d6b80;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .service-card-info .service-count {
+            font-size: 22px;
+            font-weight: 700;
+            color: #34415c;
+            line-height: 1.2;
+        }
+        .service-card-info .service-link {
+            font-size: 11.5px;
+            color: #15549a;
+            font-weight: 500;
+        }
+        .service-card-info .service-link i { font-size: 10px; margin-left: 4px; }
+
         /* ===== Card Wrapper ===== */
         .dash-card {
             background: #fff;
@@ -339,6 +394,40 @@
         .badge-under-review { background: rgba(33,150,243,0.12); color: #2196f3; }
         .badge-rejected     { background: rgba(225,75,75,0.12);  color: #e14b4b; }
         .badge-docs-pending { background: rgba(245,166,35,0.15); color: #e08e0b; }
+        .badge-new          { background: rgba(33,150,243,0.12); color: #2196f3; }
+        .badge-progress     { background: rgba(245,181,27,0.16); color: #a86f05; }
+        .badge-closed       { background: #edf0f5; color: #5d6b80; }
+
+        .admin-alert {
+            display: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            border: 1px solid transparent;
+            line-height: 1.6;
+        }
+        .admin-alert.show { display: block; }
+        .admin-alert-error { background: #fdf0f0; border-color: #f3c9c9; color: #a12f2f; }
+        .admin-alert-success { background: #eefaf4; border-color: #c5ecd9; color: #0d7a53; }
+        .empty-state { text-align: center; padding: 42px 20px; color: #8e9ab4; font-size: 13px; }
+        .empty-state i { display: block; font-size: 30px; color: #c3cdda; margin-bottom: 10px; }
+        .empty-state strong { display: block; color: #5d6b80; margin-bottom: 4px; }
+        .loading-state { text-align: center; padding: 40px 20px; color: #8e9ab4; font-size: 13px; }
+        .loading-state i { margin-right: 8px; }
+        .muted { color: #8e9ab4; font-size: 12px; font-weight: 400; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .3px; }
+        .ref-cell { font-size: 12px; color: #15549a; font-weight: 500; }
+        .admin-chip {
+            display: inline-block;
+            background: #eef5fd;
+            color: #1c4b80;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .btn-save[disabled] { opacity: 0.65; cursor: not-allowed; }
 
         .btn-view {
             background: #15549a;
@@ -578,19 +667,28 @@
         <a href="admin-dashboard.html" class="active">
             <i class="fa fa-tachometer"></i> Dashboard
         </a>
-        <a href="#">
+        <a href="admin-applications.html">
             <i class="fa fa-file-text"></i> Loan Applications
         </a>
-        <a href="#">
+        <a href="admin-leads.html">
             <i class="fa fa-users"></i> Customer Leads
         </a>
-        <a href="#">
+        <a href="admin-documents.html">
             <i class="fa fa-folder-open"></i> Documents
         </a>
-        <a href="#">
+        <a href="admin-followups.html">
             <i class="fa fa-calendar-check-o"></i> Follow-ups
         </a>
-        <a href="#">
+        <a href="admin-callbacks.html">
+            <i class="fa fa-phone"></i> Callbacks
+        </a>
+        <a href="admin-support.html">
+            <i class="fa fa-life-ring"></i> Support Requests
+        </a>
+        <a href="admin-complaints.html">
+            <i class="fa fa-exclamation-circle"></i> Complaints
+        </a>
+        <a href="admin-settings.html">
             <i class="fa fa-cog"></i> Settings
         </a>
     </nav>
@@ -638,8 +736,8 @@
                     <div class="stat-card-icon"><i class="fa fa-file-text-o"></i></div>
                     <div class="stat-card-info">
                         <h5>Total Applications</h5>
-                        <div class="stat-number">247</div>
-                        <div class="stat-sub">12 new today</div>
+                        <div class="stat-number">0</div>
+                        <div class="stat-sub">Real-time count</div>
                     </div>
                 </div>
             </div>
@@ -648,8 +746,8 @@
                     <div class="stat-card-icon"><i class="fa fa-check-circle"></i></div>
                     <div class="stat-card-info">
                         <h5>Approved</h5>
-                        <div class="stat-number">156</div>
-                        <div class="stat-sub">63% approval rate</div>
+                        <div class="stat-number">0</div>
+                        <div class="stat-sub">Verified applications</div>
                     </div>
                 </div>
             </div>
@@ -658,8 +756,8 @@
                     <div class="stat-card-icon"><i class="fa fa-clock-o"></i></div>
                     <div class="stat-card-info">
                         <h5>Pending Review</h5>
-                        <div class="stat-number">64</div>
-                        <div class="stat-sub">8 urgent</div>
+                        <div class="stat-number">0</div>
+                        <div class="stat-sub">Awaiting action</div>
                     </div>
                 </div>
             </div>
@@ -668,14 +766,60 @@
                     <div class="stat-card-icon"><i class="fa fa-times-circle"></i></div>
                     <div class="stat-card-info">
                         <h5>Rejected</h5>
-                        <div class="stat-number">27</div>
-                        <div class="stat-sub">10.9% rejection rate</div>
+                        <div class="stat-number">0</div>
+                        <div class="stat-sub">Declined leads</div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Service Desk -->
+        <div class="row service-desk-row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a class="service-card" href="admin-callbacks.html">
+                    <span class="service-card-icon"><i class="fa fa-phone"></i></span>
+                    <span class="service-card-info">
+                        <h5>Active Callbacks</h5>
+                        <div class="service-count" id="countCallbacks">0</div>
+                        <span class="service-link">Manage bookings <i class="fa fa-arrow-right"></i></span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a class="service-card green" href="admin-support.html">
+                    <span class="service-card-icon"><i class="fa fa-life-ring"></i></span>
+                    <span class="service-card-info">
+                        <h5>Open Support Requests</h5>
+                        <div class="service-count" id="countSupport">0</div>
+                        <span class="service-link">Post-disbursal desk <i class="fa fa-arrow-right"></i></span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a class="service-card red" href="admin-complaints.html">
+                    <span class="service-card-icon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="service-card-info">
+                        <h5>Open Complaints</h5>
+                        <div class="service-count" id="countComplaints">0</div>
+                        <span class="service-link">Complaint tickets <i class="fa fa-arrow-right"></i></span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a class="service-card amber" href="admin-documents.html">
+                    <span class="service-card-icon"><i class="fa fa-folder-open"></i></span>
+                    <span class="service-card-info">
+                        <h5>Documents Pending</h5>
+                        <div class="service-count" id="countDocuments">0</div>
+                        <span class="service-link">Review documents <i class="fa fa-arrow-right"></i></span>
+                    </span>
+                </a>
+            </div>
+        </div>
+
         <!-- Recent Loan Applications -->
+        <div class="admin-alert" id="dashboardAlert"></div>
+
         <div class="dash-card">
             <div class="dash-card-header">
                 <h4><i class="fa fa-file-text-o" style="color:#15549a;margin-right:8px;"></i> Recent Loan Applications</h4>
@@ -683,11 +827,15 @@
                     <input type="text" id="searchInput" placeholder="Search applicant...">
                     <select id="statusFilter">
                         <option value="">All Status</option>
-                        <option value="Approved">Approved</option>
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="In Progress">In Progress</option>
                         <option value="Pending">Pending</option>
                         <option value="Under Review">Under Review</option>
-                        <option value="Rejected">Rejected</option>
                         <option value="Documents Pending">Documents Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Closed">Closed</option>
                     </select>
                 </div>
             </div>
@@ -707,126 +855,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="Approved">
-                                <td>1</td>
-                                <td>Rajesh Patel</td>
-                                <td>98765 43210</td>
-                                <td>Home Loan</td>
-                                <td>₹45,00,000</td>
-                                <td>24 Oct 2026</td>
-                                <td><span class="badge-status badge-approved">Approved</span></td>
-                                <td><button class="btn-view" onclick="openModal(0)">View</button></td>
-                            </tr>
-                            <tr data-status="Pending">
-                                <td>2</td>
-                                <td>Priya Sharma</td>
-                                <td>87654 32109</td>
-                                <td>Personal Loan</td>
-                                <td>₹3,50,000</td>
-                                <td>24 Oct 2026</td>
-                                <td><span class="badge-status badge-pending">Pending</span></td>
-                                <td><button class="btn-view" onclick="openModal(1)">View</button></td>
-                            </tr>
-                            <tr data-status="Under Review">
-                                <td>3</td>
-                                <td>Amit Desai</td>
-                                <td>76543 21098</td>
-                                <td>Business Loan</td>
-                                <td>₹12,00,000</td>
-                                <td>23 Oct 2026</td>
-                                <td><span class="badge-status badge-under-review">Under Review</span></td>
-                                <td><button class="btn-view" onclick="openModal(2)">View</button></td>
-                            </tr>
-                            <tr data-status="Documents Pending">
-                                <td>4</td>
-                                <td>Sneha Mehta</td>
-                                <td>99887 76655</td>
-                                <td>Education Loan</td>
-                                <td>₹8,00,000</td>
-                                <td>23 Oct 2026</td>
-                                <td><span class="badge-status badge-docs-pending">Documents Pending</span></td>
-                                <td><button class="btn-view" onclick="openModal(3)">View</button></td>
-                            </tr>
-                            <tr data-status="Approved">
-                                <td>5</td>
-                                <td>Vikram Singh</td>
-                                <td>88776 65544</td>
-                                <td>Vehicle Loan</td>
-                                <td>₹6,50,000</td>
-                                <td>22 Oct 2026</td>
-                                <td><span class="badge-status badge-approved">Approved</span></td>
-                                <td><button class="btn-view" onclick="openModal(4)">View</button></td>
-                            </tr>
-                            <tr data-status="Approved">
-                                <td>6</td>
-                                <td>Nisha Joshi</td>
-                                <td>77665 54433</td>
-                                <td>Home Loan Top-Up</td>
-                                <td>₹15,00,000</td>
-                                <td>22 Oct 2026</td>
-                                <td><span class="badge-status badge-approved">Approved</span></td>
-                                <td><button class="btn-view" onclick="openModal(5)">View</button></td>
-                            </tr>
-                            <tr data-status="Rejected">
-                                <td>7</td>
-                                <td>Karan Trivedi</td>
-                                <td>66554 43322</td>
-                                <td>Loan Against Property</td>
-                                <td>₹25,00,000</td>
-                                <td>21 Oct 2026</td>
-                                <td><span class="badge-status badge-rejected">Rejected</span></td>
-                                <td><button class="btn-view" onclick="openModal(6)">View</button></td>
-                            </tr>
-                            <tr data-status="Pending">
-                                <td>8</td>
-                                <td>Meera Gandhi</td>
-                                <td>55443 32211</td>
-                                <td>Personal Loan</td>
-                                <td>₹2,00,000</td>
-                                <td>21 Oct 2026</td>
-                                <td><span class="badge-status badge-pending">Pending</span></td>
-                                <td><button class="btn-view" onclick="openModal(7)">View</button></td>
-                            </tr>
-                            <tr data-status="Under Review">
-                                <td>9</td>
-                                <td>Suresh Bhatt</td>
-                                <td>94321 12345</td>
-                                <td>Home Loan</td>
-                                <td>₹35,00,000</td>
-                                <td>20 Oct 2026</td>
-                                <td><span class="badge-status badge-under-review">Under Review</span></td>
-                                <td><button class="btn-view" onclick="openModal(8)">View</button></td>
-                            </tr>
-                            <tr data-status="Approved">
-                                <td>10</td>
-                                <td>Divya Chauhan</td>
-                                <td>93210 01234</td>
-                                <td>Business Loan</td>
-                                <td>₹18,00,000</td>
-                                <td>20 Oct 2026</td>
-                                <td><span class="badge-status badge-approved">Approved</span></td>
-                                <td><button class="btn-view" onclick="openModal(9)">View</button></td>
-                            </tr>
-                            <tr data-status="Documents Pending">
-                                <td>11</td>
-                                <td>Arjun Naik</td>
-                                <td>92109 90123</td>
-                                <td>Home Loan Takeover</td>
-                                <td>₹28,00,000</td>
-                                <td>19 Oct 2026</td>
-                                <td><span class="badge-status badge-docs-pending">Documents Pending</span></td>
-                                <td><button class="btn-view" onclick="openModal(10)">View</button></td>
-                            </tr>
-                            <tr data-status="Pending">
-                                <td>12</td>
-                                <td>Pooja Rao</td>
-                                <td>91098 89012</td>
-                                <td>Vehicle Loan</td>
-                                <td>₹4,75,000</td>
-                                <td>19 Oct 2026</td>
-                                <td><span class="badge-status badge-pending">Pending</span></td>
-                                <td><button class="btn-view" onclick="openModal(11)">View</button></td>
-                            </tr>
+                            <tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading applications…</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -842,37 +871,8 @@
                         <h4><i class="fa fa-calendar-check-o" style="color:#15549a;margin-right:8px;"></i> Today's Follow-ups</h4>
                     </div>
                     <div class="dash-card-body">
-                        <div class="followup-item">
-                            <div class="followup-dot yellow"></div>
-                            <div class="followup-info">
-                                <h6>Call Priya Sharma</h6>
-                                <p>Personal Loan inquiry follow-up</p>
-                            </div>
-                            <div class="followup-time">10:30 AM<br><small style="color:#f5a623;">Pending</small></div>
-                        </div>
-                        <div class="followup-item">
-                            <div class="followup-dot blue"></div>
-                            <div class="followup-info">
-                                <h6>Meeting with Amit Desai</h6>
-                                <p>Document collection</p>
-                            </div>
-                            <div class="followup-time">2:00 PM<br><small style="color:#2196f3;">Scheduled</small></div>
-                        </div>
-                        <div class="followup-item">
-                            <div class="followup-dot yellow"></div>
-                            <div class="followup-info">
-                                <h6>Call Sneha Mehta</h6>
-                                <p>Missing education documents</p>
-                            </div>
-                            <div class="followup-time">3:30 PM<br><small style="color:#f5a623;">Pending</small></div>
-                        </div>
-                        <div class="followup-item">
-                            <div class="followup-dot green"></div>
-                            <div class="followup-info">
-                                <h6>Email Karan Trivedi</h6>
-                                <p>Rejection reason explanation</p>
-                            </div>
-                            <div class="followup-time">5:00 PM<br><small style="color:#10a874;">Completed</small></div>
+                        <div id="followupsList">
+                            <div style="text-align:center; padding:20px; color:#8e9ab4;">No follow-ups scheduled for today.</div>
                         </div>
                     </div>
                 </div>
@@ -886,29 +886,29 @@
                     </div>
                     <div class="dash-card-body">
                         <div style="text-align:center;margin-bottom:20px;">
-                            <span style="font-size:28px;font-weight:700;color:#34415c;">189</span><br>
+                            <span id="totalDocs" style="font-size:28px;font-weight:700;color:#34415c;">0</span><br>
                             <span style="font-size:12px;color:#8e9ab4;">Total Documents Received</span>
                         </div>
                         <div class="doc-stat-row">
                             <span class="doc-stat-label">Verified</span>
                             <div class="doc-bar-wrap">
-                                <div class="doc-bar green" style="width:76.7%;"></div>
+                                <div id="barVerified" class="doc-bar green" style="width:0%;"></div>
                             </div>
-                            <span class="doc-stat-val">145</span>
+                            <span id="valVerified" class="doc-stat-val">0</span>
                         </div>
                         <div class="doc-stat-row">
                             <span class="doc-stat-label">Pending Verification</span>
                             <div class="doc-bar-wrap">
-                                <div class="doc-bar yellow" style="width:16.9%;"></div>
+                                <div id="barPending" class="doc-bar yellow" style="width:0%;"></div>
                             </div>
-                            <span class="doc-stat-val">32</span>
+                            <span id="valPending" class="doc-stat-val">0</span>
                         </div>
                         <div class="doc-stat-row">
                             <span class="doc-stat-label">Incomplete</span>
                             <div class="doc-bar-wrap">
-                                <div class="doc-bar red" style="width:6.3%;"></div>
+                                <div id="barIncomplete" class="doc-bar red" style="width:0%;"></div>
                             </div>
-                            <span class="doc-stat-val">12</span>
+                            <span id="valIncomplete" class="doc-stat-val">0</span>
                         </div>
                     </div>
                 </div>
@@ -929,6 +929,8 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="admin-alert" id="modalAlert"></div>
+
                 <!-- Applicant Details -->
                 <div class="detail-group">
                     <h6><i class="fa fa-id-card-o" style="margin-right:6px;"></i> Applicant Information</h6>
@@ -980,11 +982,15 @@
                         <div class="form-group">
                             <label>Application Status</label>
                             <select class="form-control" id="modalStatusSelect">
-                                <option value="Approved">Approved</option>
+                                <option value="New">New</option>
+                                <option value="Contacted">Contacted</option>
+                                <option value="In Progress">In Progress</option>
                                 <option value="Pending">Pending</option>
                                 <option value="Under Review">Under Review</option>
                                 <option value="Documents Pending">Documents Pending</option>
+                                <option value="Approved">Approved</option>
                                 <option value="Rejected">Rejected</option>
+                                <option value="Closed">Closed</option>
                             </select>
                         </div>
                     </div>
@@ -1002,128 +1008,237 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
-                <button type="button" class="btn-save" onclick="saveModal()">Save Changes</button>
+                <button type="button" class="btn-save" id="saveDashboardBtn">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
 
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script>
-    // ===== Demo Data for Modal =====
-    var applicants = [
-        {name:"Rajesh Patel",mobile:"98765 43210",email:"rajesh.patel@email.com",address:"12, Navrangpura, Ahmedabad, Gujarat 380009",loanType:"Home Loan",amount:"₹45,00,000",tenure:"20 Years",purpose:"Purchase of new residential flat",status:"Approved",date:"24 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:true},{n:"Bank Statements (6 months)",ok:true},{n:"Property Documents",ok:true}],notes:"All documents verified. Loan sanctioned."},
-        {name:"Priya Sharma",mobile:"87654 32109",email:"priya.sharma@email.com",address:"45, Satellite Road, Ahmedabad, Gujarat 380015",loanType:"Personal Loan",amount:"₹3,50,000",tenure:"3 Years",purpose:"Medical emergency expenses",status:"Pending",date:"24 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:false},{n:"Bank Statements (6 months)",ok:true}],notes:"Waiting for salary slip verification."},
-        {name:"Amit Desai",mobile:"76543 21098",email:"amit.desai@email.com",address:"78, CG Road, Ahmedabad, Gujarat 380006",loanType:"Business Loan",amount:"₹12,00,000",tenure:"5 Years",purpose:"Business expansion - new branch office",status:"Under Review",date:"23 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Business Registration",ok:true},{n:"ITR (3 years)",ok:true},{n:"Bank Statements (12 months)",ok:false}],notes:"Under financial review. Need 12-month bank statements."},
-        {name:"Sneha Mehta",mobile:"99887 76655",email:"sneha.mehta@email.com",address:"23, Vastrapur, Ahmedabad, Gujarat 380015",loanType:"Education Loan",amount:"₹8,00,000",tenure:"7 Years",purpose:"MBA program at IIM Ahmedabad",status:"Documents Pending",date:"23 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Admission Letter",ok:true},{n:"Fee Structure",ok:false},{n:"Co-applicant Documents",ok:false}],notes:"Missing fee structure and co-applicant documents."},
-        {name:"Vikram Singh",mobile:"88776 65544",email:"vikram.singh@email.com",address:"56, Bodakdev, Ahmedabad, Gujarat 380054",loanType:"Vehicle Loan",amount:"₹6,50,000",tenure:"5 Years",purpose:"Purchase of new car - Hyundai Creta",status:"Approved",date:"22 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:true},{n:"Proforma Invoice",ok:true}],notes:"Approved. Disbursement scheduled."},
-        {name:"Nisha Joshi",mobile:"77665 54433",email:"nisha.joshi@email.com",address:"90, Paldi, Ahmedabad, Gujarat 380007",loanType:"Home Loan Top-Up",amount:"₹15,00,000",tenure:"10 Years",purpose:"Home renovation and interiors",status:"Approved",date:"22 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Existing Loan Statement",ok:true},{n:"Property Documents",ok:true},{n:"Renovation Estimate",ok:true}],notes:"Top-up approved on existing home loan."},
-        {name:"Karan Trivedi",mobile:"66554 43322",email:"karan.trivedi@email.com",address:"34, Maninagar, Ahmedabad, Gujarat 380008",loanType:"Loan Against Property",amount:"₹25,00,000",tenure:"15 Years",purpose:"Debt consolidation",status:"Rejected",date:"21 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Property Documents",ok:true},{n:"ITR (3 years)",ok:false},{n:"Bank Statements (12 months)",ok:false}],notes:"Rejected due to insufficient income documentation and existing high debt ratio."},
-        {name:"Meera Gandhi",mobile:"55443 32211",email:"meera.gandhi@email.com",address:"67, Thaltej, Ahmedabad, Gujarat 380059",loanType:"Personal Loan",amount:"₹2,00,000",tenure:"2 Years",purpose:"Wedding expenses",status:"Pending",date:"21 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:true},{n:"Bank Statements (6 months)",ok:false}],notes:"Awaiting bank statement submission."},
-        {name:"Suresh Bhatt",mobile:"94321 12345",email:"suresh.bhatt@email.com",address:"12, SG Highway, Ahmedabad, Gujarat 380054",loanType:"Home Loan",amount:"₹35,00,000",tenure:"20 Years",purpose:"Purchase of 3BHK apartment",status:"Under Review",date:"20 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:true},{n:"Bank Statements (6 months)",ok:true},{n:"Property Documents",ok:false}],notes:"Property title verification in progress."},
-        {name:"Divya Chauhan",mobile:"93210 01234",email:"divya.chauhan@email.com",address:"89, Prahlad Nagar, Ahmedabad, Gujarat 380015",loanType:"Business Loan",amount:"₹18,00,000",tenure:"7 Years",purpose:"Restaurant business startup",status:"Approved",date:"20 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Business Plan",ok:true},{n:"ITR (3 years)",ok:true},{n:"Bank Statements (12 months)",ok:true}],notes:"Approved. Strong business plan and financials."},
-        {name:"Arjun Naik",mobile:"92109 90123",email:"arjun.naik@email.com",address:"45, Chandkheda, Ahmedabad, Gujarat 382424",loanType:"Home Loan Takeover",amount:"₹28,00,000",tenure:"15 Years",purpose:"Balance transfer from XYZ Bank for lower interest rate",status:"Documents Pending",date:"19 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Existing Loan Statement",ok:true},{n:"Property Documents",ok:false},{n:"NOC from Current Bank",ok:false}],notes:"Waiting for property docs and NOC from current lender."},
-        {name:"Pooja Rao",mobile:"91098 89012",email:"pooja.rao@email.com",address:"78, Gota, Ahmedabad, Gujarat 382481",loanType:"Vehicle Loan",amount:"₹4,75,000",tenure:"4 Years",purpose:"Purchase of two-wheeler - Royal Enfield",status:"Pending",date:"19 Oct 2026",docs:[{n:"Aadhaar Card",ok:true},{n:"PAN Card",ok:true},{n:"Salary Slips (3 months)",ok:false},{n:"Proforma Invoice",ok:true}],notes:"Salary slip pending submission."}
-    ];
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js"></script>
+    <script src="js/admin-layout.js"></script>
+    <script>
+        // ===== Nhost / Hasura admin dashboard =====
+        let applicants = [];
 
-    try {
-        var stored = JSON.parse(localStorage.getItem('dhanvi_loan_applications') || '[]');
-        if (stored.length > 0) {
-            applicants = stored.concat(applicants);
-            var tbody = $('#applicationsTable tbody');
+        const LEADS_QUERY =
+            'query DashboardLeads {' +
+            '  loan_leads(order_by: {created_at: desc}) {' +
+            '    id reference_no full_name mobile email loan_type loan_amount' +
+            '    message status admin_notes created_at' +
+            '  }' +
+            '}';
+
+        const UPDATE_LEAD_MUTATION =
+            'mutation UpdateLead($id: uuid!, $status: String!, $notes: String) {' +
+            '  update_loan_leads_by_pk(pk_columns: {id: $id}, _set: {status: $status, admin_notes: $notes}) { id }' +
+            '}';
+
+        const COUNTS_QUERY =
+            'query DashboardCounts($today: date!) {' +
+            '  callbacks: callback_bookings_aggregate(where: {status: {_in: ["Pending", "Confirmed", "Rescheduled"]}, preferred_date: {_gte: $today}}) { aggregate { count } }' +
+            '  support: post_disbursal_requests_aggregate(where: {status: {_in: ["New", "In Progress", "Awaiting Customer"]}}) { aggregate { count } }' +
+            '  complaints: complaints_aggregate(where: {status: {_in: ["Open", "Acknowledged", "In Progress"]}}) { aggregate { count } }' +
+            '  documents: loan_documents_aggregate(where: {status: {_eq: "Pending"}}) { aggregate { count } }' +
+            '}';
+
+        function esc(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function money(value) {
+            const number = Number(value);
+            return isNaN(number) ? '—' : '₹' + number.toLocaleString('en-IN');
+        }
+
+        function showDashboardAlert(type, message) {
+            const el = document.getElementById('dashboardAlert');
+            el.className = 'admin-alert admin-alert-' + type + ' show';
+            el.innerHTML = message;
+        }
+
+        function hideDashboardAlert() {
+            const el = document.getElementById('dashboardAlert');
+            el.className = 'admin-alert';
+            el.innerHTML = '';
+        }
+
+        function backend() {
+            return window.DhanviBackend;
+        }
+
+        async function fetchApplications() {
+            const tbody = $('#applicationsTable tbody');
+            tbody.html('<tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading applications…</td></tr>');
+            hideDashboardAlert();
+
+            try {
+                const data = await backend().adminGql(LEADS_QUERY);
+                applicants = (data && data.loan_leads) || [];
+                renderTable();
+                updateStats();
+            } catch (err) {
+                console.error('Error fetching applications:', err);
+                tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
+                showDashboardAlert('error', 'Application data could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+            }
+        }
+
+        function renderTable() {
+            const tbody = $('#applicationsTable tbody');
             tbody.empty();
-            for (var k = 0; k < applicants.length; k++) {
-                var app = applicants[k];
-                var badgeClass = 'badge-pending';
-                if (app.status === 'Approved') badgeClass = 'badge-approved';
-                else if (app.status === 'Under Review') badgeClass = 'badge-under-review';
-                else if (app.status === 'Documents Pending') badgeClass = 'badge-docs-pending';
-                else if (app.status === 'Rejected') badgeClass = 'badge-rejected';
-                
-                var tr = $('<tr data-status="' + app.status + '"></tr>');
-                tr.append('<td>' + (k + 1) + '</td>');
-                tr.append('<td>' + app.name + '</td>');
-                tr.append('<td>' + app.mobile + '</td>');
-                tr.append('<td>' + app.loanType + '</td>');
-                tr.append('<td>' + app.amount + '</td>');
-                tr.append('<td>' + app.date + '</td>');
-                tr.append('<td><span class="badge-status ' + badgeClass + '">' + app.status + '</span></td>');
-                tr.append('<td><button class="btn-view" onclick="openModal(' + k + ')">View</button></td>');
+
+            if (!applicants.length) {
+                tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-file-text-o"></i><strong>No applications yet</strong>New applications from the website will appear here.</td></tr>');
+                return;
+            }
+
+            applicants.forEach((app, k) => {
+                const badgeClass = getStatusBadgeClass(app.status);
+                const tr = $('<tr>');
+                tr.attr('data-status', app.status);
+                tr.html(
+                    '<td>' + (k + 1) + '</td>' +
+                    '<td>' + esc(app.full_name) + (app.reference_no ? '<div class="muted mono">' + esc(app.reference_no) + '</div>' : '') + '</td>' +
+                    '<td>' + esc(app.mobile) + '</td>' +
+                    '<td>' + esc(app.loan_type) + '</td>' +
+                    '<td>' + esc(money(app.loan_amount)) + '</td>' +
+                    '<td>' + esc(new Date(app.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })) + '</td>' +
+                    '<td><span class="badge-status ' + badgeClass + '">' + esc(app.status) + '</span></td>' +
+                    '<td><button class="btn-view" data-index="' + k + '">View</button></td>'
+                );
                 tbody.append(tr);
+            });
+
+            tbody.find('.btn-view').on('click', function () {
+                openModal(Number($(this).attr('data-index')));
+            });
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'Approved': return 'badge-approved';
+                case 'Under Review': return 'badge-under-review';
+                case 'Rejected': return 'badge-rejected';
+                case 'Documents Pending': return 'badge-docs-pending';
+                case 'Closed': return 'badge-closed';
+                case 'New': return 'badge-new';
+                case 'In Progress':
+                case 'Contacted': return 'badge-progress';
+                default: return 'badge-pending';
             }
         }
-    } catch(e) {}
 
-    // ===== Open Modal =====
-    function openModal(idx) {
-        var a = applicants[idx];
-        $('#modalTitle').text(a.name + ' — ' + a.loanType);
-        $('#modalName').text(a.name);
-        $('#modalMobile').text(a.mobile);
-        $('#modalEmail').text(a.email);
-        $('#modalAddress').text(a.address);
-        $('#modalLoanType').text(a.loanType);
-        $('#modalAmount').text(a.amount);
-        $('#modalTenure').text(a.tenure);
-        $('#modalPurpose').text(a.purpose);
-        $('#modalDate').val(a.date);
-        $('#modalStatusSelect').val(a.status);
-        $('#modalNotes').val(a.notes);
-        var docsHtml = '';
-        for (var i = 0; i < a.docs.length; i++) {
-            var icon = a.docs[i].ok ? 'fa-check-circle' : 'fa-times-circle';
-            docsHtml += '<div class="doc-check"><i class="fa ' + icon + '" style="margin-right:8px;"></i> ' + a.docs[i].n + '</div>';
+        async function updateStats() {
+            const total = applicants.length;
+            const approved = applicants.filter(a => a.status === 'Approved').length;
+            const pending = applicants.filter(a => ['New', 'Contacted', 'In Progress', 'Pending', 'Under Review', 'Documents Pending'].indexOf(a.status) > -1).length;
+            const rejected = applicants.filter(a => a.status === 'Rejected').length;
+
+            $('.stat-card.blue .stat-number').text(total);
+            $('.stat-card.green .stat-number').text(approved);
+            $('.stat-card.orange .stat-number').text(pending);
+            $('.stat-card.red .stat-number').text(rejected);
         }
-        $('#modalDocs').html(docsHtml);
-        $('#viewModal').modal('show');
-    }
 
-    // ===== Save Modal (Demo) =====
-    function saveModal() {
-        alert('Changes saved successfully! (Demo)');
-        $('#viewModal').modal('hide');
-    }
+        function openModal(idx) {
+            const a = applicants[idx];
+            if (!a) { return; }
+            $('#modalAlert').removeClass('show').empty();
+            $('#modalTitle').text((a.full_name || 'Application') + ' — ' + (a.loan_type || ''));
+            $('#modalName').text(a.full_name || '—');
+            $('#modalMobile').text(a.mobile || '—');
+            $('#modalEmail').text(a.email || 'N/A');
+            $('#modalAddress').text(a.admin_notes || 'No address provided');
+            $('#modalLoanType').text(a.loan_type || '—');
+            $('#modalAmount').text(money(a.loan_amount));
+            $('#modalTenure').text('N/A');
+            $('#modalPurpose').text(a.message || 'No purpose specified');
+            $('#modalDate').val(new Date(a.created_at).toLocaleDateString());
+            $('#modalStatusSelect').val(a.status);
+            $('#modalNotes').val(a.admin_notes || '');
+            $('#viewModal').data('app-id', a.id);
 
-    // ===== Sidebar Toggle =====
-    $('#sidebarToggle').on('click', function() {
-        $('#adminSidebar').toggleClass('open');
-        $('#sidebarOverlay').toggleClass('show');
-    });
-    $('#sidebarOverlay').on('click', function() {
-        $('#adminSidebar').removeClass('open');
-        $('#sidebarOverlay').removeClass('show');
-    });
+            $('#modalDocs').html('<div class="doc-check"><i class="fa fa-info-circle"></i> Document verification available in Documents module.</div>');
+            $('#viewModal').modal('show');
+        }
 
-    // ===== Search Filter =====
-    $('#searchInput').on('keyup', function() {
-        filterTable();
-    });
+        async function saveModal() {
+            const appId = $('#viewModal').data('app-id');
+            const status = $('#modalStatusSelect').val();
+            const notes = $('#modalNotes').val().trim();
+            const btn = $('#saveDashboardBtn');
+            const alertEl = document.getElementById('modalAlert');
 
-    // ===== Status Filter =====
-    $('#statusFilter').on('change', function() {
-        filterTable();
-    });
+            btn.prop('disabled', true).text('Saving…');
+            alertEl.className = 'admin-alert';
+            alertEl.innerHTML = '';
 
-    function filterTable() {
-        var search = $('#searchInput').val().toLowerCase();
-        var status = $('#statusFilter').val();
-        $('#applicationsTable tbody tr').each(function() {
-            var row = $(this);
-            var name = row.find('td:nth-child(2)').text().toLowerCase();
-            var loanType = row.find('td:nth-child(4)').text().toLowerCase();
-            var mobile = row.find('td:nth-child(3)').text().toLowerCase();
-            var rowStatus = row.attr('data-status');
-            var matchSearch = !search || name.indexOf(search) > -1 || loanType.indexOf(search) > -1 || mobile.indexOf(search) > -1;
-            var matchStatus = !status || rowStatus === status;
-            if (matchSearch && matchStatus) {
-                row.show();
-            } else {
-                row.hide();
+            try {
+                await backend().adminGql(UPDATE_LEAD_MUTATION, {
+                    id: appId,
+                    status: status,
+                    notes: notes || null
+                });
+
+                $('#viewModal').modal('hide');
+                showDashboardAlert('success', 'Application updated successfully.');
+                await fetchApplications();
+            } catch (err) {
+                console.error('Dashboard application update failed:', err);
+                alertEl.className = 'admin-alert admin-alert-error show';
+                alertEl.innerHTML = esc(err.message || 'Could not update the application.');
+            } finally {
+                btn.prop('disabled', false).text('Save Changes');
             }
+        }
+
+        async function fetchServiceCounts() {
+            var now = new Date();
+            var today = now.getFullYear() + '-' +
+                String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                String(now.getDate()).padStart(2, '0');
+
+            try {
+                var data = await backend().adminGql(COUNTS_QUERY, { today: today });
+                $('#countCallbacks').text((data.callbacks && data.callbacks.aggregate.count) || 0);
+                $('#countSupport').text((data.support && data.support.aggregate.count) || 0);
+                $('#countComplaints').text((data.complaints && data.complaints.aggregate.count) || 0);
+                $('#countDocuments').text((data.documents && data.documents.aggregate.count) || 0);
+            } catch (err) {
+                console.error('Service counts could not be loaded:', err);
+                ['#countCallbacks', '#countSupport', '#countComplaints', '#countDocuments'].forEach(function (selector) {
+                    $(selector).text('—');
+                });
+            }
+        }
+
+        window.DhanviAdminReady.then(function () {
+            fetchApplications();
+            fetchServiceCounts();
+            $('#searchInput').on('keyup', filterTable);
+            $('#statusFilter').on('change', filterTable);
+            $('#saveDashboardBtn').on('click', saveModal);
         });
-    }
-</script>
+
+        function filterTable() {
+            const search = $('#searchInput').val().toLowerCase();
+            const status = $('#statusFilter').val();
+            $('#applicationsTable tbody tr').each(function() {
+                const row = $(this);
+                const name = row.find('td:nth-child(2)').text().toLowerCase();
+                const loanType = row.find('td:nth-child(4)').text().toLowerCase();
+                const rowStatus = row.attr('data-status');
+                const matchSearch = !search || name.indexOf(search) > -1 || loanType.indexOf(search) > -1;
+                const matchStatus = !status || rowStatus === status;
+                row.toggle(matchSearch && matchStatus);
+            });
+        }
+    </script>
     <script src="js/interactions.js"></script>
 </body>
 </html>

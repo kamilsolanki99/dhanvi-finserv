@@ -89,7 +89,7 @@
     height: 44px;
     border-radius: 50%;
     border: 3px solid rgba(11, 43, 76, 0.08);
-    border-top-color: #f51f8a;
+    border-top-color: #F5B51B;
     border-right-color: #15549a;
     animation: dhanviSpin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
     box-sizing: border-box;
@@ -123,7 +123,7 @@
     left: -40%;
     bottom: 0;
     width: 40%;
-    background: linear-gradient(90deg, #15549a 0%, #f51f8a 100%);
+    background: linear-gradient(90deg, #15549a 0%, #F5B51B 100%);
     border-radius: 3px;
     animation: dhanviBarShimmer 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }

@@ -31,7 +31,7 @@ body {
         left: 18px;
         right: 18px;
         height: 2.5px;
-        background: #f51f8a;
+        background: #F5B51B;
         border-radius: 3px;
         transform: scaleX(0);
         transform-origin: center;
@@ -75,7 +75,7 @@ body {
 
     #navigation ul ul li:hover > a {
         background-color: #f6f9fc;
-        color: #f51f8a !important;
+        color: #A96500 !important;
         padding-left: 26px;
     }
 }
@@ -89,7 +89,7 @@ body {
 
     #navigation > ul > li:hover > a:not(.btn-nav-cta):not(.btn-default):not(.btn),
     #navigation > ul > li.active > a:not(.btn-nav-cta):not(.btn-default):not(.btn) {
-        border-left-color: #f51f8a;
+        border-left-color: #F5B51B;
         background-color: #f7f9fc;
         padding-left: 18px;
     }
@@ -131,13 +131,13 @@ body {
 
 .btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3.5px rgba(245, 31, 138, 0.35);
+    box-shadow: 0 0 0 3.5px rgba(245, 181, 27, 0.35);
 }
 
 /* Specific button shadows */
 .btn-default:hover,
 .btn-nav-cta:hover {
-    box-shadow: 0 8px 24px rgba(245, 31, 138, 0.32);
+    box-shadow: 0 8px 24px rgba(245, 181, 27, 0.32);
 }
 
 .btn-primary:hover {
@@ -176,7 +176,7 @@ body {
 .service-block:hover {
     transform: translateY(-6px);
     box-shadow: 0 18px 40px rgba(11, 43, 76, 0.12);
-    border-color: rgba(245, 31, 138, 0.18);
+    border-color: rgba(245, 181, 27, 0.18);
 }
 
 .rate-box:hover,
@@ -268,7 +268,7 @@ body {
 input[type="range"] {
     width: 100%;
     margin: 10px 0;
-    accent-color: #f51f8a;
+    accent-color: #F5B51B;
     height: 6px;
     background: #e5ecf4;
     border-radius: 4px;
@@ -284,12 +284,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(1.22);
-    box-shadow: 0 0 0 6px rgba(245, 31, 138, 0.2);
+    box-shadow: 0 0 0 6px rgba(245, 181, 27, 0.2);
 }
 
 input[type="range"]:active::-webkit-slider-thumb {
     transform: scale(1.3);
-    box-shadow: 0 0 0 8px rgba(245, 31, 138, 0.25);
+    box-shadow: 0 0 0 8px rgba(245, 181, 27, 0.25);
 }
 
 /* EMI value flash update */
@@ -299,7 +299,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 
 @keyframes emiPulse {
     0% {
-        color: #f51f8a;
+        color: #A96500;
         transform: scale(1.05);
     }
     100% {
@@ -346,7 +346,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 .widget-social ul li a:hover,
 .footer-social a:hover {
     transform: translateY(-3px) scale(1.1);
-    color: #f51f8a !important;
+    color: #F5B51B !important;
 }
 
 /* Floating Mobile Action Bar */
@@ -370,7 +370,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 .cd-top:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(11, 43, 76, 0.25);
-    background-color: #f51f8a;
+    background-color: #F5B51B;
 }
 
 /* --------------------------------------------------------------------------

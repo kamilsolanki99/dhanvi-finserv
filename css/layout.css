@@ -12,7 +12,17 @@
     --blue: #15549a;
     --blue-dark: #0d3b6b;
     --navy: #0b2440;
-    --pink: #f51f8a;
+    --brand-gold: #F5B51B;
+    --brand-orange: #F39A24;
+    --brand-gold-light: #F8C94A;
+    --brand-gold-pale: #FFE5A3;
+    --brand-cream: #FFFAEF;
+    --brand-cream-border: #FFF0CC;
+    --brand-blue: #174582;
+    --brand-navy: #0B2440;
+    --brand-gray: #66717D;
+    --brand-text-accent: #A96500;
+    --pink: var(--brand-gold);
     --line: #e5ecf4;
     --soft: #f5f8fc;
     --radius: 16px;
@@ -40,13 +50,13 @@ h1, h2, h3, h4, h5, h6 {
 p { line-height: 1.75; }
 img { max-width: 100%; }
 
-::selection { background: rgba(245, 31, 138, .18); color: var(--ink); }
+::selection { background: rgba(245, 181, 27, .18); color: var(--ink); }
 
 a:focus-visible,
 button:focus-visible,
 .btn:focus-visible,
 .form-control:focus-visible {
-    outline: 3px solid rgba(245, 31, 138, .45);
+    outline: 3px solid rgba(245, 181, 27, .45);
     outline-offset: 2px;
 }
 
@@ -94,8 +104,8 @@ button:focus-visible,
 #navigation > ul > li > a.btn-nav-cta,
 #navigation > ul > li > a.btn-default,
 #navigation > ul > li > a.btn {
-    background-color: var(--pink, #f51f8a) !important;
-    color: #ffffff !important;
+    background-color: var(--brand-gold) !important;
+    color: var(--brand-navy) !important;
     border-radius: 8px !important;
     padding: 10px 20px !important;
     font-size: 12.5px !important;
@@ -116,17 +126,17 @@ button:focus-visible,
 #navigation > ul > li > a.btn-nav-cta:hover,
 #navigation > ul > li > a.btn-default:hover,
 #navigation > ul > li > a.btn:hover {
-    color: #ffffff !important;
-    background-color: #ff389c !important;
-    box-shadow: 0 10px 22px rgba(245, 31, 138, .28) !important;
+    color: var(--brand-navy) !important;
+    background-color: var(--brand-orange) !important;
+    box-shadow: 0 10px 22px rgba(245, 181, 27, .28) !important;
     transform: translateY(-1px) !important;
 }
 
 #navigation > ul > li > a.btn-nav-cta:focus,
 #navigation > ul > li > a.btn-default:focus,
 #navigation > ul > li > a.btn:focus {
-    color: #ffffff !important;
-    background-color: #ff389c !important;
+    color: var(--brand-navy) !important;
+    background-color: var(--brand-orange) !important;
     outline: none !important;
 }
 
@@ -140,8 +150,8 @@ button:focus-visible,
         padding: 13px 20px !important;
         text-align: center !important;
         border-radius: 8px !important;
-        color: #ffffff !important;
-        background-color: var(--pink, #f51f8a) !important;
+        color: var(--brand-navy) !important;
+        background-color: var(--brand-gold) !important;
     }
 }
 
@@ -156,7 +166,7 @@ button:focus-visible,
     transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-default:hover { box-shadow: 0 10px 22px rgba(245, 31, 138, .28); }
+.btn-default:hover { box-shadow: 0 10px 22px rgba(245, 181, 27, .28); }
 .btn-primary:hover { box-shadow: 0 10px 22px rgba(21, 84, 154, .25); }
 .btn-outline {
     border: 1.5px solid #cfdcec;
@@ -189,7 +199,7 @@ button:focus-visible,
     line-height: 1;
     transition: transform .2s ease;
 }
-.btn-link:hover { color: var(--pink); border: 0; }
+.btn-link:hover { color: var(--brand-text-accent); border: 0; }
 .btn-link:hover:after { transform: translateX(4px); }
 
 /* Section rhythm --------------------------------------------------------- */
@@ -226,7 +236,7 @@ button:focus-visible,
     width: 52px;
     height: 3px;
     border-radius: 3px;
-    background: linear-gradient(90deg, var(--pink), #ff77b7);
+    background: linear-gradient(90deg, var(--brand-gold), var(--brand-gold-light));
     margin: 18px auto 0;
 }
 .section-title:not(.text-center) h2 {
@@ -241,7 +251,7 @@ button:focus-visible,
     bottom: .16em;
     width: 4px;
     border-radius: 4px;
-    background: var(--pink);
+    background: var(--brand-gold);
 }
 .section-title.mb60 { margin-bottom: 42px; }
 .section-title.mb100 { margin-bottom: 56px; }
@@ -289,8 +299,8 @@ button:focus-visible,
     padding: 7px 14px;
     border: 1px solid rgba(255, 255, 255, .16);
     border-radius: 40px;
-    background: rgba(245, 31, 138, .16);
-    color: #ffc2e0;
+    background: rgba(245, 181, 27, .16);
+    color: #FFE5A3;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 2.2px;
@@ -412,7 +422,7 @@ button:focus-visible,
     right: 30px;
     height: 3px;
     border-radius: 0 0 3px 3px;
-    background: linear-gradient(90deg, var(--blue), var(--pink));
+    background: linear-gradient(90deg, var(--blue), var(--brand-gold));
     opacity: 0;
     transition: opacity .25s ease;
 }
@@ -478,7 +488,7 @@ button:focus-visible,
     line-height: 1;
 }
 .number-block > div:first-child i.icon-default,
-.bg-boxshadow > div:first-child i.icon-default { background: rgba(245, 31, 138, .08); }
+.bg-boxshadow > div:first-child i.icon-default { background: rgba(245, 181, 27, .08); }
 
 .bg-boxshadow > .row > [class*="col-"] .number-block.outline { border: 0; }
 .bg-boxshadow > .row > [class*="col-"] + [class*="col-"] .number-block.outline {
@@ -719,7 +729,7 @@ button:focus-visible,
 .sub-nav > .nav li.active a {
     background: #f3f8fd;
     color: var(--blue);
-    box-shadow: inset 0 -2px 0 var(--pink);
+    box-shadow: inset 0 -2px 0 var(--brand-gold);
 }
 
 /* Content wrapper -------------------------------------------------------- */
@@ -755,7 +765,7 @@ button:focus-visible,
 }
 .feature-icon h3 { font-size: 17px; margin-bottom: 8px; }
 .feature-icon p { font-size: 14px; }
-.feature-icon .icon i { color: var(--pink); }
+.feature-icon .icon i { color: var(--brand-gold); }
 
 .bg-default.pinside80 {
     margin: 8px 28px 24px;
@@ -949,7 +959,7 @@ textarea.form-control { min-height: 120px; }
     font-size: 14px;
 }
 .widget-social ul li a:hover { color: #fff; text-decoration: none; }
-.widget-social ul li a:hover i { background: var(--pink); color: #fff; }
+.widget-social ul li a:hover i { background: var(--brand-gold); color: var(--brand-navy); }
 
 .tiny-footer { padding: 16px 0; background: #07182b; color: #8ca1bb; font-size: 12px; }
 .tiny-footer p { margin: 0; }
@@ -1080,7 +1090,7 @@ textarea.form-control { min-height: 120px; }
 }
 .blog-eyebrow {
     display: inline-block;
-    color: var(--pink);
+    color: var(--brand-text-accent);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.2px;
@@ -1216,7 +1226,7 @@ textarea.form-control { min-height: 120px; }
 .blog-recent-copy small {
     display: block;
     margin-top: 3px;
-    color: var(--pink);
+    color: var(--brand-text-accent);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: .5px;
