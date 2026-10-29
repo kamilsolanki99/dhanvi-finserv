@@ -13,8 +13,8 @@
     'use strict';
 
     var CONFIG = window.DHANVI_NHOST_CONFIG || {
-        subdomain: 'YOUR_NHOST_SUBDOMAIN',
-        region: 'YOUR_NHOST_REGION'
+        subdomain: 'yybitlaloiggcvxntptp',
+        region: 'ap-south-1'
     };
 
     var client = null;
