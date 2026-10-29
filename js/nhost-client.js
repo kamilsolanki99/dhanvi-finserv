@@ -60,8 +60,19 @@
 
     function normalizeError(err) {
         var gqlError = err && err.body && err.body.errors && err.body.errors[0];
+        var internal = gqlError && gqlError.extensions && gqlError.extensions.internal &&
+            gqlError.extensions.internal.error;
         var message = (gqlError && gqlError.message) || (err && err.message) || 'Something went wrong. Please try again.';
+
+        // Hasura reports a generic "database query error" for Postgres errors
+        // whose SQLSTATE is not P0001. Our functions raise user-facing
+        // validation messages, so surface the real message when available.
+        if (message === 'database query error' && internal && internal.message) {
+            message = internal.message;
+        }
+
         var code = (gqlError && gqlError.extensions && (gqlError.extensions.code || gqlError.extensions.sqlState)) ||
+            (internal && internal.status_code) ||
             (err && err.body && err.body.error) ||
             (err && err.code);
         var out = new Error(message);
