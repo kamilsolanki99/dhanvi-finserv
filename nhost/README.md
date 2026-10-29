@@ -40,6 +40,12 @@ The script creates the business tables, the `api_result` helper table, the
 server-side functions, the private `loan-documents` bucket and the custom
 `admin` auth role.
 
+If you already ran `001_init.sql` before **30 October 2026**, also run
+[`migrations/002_register_document_null_uploader.sql`](migrations/002_register_document_null_uploader.sql).
+It lets `register_document` accept uploads when Nhost leaves the deprecated
+`storage.files.uploaded_by_user_id` column empty, while still enforcing the
+ownership check whenever the column is populated.
+
 Do **not** enable Postgres RLS on these tables. Access is enforced by Hasura
 permissions, which is how Nhost is designed to work.
 
@@ -202,6 +208,11 @@ therefore works for an admin too, and `register_document` records the upload as
 ### `public` and `user` roles
 
 No storage access.
+
+> **Note:** `storage.files.uploaded_by_user_id` is deprecated in Nhost Storage.
+> Some projects leave it `NULL` even when **Uploader identity** is enabled.
+> `register_document` enforces the ownership match only when the column is
+> populated; migration `002` contains that behaviour.
 
 The upload flow is:
 

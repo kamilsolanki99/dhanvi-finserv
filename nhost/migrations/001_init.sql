@@ -937,7 +937,9 @@ BEGIN
     IF v_is_uploaded IS NOT TRUE THEN
         RAISE EXCEPTION 'The upload did not finish. Please try again.' USING ERRCODE = '22023';
     END IF;
-    IF v_uploaded_by IS NULL OR v_uploaded_by::text <> v_user_id THEN
+    -- Nhost may not populate uploaded_by_user_id (deprecated column), so only
+    -- enforce the match when an uploader was actually recorded.
+    IF v_uploaded_by IS NOT NULL AND v_uploaded_by::text <> v_user_id THEN
         RAISE EXCEPTION 'This file does not belong to your upload session. Please try again.' USING ERRCODE = '28000';
     END IF;
 
