@@ -145,6 +145,7 @@ Browser
 ├── fonts/, flat-font-icons/     # bundled fonts and icon fonts
 ├── nhost/
 │   ├── migrations/001_init.sql  # schema, RPCs, private bucket, role seed
+│   ├── verify_setup.sql         # read-only setup verification report
 │   └── README.md                # complete backend setup guide
 ├── _backup_before_rebuild/      # historical templates — not deployed
 ├── _demo_backup/                # historical templates — not deployed

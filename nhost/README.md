@@ -272,6 +272,13 @@ The admin pages send `x-hasura-role: admin` explicitly. The JWT must contain
 
 ## 8. Verify the setup
 
+First run [`verify_setup.sql`](verify_setup.sql) in **Database → SQL Editor**.
+It is read-only and returns a single JSON report confirming the tables, columns,
+functions, triggers, indexes, private bucket, `admin` role, sequence and
+`api_result` grant. Every expected object should show `OK`.
+
+Then test the full flow:
+
 1. Open the public site and submit a loan application. It should return a
    `DF-2026-xxxxx` reference and an upload link.
 2. Open the upload link, choose a PDF or image and upload it. The document
