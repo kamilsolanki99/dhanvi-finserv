@@ -390,11 +390,13 @@
                         );
                     } catch (err) {
                         await backend.signOut();
+                        console.error('Admin profile lookup failed:', err);
                         throw new Error('Access denied. The administrator profile could not be verified.');
                     }
 
                     var profile = data && data.admin_profiles_by_pk;
                     if (!profile || profile.role !== 'admin') {
+                        console.error('No admin_profiles row or role mismatch:', profile);
                         await backend.signOut();
                         throw new Error('Access denied. The administrator profile could not be verified.');
                     }
