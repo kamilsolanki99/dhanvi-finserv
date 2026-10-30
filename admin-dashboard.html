@@ -1198,6 +1198,7 @@
         let dashboardFollowups = [];
         let worklistItems = [];
         let worklistFilter = 'all';
+        let worklistAvailable = false;
 
         const LEADS_QUERY =
             'query DashboardLeads {' +
@@ -1268,6 +1269,7 @@
                 applicants = (data && data.loan_leads) || [];
                 dashboardDocuments = (data && data.loan_documents) || [];
                 dashboardFollowups = (data && data.loan_followups) || [];
+                worklistAvailable = true;
                 renderTable();
                 updateStats();
                 renderDocumentStatus();
@@ -1279,6 +1281,7 @@
                 showDashboardAlert('error', 'Application data could not be loaded. ' + (err.message || 'Please refresh the page.'));
                 dashboardDocuments = [];
                 dashboardFollowups = [];
+                worklistAvailable = false;
                 renderDocumentStatusUnavailable();
                 renderWorklistUnavailable();
             }
@@ -1554,6 +1557,7 @@
             Object.keys(docsByLead).forEach(function (leadId) {
                 const lead = leadById[leadId];
                 if (!lead) { return; }
+                if (['Rejected', 'Closed'].indexOf(lead.status) > -1) { return; }
 
                 const docs = docsByLead[leadId];
                 const rejected = docs.filter(function (doc) { return doc.status === 'Rejected'; });
@@ -1614,6 +1618,11 @@
         }
 
         function renderWorklist() {
+            if (!worklistAvailable) {
+                renderWorklistUnavailable();
+                return;
+            }
+
             const count = worklistItems.length;
             $('#worklistCount').text(count + (count === 1 ? ' action' : ' actions'));
 
@@ -1692,6 +1701,7 @@
         }
 
         function renderWorklistUnavailable() {
+            worklistAvailable = false;
             worklistItems = [];
             $('#worklistCount').text('—');
             $('#wlAll, #wlOverdue, #wlToday, #wlUpcoming, #wlAttention').text('—');
@@ -1823,6 +1833,7 @@
             $('#saveDashboardBtn').on('click', saveModal);
 
             $('#worklistChips').on('click', '.worklist-chip', function () {
+                if (!worklistAvailable) { return; }
                 worklistFilter = $(this).attr('data-filter') || 'all';
                 renderWorklist();
             });
