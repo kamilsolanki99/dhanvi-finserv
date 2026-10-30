@@ -206,9 +206,9 @@ try to grant storage access from the Hasura table permissions screen.
 - **Upload** — custom check: `bucket_id` equals `loan-documents`
 - **Uploader identity** — enabled (prefills `uploaded_by_user_id` with
   `X-Hasura-User-Id`)
-- **Replace / Delete** — Delete is required: after an administrator removes a
-  document or lead record, the admin panel best-effort deletes the matching
-  private storage file. Replace is not used by the admin panel.
+- **Delete** — required: after an administrator removes a document or lead
+  record, the admin panel best-effort deletes the matching private storage file.
+- **Replace** — not used by the admin panel.
 
 Admin Upload is required because `ensureAnonymousSession()` reuses an existing
 admin session instead of signing the administrator out. The public upload page
