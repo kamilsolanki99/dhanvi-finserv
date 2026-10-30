@@ -131,9 +131,11 @@
         keyHandler = onKeydown;
         document.addEventListener('keydown', keyHandler, true);
 
-        window.requestAnimationFrame(function () {
-            if (!overlay.hidden) { overlay.classList.add('is-open'); }
-        });
+        // Force a style recalculation and add the open class synchronously.
+        // requestAnimationFrame is paused in background tabs, which would
+        // otherwise leave the dialog hidden at opacity 0.
+        void overlay.offsetHeight;
+        overlay.classList.add('is-open');
         cancelButton.focus();
 
         return new Promise(function (resolve) {
