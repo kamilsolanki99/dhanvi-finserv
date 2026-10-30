@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <style>
         /* ===== Reset & Base ===== */
@@ -1019,8 +1020,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js"></script>
     <script>
         // ===== Nhost / Hasura admin dashboard =====
         let applicants = [];
@@ -1111,7 +1113,12 @@
                     '<td>' + esc(money(app.loan_amount)) + '</td>' +
                     '<td>' + esc(new Date(app.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })) + '</td>' +
                     '<td><span class="badge-status ' + badgeClass + '">' + esc(app.status) + '</span></td>' +
-                    '<td><button class="btn-view" data-index="' + k + '">View</button></td>'
+                    '<td class="row-actions">' +
+                        '<button class="btn-view" data-index="' + k + '">View</button>' +
+                        '<button class="btn-delete" data-index="' + k + '" title="Delete application" ' +
+                            'aria-label="Delete application ' + esc(app.reference_no || app.full_name) + '">' +
+                            '<i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                    '</td>'
                 );
                 tbody.append(tr);
             });
@@ -1119,6 +1126,40 @@
             tbody.find('.btn-view').on('click', function () {
                 openModal(Number($(this).attr('data-index')));
             });
+            tbody.find('.btn-delete').on('click', function () {
+                deleteApplication(Number($(this).attr('data-index')), this);
+            });
+        }
+
+        async function deleteApplication(idx, button) {
+            const app = applicants[idx];
+            if (!app) { return; }
+
+            const confirmed = await window.DhanviAdminDelete.confirm({
+                title: 'Delete application ' + (app.reference_no || '') + '?',
+                message: 'This permanently deletes the application, its co-applicants, uploaded document records and follow-ups from the database.',
+                details: 'Linked callbacks, complaints and support requests are kept but unlinked from this application. This action cannot be undone.',
+                confirmLabel: 'Delete application'
+            });
+            if (!confirmed) { return; }
+
+            const btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+            try {
+                const result = await window.DhanviAdminDelete.deleteLead(app.id);
+                await fetchApplications();
+                if (result.failedFiles.length) {
+                    showDashboardAlert('warning', 'Application deleted, but ' + result.failedFiles.length +
+                        ' private file(s) could not be removed. Please contact support.');
+                } else {
+                    showDashboardAlert('success', 'Application ' + (app.reference_no || '') + ' deleted.');
+                }
+            } catch (err) {
+                console.error('Dashboard application delete failed:', err);
+                showDashboardAlert('error', err.message || 'Could not delete the application.');
+            } finally {
+                btn.prop('disabled', false).html('<i class="fa fa-trash" aria-hidden="true"></i>');
+            }
         }
 
         function getStatusBadgeClass(status) {
@@ -1188,8 +1229,8 @@
                 });
 
                 $('#viewModal').modal('hide');
-                showDashboardAlert('success', 'Application updated successfully.');
                 await fetchApplications();
+                showDashboardAlert('success', 'Application updated successfully.');
             } catch (err) {
                 console.error('Dashboard application update failed:', err);
                 showDashboardAlert('error', err.message || 'Could not update the application.');

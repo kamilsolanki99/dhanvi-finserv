@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles */
@@ -502,8 +503,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js"></script>
     <script>
         let followups = [];
         let leadNames = {};
@@ -586,7 +588,12 @@
                     '<td>' + esc(name) + '</td>' +
                     '<td>' + esc(fu.interaction_type) + '</td>' +
                     '<td><span class="badge-status ' + badgeClass + '">' + esc(fu.status) + '</span></td>' +
-                    '<td><button class="btn-action btn-view" data-index="' + idx + '">Manage</button></td>'
+                    '<td class="row-actions">' +
+                        '<button class="btn-action btn-view" data-index="' + idx + '">Manage</button>' +
+                        '<button class="btn-delete" data-index="' + idx + '" title="Delete follow-up" ' +
+                            'aria-label="Delete follow-up for ' + esc(name) + '">' +
+                            '<i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                    '</td>'
                 );
                 tbody.append(tr);
             });
@@ -594,6 +601,35 @@
             tbody.find('.btn-view').on('click', function () {
                 openModal(Number($(this).attr('data-index')));
             });
+            tbody.find('.btn-delete').on('click', function () {
+                deleteFollowup(Number($(this).attr('data-index')), this);
+            });
+        }
+
+        async function deleteFollowup(idx, button) {
+            const fu = followups[idx];
+            if (!fu) { return; }
+
+            const confirmed = await window.DhanviAdminDelete.confirm({
+                title: 'Delete follow-up?',
+                message: 'This permanently deletes the scheduled follow-up for ' + (applicantName(fu) || 'this applicant') + ' from the database.',
+                details: 'The interaction history entry will be removed and cannot be restored.',
+                confirmLabel: 'Delete follow-up'
+            });
+            if (!confirmed) { return; }
+
+            const btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+            try {
+                await window.DhanviAdminDelete.deleteRow('loan_followups', fu.id);
+                await fetchFollowups();
+                showAlert('success', 'Follow-up deleted.');
+            } catch (err) {
+                console.error('Follow-up delete failed:', err);
+                showAlert('error', err.message || 'Could not delete the follow-up.');
+            } finally {
+                btn.prop('disabled', false).html('<i class="fa fa-trash" aria-hidden="true"></i>');
+            }
         }
 
         function getStatusBadgeClass(status) {
@@ -637,8 +673,8 @@
                 });
 
                 $('#followupModal').modal('hide');
-                showAlert('success', 'Follow-up updated successfully.');
                 await fetchFollowups();
+                showAlert('success', 'Follow-up updated successfully.');
             } catch (err) {
                 console.error('Follow-up update failed:', err);
                 showAlert('error', err.message || 'Could not update the follow-up.');

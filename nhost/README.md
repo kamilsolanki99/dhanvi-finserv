@@ -140,13 +140,21 @@ Grant only what the admin panel uses:
 | Table | select | insert | update | delete |
 | --- | --- | --- | --- | --- |
 | `admin_profiles` | yes | no | yes | no |
-| `loan_leads` | yes | no | yes | no |
+| `loan_leads` | yes | no | yes | yes |
 | `loan_applicants` | yes | no | no | no |
-| `loan_documents` | yes | no | yes | no |
-| `loan_followups` | yes | no | yes | no |
-| `callback_bookings` | yes | no | yes | no |
-| `post_disbursal_requests` | yes | no | yes | no |
-| `complaints` | yes | no | yes | no |
+| `loan_documents` | yes | no | yes | yes |
+| `loan_followups` | yes | no | yes | yes |
+| `callback_bookings` | yes | no | yes | yes |
+| `post_disbursal_requests` | yes | no | yes | yes |
+| `complaints` | yes | no | yes | yes |
+
+The admin panel exposes a confirmed, permanent delete action for leads,
+documents, follow-ups, callbacks, support requests and complaints. Grant
+`delete` only on those tables. Deleting a `loan_leads` row cascades to
+`loan_applicants`, `loan_documents` and `loan_followups`; linked callbacks,
+complaints and support requests are kept with `loan_lead_id` set to `NULL`
+(`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants` must not be
+deletable from the admin UI.
 
 For `admin_profiles` update, allow only `full_name` (and `updated_at` is
 maintained by the trigger). Restrict the update columns per table to match the
@@ -198,7 +206,9 @@ try to grant storage access from the Hasura table permissions screen.
 - **Upload** — custom check: `bucket_id` equals `loan-documents`
 - **Uploader identity** — enabled (prefills `uploaded_by_user_id` with
   `X-Hasura-User-Id`)
-- **Replace / Delete** — optional; the admin panel only downloads
+- **Replace / Delete** — Delete is required: after an administrator removes a
+  document or lead record, the admin panel best-effort deletes the matching
+  private storage file. Replace is not used by the admin panel.
 
 Admin Upload is required because `ensureAnonymousSession()` reuses an existing
 admin session instead of signing the administrator out. The public upload page

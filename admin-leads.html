@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles from Dashboard */
@@ -530,8 +531,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js"></script>
     <script>
         let leads = [];
 
@@ -611,7 +613,12 @@
                     '<td>' + esc(lead.loan_type) + '</td>' +
                     '<td>' + esc(money(lead.loan_amount)) + '</td>' +
                     '<td><span class="badge-status ' + badgeClass + '">' + esc(lead.status) + '</span></td>' +
-                    '<td><button class="btn-view" data-index="' + idx + '">Manage</button></td>'
+                    '<td class="row-actions">' +
+                        '<button class="btn-view" data-index="' + idx + '">Manage</button>' +
+                        '<button class="btn-delete" data-index="' + idx + '" title="Delete lead" ' +
+                            'aria-label="Delete lead ' + esc(lead.reference_no || lead.full_name) + '">' +
+                            '<i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                    '</td>'
                 );
                 tbody.append(tr);
             });
@@ -619,6 +626,40 @@
             tbody.find('.btn-view').on('click', function () {
                 openModal(Number($(this).attr('data-index')));
             });
+            tbody.find('.btn-delete').on('click', function () {
+                deleteLead(Number($(this).attr('data-index')), this);
+            });
+        }
+
+        async function deleteLead(idx, button) {
+            const lead = leads[idx];
+            if (!lead) { return; }
+
+            const confirmed = await window.DhanviAdminDelete.confirm({
+                title: 'Delete lead ' + (lead.reference_no || '') + '?',
+                message: 'This permanently deletes the lead, its co-applicants, uploaded document records and follow-ups from the database.',
+                details: 'Linked callbacks, complaints and support requests are kept but unlinked from this lead. This action cannot be undone.',
+                confirmLabel: 'Delete lead'
+            });
+            if (!confirmed) { return; }
+
+            const btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+            try {
+                const result = await window.DhanviAdminDelete.deleteLead(lead.id);
+                await fetchLeads();
+                if (result.failedFiles.length) {
+                    showAlert('warning', 'Lead deleted, but ' + result.failedFiles.length +
+                        ' private file(s) could not be removed. Please contact support.');
+                } else {
+                    showAlert('success', 'Lead ' + (lead.reference_no || '') + ' deleted.');
+                }
+            } catch (err) {
+                console.error('Lead delete failed:', err);
+                showAlert('error', err.message || 'Could not delete the lead.');
+            } finally {
+                btn.prop('disabled', false).html('<i class="fa fa-trash" aria-hidden="true"></i>');
+            }
         }
 
         function getStatusBadgeClass(status) {
@@ -670,8 +711,8 @@
                 });
 
                 $('#viewModal').modal('hide');
-                showAlert('success', 'Lead updated successfully.');
                 await fetchLeads();
+                showAlert('success', 'Lead updated successfully.');
             } catch (err) {
                 console.error('Lead update failed:', err);
                 showAlert('error', err.message || 'Could not update the lead.');

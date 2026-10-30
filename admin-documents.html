@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles */
@@ -514,8 +515,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js"></script>
     <script>
         let documents = [];
         let documentLeads = {};
@@ -634,7 +636,12 @@
                     '<td>' + esc(fileName) + '<div class="muted">' + esc(prettySize(doc.file_size)) + '</div></td>' +
                     '<td>' + esc(prettyDate(doc.created_at)) + '</td>' +
                     '<td><span class="badge-status ' + badgeClass + '">' + esc(doc.status) + '</span></td>' +
-                    '<td><button class="btn-view" data-index="' + idx + '">Review</button></td>'
+                    '<td class="row-actions">' +
+                        '<button class="btn-view" data-index="' + idx + '">Review</button>' +
+                        '<button class="btn-delete" data-index="' + idx + '" title="Delete document" ' +
+                            'aria-label="Delete document ' + esc(doc.document_type || fileName) + '">' +
+                            '<i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                    '</td>'
                 );
                 tbody.append(tr);
             });
@@ -642,6 +649,40 @@
             tbody.find('.btn-view').on('click', function () {
                 openModal(Number($(this).attr('data-index')));
             });
+            tbody.find('.btn-delete').on('click', function () {
+                deleteDocument(Number($(this).attr('data-index')), this);
+            });
+        }
+
+        async function deleteDocument(idx, button) {
+            const doc = documents[idx];
+            if (!doc) { return; }
+
+            const confirmed = await window.DhanviAdminDelete.confirm({
+                title: 'Delete ' + (doc.document_type || 'document') + '?',
+                message: 'This permanently deletes the document record' +
+                    (doc.storage_file_id ? ' and its private storage file' : '') + ' from the database.',
+                details: 'The file cannot be recovered after deletion. This action cannot be undone.',
+                confirmLabel: 'Delete document'
+            });
+            if (!confirmed) { return; }
+
+            const btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+            try {
+                const result = await window.DhanviAdminDelete.deleteDocument(doc.id);
+                await fetchDocuments();
+                if (result.failedFiles.length) {
+                    showPageAlert('warning', 'Document deleted, but its private file could not be removed. Please contact support.');
+                } else {
+                    showPageAlert('success', 'Document deleted.');
+                }
+            } catch (err) {
+                console.error('Document delete failed:', err);
+                showPageAlert('error', err.message || 'Could not delete the document.');
+            } finally {
+                btn.prop('disabled', false).html('<i class="fa fa-trash" aria-hidden="true"></i>');
+            }
         }
 
         function openModal(idx) {
@@ -711,8 +752,8 @@
                 });
 
                 $('#docModal').modal('hide');
-                showPageAlert('success', 'Document status updated successfully.');
                 await fetchDocuments();
+                showPageAlert('success', 'Document status updated successfully.');
             } catch (err) {
                 console.error('Document update failed:', err);
                 $('#documentLinkNote').text('Could not save the decision: ' + (err.message || 'unknown error'));

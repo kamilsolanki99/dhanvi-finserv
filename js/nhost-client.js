@@ -331,6 +331,24 @@
         return files[0];
     }
 
+    /**
+     * Delete one private storage file. Only administrators have delete access
+     * to the loan-documents bucket; the admin panel uses this after removing
+     * the matching database record.
+     */
+    async function deleteFile(fileId) {
+        var nhost = getClient();
+        if (!nhost) {
+            throw new Error('The secure document service could not be loaded.');
+        }
+        if (!fileId) { return; }
+        try {
+            await nhost.storage.deleteFile(fileId);
+        } catch (err) {
+            throw normalizeError(err);
+        }
+    }
+
     async function getFileUrl(fileId) {
         var nhost = getClient();
         if (!nhost) {
@@ -374,6 +392,7 @@
         rpc: rpc,
         adminGql: adminGql,
         uploadFile: uploadFile,
+        deleteFile: deleteFile,
         getFileUrl: getFileUrl,
         changePassword: changePassword,
         errorMessage: errorMessage,

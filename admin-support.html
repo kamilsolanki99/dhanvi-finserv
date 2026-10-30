@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <link href="css/admin.css" rel="stylesheet">
     <link href="css/loader.css" rel="stylesheet">
@@ -187,8 +188,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js"></script>
     <script>
         var requests = [];
 
@@ -279,7 +281,12 @@
                     '<td>' + esc(item.loan_reference_no || '—') + '</td>' +
                     '<td>' + esc(prettyDateTime(item.created_at)) + '</td>' +
                     '<td><span class="badge-status ' + badgeClass(item.status) + '">' + esc(item.status) + '</span></td>' +
-                    '<td><button class="btn-view" data-index="' + index + '">View</button></td>'
+                    '<td class="row-actions">' +
+                        '<button class="btn-view" data-index="' + index + '">View</button>' +
+                        '<button class="btn-delete" data-index="' + index + '" title="Delete support request" ' +
+                            'aria-label="Delete support request ' + esc(item.reference_no || item.full_name) + '">' +
+                            '<i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                    '</td>'
                 );
                 tbody.append(tr);
             });
@@ -287,6 +294,35 @@
             tbody.find('.btn-view').on('click', function () {
                 openModal(Number($(this).attr('data-index')));
             });
+            tbody.find('.btn-delete').on('click', function () {
+                deleteRequest(Number($(this).attr('data-index')), this);
+            });
+        }
+
+        async function deleteRequest(index, button) {
+            var item = requests[index];
+            if (!item) { return; }
+
+            var confirmed = await window.DhanviAdminDelete.confirm({
+                title: 'Delete support request ' + (item.reference_no || '') + '?',
+                message: 'This permanently deletes the post-disbursal support request from the database.',
+                details: 'The customer will no longer be able to reference this request. This action cannot be undone.',
+                confirmLabel: 'Delete request'
+            });
+            if (!confirmed) { return; }
+
+            var btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+            try {
+                await window.DhanviAdminDelete.deleteRow('post_disbursal_requests', item.id);
+                await fetchRequests();
+                showAlert('pageAlert', 'success', 'Support request ' + (item.reference_no || '') + ' deleted.');
+            } catch (err) {
+                console.error('Support request delete failed:', err);
+                showAlert('pageAlert', 'error', err.message || 'Could not delete the support request.');
+            } finally {
+                btn.prop('disabled', false).html('<i class="fa fa-trash" aria-hidden="true"></i>');
+            }
         }
 
         function openModal(index) {
