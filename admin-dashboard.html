@@ -393,6 +393,7 @@
             letter-spacing: 0.3px;
         }
         .badge-approved     { background: rgba(16,168,116,0.12); color: #10a874; }
+        .badge-verified     { background: rgba(16,168,116,0.12); color: #10a874; }
         .badge-pending      { background: rgba(245,166,35,0.12); color: #c98a10; }
         .badge-under-review { background: rgba(33,150,243,0.12); color: #2196f3; }
         .badge-rejected     { background: rgba(225,75,75,0.12);  color: #e14b4b; }
@@ -569,6 +570,37 @@
         .doc-check { margin-bottom: 6px; font-size: 13px; }
         .doc-check i.fa-check-circle { color: #10a874; }
         .doc-check i.fa-times-circle { color: #e14b4b; }
+        .doc-check i.fa-clock-o { color: #f5a623; }
+        .doc-list { display: flex; flex-direction: column; gap: 8px; }
+        .doc-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 9px 12px;
+            border: 1px solid #edf0f5;
+            border-radius: 8px;
+            background: #fafbfd;
+        }
+        .doc-list-main { min-width: 0; }
+        .doc-list-type { font-size: 13px; font-weight: 500; color: #34415c; }
+        .doc-list-file {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 11.5px;
+            color: #8e9ab4;
+        }
+        .doc-list-empty { font-size: 13px; color: #8e9ab4; }
+        .doc-list-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #15549a;
+        }
+        .doc-list-link:hover { color: #103f73; text-decoration: underline; }
         .modal-body .form-group label {
             font-size: 13px;
             font-weight: 500;
@@ -907,7 +939,7 @@
                             <span id="valPending" class="doc-stat-val">0</span>
                         </div>
                         <div class="doc-stat-row">
-                            <span class="doc-stat-label">Incomplete</span>
+                            <span class="doc-stat-label">Rejected</span>
                             <div class="doc-bar-wrap">
                                 <div id="barIncomplete" class="doc-bar red" style="width:0%;"></div>
                             </div>
@@ -1026,12 +1058,16 @@
     <script>
         // ===== Nhost / Hasura admin dashboard =====
         let applicants = [];
+        let dashboardDocuments = [];
 
         const LEADS_QUERY =
             'query DashboardLeads {' +
             '  loan_leads(order_by: {created_at: desc}) {' +
             '    id reference_no full_name mobile email loan_type loan_amount' +
             '    message status admin_notes created_at' +
+            '  }' +
+            '  loan_documents(order_by: {created_at: desc}) {' +
+            '    id loan_lead_id document_type status file_name created_at' +
             '  }' +
             '}';
 
@@ -1083,12 +1119,16 @@
             try {
                 const data = await backend().adminGql(LEADS_QUERY);
                 applicants = (data && data.loan_leads) || [];
+                dashboardDocuments = (data && data.loan_documents) || [];
                 renderTable();
                 updateStats();
+                renderDocumentStatus();
             } catch (err) {
                 console.error('Error fetching applications:', err);
                 tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
                 showDashboardAlert('error', 'Application data could not be loaded. ' + (err.message || 'Please refresh the page.'));
+                dashboardDocuments = [];
+                renderDocumentStatusUnavailable();
             }
         }
 
@@ -1188,6 +1228,56 @@
             $('.stat-card.red .stat-number').text(rejected);
         }
 
+        function renderDocumentStatus() {
+            const total = dashboardDocuments.length;
+            const verified = dashboardDocuments.filter(doc => doc.status === 'Verified').length;
+            const pending = dashboardDocuments.filter(doc => doc.status === 'Pending').length;
+            const rejected = dashboardDocuments.filter(doc => doc.status === 'Rejected').length;
+            const percent = count => total ? Math.round((count / total) * 100) : 0;
+
+            $('#totalDocs').text(total);
+            $('#valVerified').text(verified);
+            $('#valPending').text(pending);
+            $('#valIncomplete').text(rejected);
+
+            $('#barVerified').css('width', percent(verified) + '%')
+                .attr('title', verified + ' of ' + total + ' document(s) verified');
+            $('#barPending').css('width', percent(pending) + '%')
+                .attr('title', pending + ' of ' + total + ' document(s) pending verification');
+            $('#barIncomplete').css('width', percent(rejected) + '%')
+                .attr('title', rejected + ' of ' + total + ' document(s) rejected');
+        }
+
+        function renderDocumentStatusUnavailable() {
+            $('#totalDocs, #valVerified, #valPending, #valIncomplete').text('—');
+            $('#barVerified, #barPending, #barIncomplete').css('width', '0%').removeAttr('title');
+        }
+
+        function renderModalDocuments(leadId) {
+            const docs = dashboardDocuments.filter(doc => doc.loan_lead_id === leadId);
+            if (!docs.length) {
+                $('#modalDocs').html('<div class="doc-list-empty"><i class="fa fa-info-circle" style="margin-right:6px;"></i>No documents uploaded for this application.</div>');
+                return;
+            }
+
+            const items = docs.map(doc => {
+                const badgeClass = doc.status === 'Verified' ? 'badge-verified'
+                    : (doc.status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+                return '<div class="doc-list-item">' +
+                    '<div class="doc-list-main">' +
+                        '<div class="doc-list-type">' + esc(doc.document_type || 'Document') + '</div>' +
+                        '<div class="doc-list-file">' + esc(doc.file_name || 'No file attached') + '</div>' +
+                    '</div>' +
+                    '<span class="badge-status ' + badgeClass + '">' + esc(doc.status || 'Pending') + '</span>' +
+                '</div>';
+            }).join('');
+
+            $('#modalDocs').html(
+                '<div class="doc-list">' + items + '</div>' +
+                '<a class="doc-list-link" href="admin-documents.html">Open Documents module <i class="fa fa-arrow-right"></i></a>'
+            );
+        }
+
         function openModal(idx) {
             const a = applicants[idx];
             if (!a) { return; }
@@ -1209,7 +1299,8 @@
             $('#modalNotes').val(a.admin_notes || '');
             $('#viewModal').data('app-id', a.id);
 
-            $('#modalDocs').html('<div class="doc-check"><i class="fa fa-info-circle"></i> Document verification available in Documents module.</div>');
+            $('#modalDocs').empty();
+            renderModalDocuments(a.id);
             $('#viewModal').modal('show');
         }
 
