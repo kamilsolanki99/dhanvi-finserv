@@ -447,43 +447,156 @@
         }
         .btn-view:hover { background: #103f73; color: #fff; }
 
-        /* ===== Follow-Up Section ===== */
-        .followup-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            padding: 14px 0;
-            border-bottom: 1px solid #edf0f5;
-        }
-        .followup-item:last-child { border-bottom: none; }
-        .followup-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-        .followup-dot.yellow { background: #f5a623; }
-        .followup-dot.blue   { background: #2196f3; }
-        .followup-dot.green  { background: #10a874; }
-        .followup-info { flex: 1; }
-        .followup-info h6 {
-            margin: 0 0 3px;
-            font-size: 13px;
+        /* ===== Smart Follow-up Worklist ===== */
+        .worklist-title h4 { margin: 0 0 3px; font-size: 16px; font-weight: 600; }
+        .worklist-subtitle { font-size: 11.5px; color: #8e9ab4; }
+        .worklist-header-actions { display: flex; align-items: center; gap: 8px; }
+        .worklist-count-badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: rgba(21,84,154,0.08);
+            color: #15549a;
+            font-size: 11px;
             font-weight: 600;
+            white-space: nowrap;
+        }
+        .worklist-refresh {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #dbe5f1;
+            border-radius: 6px;
+            background: #fff;
+            color: #15549a;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .worklist-refresh:hover { background: #f2f6fc; border-color: #b9cde6; }
+        .worklist-refresh:disabled { opacity: 0.6; cursor: default; }
+        .worklist-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .worklist-chip {
+            flex: 1 1 92px;
+            min-width: 88px;
+            padding: 8px 10px;
+            border: 1px solid #edf0f5;
+            border-radius: 8px;
+            background: #fafbfd;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+        .worklist-chip strong {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.15;
             color: #34415c;
         }
-        .followup-info p {
-            margin: 0;
-            font-size: 12px;
+        .worklist-chip span { font-size: 10.5px; font-weight: 500; color: #8e9ab4; }
+        .worklist-chip:hover { border-color: #c9d8ea; background: #fff; }
+        .worklist-chip.active {
+            border-color: #15549a;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(21,84,154,0.08);
+        }
+        .worklist-chip.critical strong { color: #e14b4b; }
+        .worklist-chip.warn strong { color: #c98a10; }
+        .worklist-chip.info strong { color: #2196f3; }
+        .worklist-chip.neutral strong { color: #15549a; }
+        .worklist-list { max-height: 390px; overflow-y: auto; padding-right: 4px; }
+        .worklist-list::-webkit-scrollbar { width: 6px; }
+        .worklist-list::-webkit-scrollbar-thumb { background: #d7e0ec; border-radius: 10px; }
+        .worklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 11px 12px;
+            border: 1px solid #edf0f5;
+            border-left: 3px solid #d7e0ec;
+            border-radius: 8px;
+            background: #fff;
+            margin-bottom: 8px;
+        }
+        .worklist-item:last-child { margin-bottom: 0; }
+        .worklist-item.priority-critical { border-left-color: #e14b4b; }
+        .worklist-item.priority-high { border-left-color: #f5a623; }
+        .worklist-item.priority-medium { border-left-color: #2196f3; }
+        .worklist-item.priority-low { border-left-color: #b6c2d4; }
+        .worklist-item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 13px;
+            background: #f2f6fc;
+            color: #15549a;
+        }
+        .worklist-item.priority-critical .worklist-item-icon { background: rgba(225,75,75,0.1); color: #e14b4b; }
+        .worklist-item.priority-high .worklist-item-icon { background: rgba(245,166,35,0.13); color: #c98a10; }
+        .worklist-item.priority-medium .worklist-item-icon { background: rgba(33,150,243,0.1); color: #2196f3; }
+        .worklist-item-main { flex: 1; min-width: 0; }
+        .worklist-item-title { font-size: 13px; font-weight: 600; color: #34415c; line-height: 1.35; }
+        .worklist-ref { font-size: 10.5px; font-weight: 500; color: #8e9ab4; margin-left: 5px; white-space: nowrap; }
+        .worklist-item-reason { font-size: 12px; color: #5d6b80; margin-top: 2px; }
+        .worklist-item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+            margin-top: 5px;
+            font-size: 10.5px;
             color: #8e9ab4;
         }
-        .followup-time {
-            font-size: 12px;
-            font-weight: 500;
-            color: #5d6b80;
-            white-space: nowrap;
+        .worklist-item-meta span { position: relative; }
+        .worklist-item-meta span + span::before {
+            content: '•';
+            position: absolute;
+            left: -7px;
+            color: #c7d2e2;
+        }
+        .worklist-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
             flex-shrink: 0;
+        }
+        .worklist-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 9px;
+            border: 1px solid #dbe5f1;
+            border-radius: 5px;
+            background: #fff;
+            color: #15549a;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.4;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .worklist-btn:hover { background: #f2f6fc; border-color: #b9cde6; color: #103f73; text-decoration: none; }
+        .worklist-btn.primary { background: #15549a; border-color: #15549a; color: #fff; }
+        .worklist-btn.primary:hover { background: #103f73; border-color: #103f73; color: #fff; }
+        .worklist-btn.done { color: #10a874; border-color: rgba(16,168,116,0.35); }
+        .worklist-btn.done:hover { background: rgba(16,168,116,0.07); border-color: #10a874; color: #0b7f58; }
+        .worklist-btn:disabled { opacity: 0.6; cursor: default; }
+        .worklist-empty { text-align: center; padding: 30px 14px; color: #8e9ab4; }
+        .worklist-empty i { display: block; font-size: 30px; color: #c7d2e2; margin-bottom: 10px; }
+        .worklist-empty strong { display: block; font-size: 13px; color: #5d6b80; margin-bottom: 3px; }
+        .worklist-footer { margin-top: 12px; text-align: right; font-size: 12px; }
+        .worklist-footer a { color: #15549a; font-weight: 500; }
+        .worklist-footer a:hover { color: #103f73; text-decoration: underline; }
+        @media (max-width: 575px) {
+            .worklist-item { flex-wrap: wrap; }
+            .worklist-actions { flex-direction: row; width: 100%; justify-content: flex-end; }
+            .worklist-list { max-height: 340px; }
         }
 
         /* ===== Document Status ===== */
@@ -899,15 +1012,38 @@
 
         <!-- Follow-ups & Document Status -->
         <div class="row">
-            <!-- Today's Follow-ups -->
+            <!-- Smart Follow-up Worklist -->
             <div class="col-lg-7">
                 <div class="dash-card">
                     <div class="dash-card-header">
-                        <h4><i class="fa fa-calendar-check-o" style="color:#15549a;margin-right:8px;"></i> Today's Follow-ups</h4>
+                        <div class="worklist-title">
+                            <h4><i class="fa fa-bolt" style="color:#15549a;margin-right:8px;"></i> Smart Follow-ups</h4>
+                            <span class="worklist-subtitle">Auto-prioritised follow-ups, missed work and pending actions</span>
+                        </div>
+                        <div class="worklist-header-actions">
+                            <span class="worklist-count-badge" id="worklistCount">—</span>
+                            <button type="button" class="worklist-refresh" id="refreshWorklist" title="Refresh worklist" aria-label="Refresh worklist">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="dash-card-body">
-                        <div id="followupsList">
-                            <div style="text-align:center; padding:20px; color:#8e9ab4;">No follow-ups scheduled for today.</div>
+                        <div class="worklist-summary" id="worklistChips">
+                            <button type="button" class="worklist-chip active" data-filter="all"><strong id="wlAll">0</strong><span>All</span></button>
+                            <button type="button" class="worklist-chip critical" data-filter="overdue"><strong id="wlOverdue">0</strong><span>Missed</span></button>
+                            <button type="button" class="worklist-chip warn" data-filter="today"><strong id="wlToday">0</strong><span>Due today</span></button>
+                            <button type="button" class="worklist-chip info" data-filter="upcoming"><strong id="wlUpcoming">0</strong><span>Next 7 days</span></button>
+                            <button type="button" class="worklist-chip neutral" data-filter="attention"><strong id="wlAttention">0</strong><span>Needs action</span></button>
+                        </div>
+                        <div id="followupsList" class="worklist-list" aria-live="polite">
+                            <div class="worklist-empty">
+                                <i class="fa fa-circle-o-notch fa-spin"></i>
+                                <strong>Building your worklist…</strong>
+                                Checking follow-ups, leads and documents.
+                            </div>
+                        </div>
+                        <div class="worklist-footer">
+                            <a href="admin-followups.html">Manage all follow-ups <i class="fa fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -1059,6 +1195,9 @@
         // ===== Nhost / Hasura admin dashboard =====
         let applicants = [];
         let dashboardDocuments = [];
+        let dashboardFollowups = [];
+        let worklistItems = [];
+        let worklistFilter = 'all';
 
         const LEADS_QUERY =
             'query DashboardLeads {' +
@@ -1069,11 +1208,19 @@
             '  loan_documents(order_by: {created_at: desc}) {' +
             '    id loan_lead_id document_type status file_name created_at' +
             '  }' +
+            '  loan_followups(where: {status: {_eq: "Pending"}}, order_by: {scheduled_at: asc}) {' +
+            '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
+            '  }' +
             '}';
 
         const UPDATE_LEAD_MUTATION =
             'mutation UpdateLead($id: uuid!, $status: String!, $notes: String) {' +
             '  update_loan_leads_by_pk(pk_columns: {id: $id}, _set: {status: $status, admin_notes: $notes}) { id }' +
+            '}';
+
+        const COMPLETE_FOLLOWUP_MUTATION =
+            'mutation CompleteFollowup($id: uuid!) {' +
+            '  update_loan_followups_by_pk(pk_columns: {id: $id}, _set: {status: "Completed"}) { id status }' +
             '}';
 
         const COUNTS_QUERY =
@@ -1120,15 +1267,20 @@
                 const data = await backend().adminGql(LEADS_QUERY);
                 applicants = (data && data.loan_leads) || [];
                 dashboardDocuments = (data && data.loan_documents) || [];
+                dashboardFollowups = (data && data.loan_followups) || [];
                 renderTable();
                 updateStats();
                 renderDocumentStatus();
+                buildWorklist();
+                renderWorklist();
             } catch (err) {
                 console.error('Error fetching applications:', err);
                 tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
                 showDashboardAlert('error', 'Application data could not be loaded. ' + (err.message || 'Please refresh the page.'));
                 dashboardDocuments = [];
+                dashboardFollowups = [];
                 renderDocumentStatusUnavailable();
+                renderWorklistUnavailable();
             }
         }
 
@@ -1253,6 +1405,318 @@
             $('#barVerified, #barPending, #barIncomplete').css('width', '0%').removeAttr('title');
         }
 
+        function startOfLocalDay(value) {
+            const date = new Date(value);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        }
+
+        function dayDiff(from, to) {
+            return Math.round((startOfLocalDay(to).getTime() - startOfLocalDay(from).getTime()) / 86400000);
+        }
+
+        function safeTime(value) {
+            const time = new Date(value).getTime();
+            return isNaN(time) ? Date.now() : time;
+        }
+
+        function worklistPriorityRank(priority) {
+            const ranks = { critical: 0, high: 1, medium: 2, low: 3 };
+            return ranks[priority] === undefined ? 4 : ranks[priority];
+        }
+
+        function buildWorklist() {
+            const items = [];
+            const now = new Date();
+            const today = startOfLocalDay(now);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const weekEnd = new Date(today);
+            weekEnd.setDate(weekEnd.getDate() + 8);
+
+            const leadById = {};
+            const leadIndexById = {};
+            applicants.forEach(function (lead, index) {
+                leadById[lead.id] = lead;
+                leadIndexById[lead.id] = index;
+            });
+
+            const pendingFollowupLeadIds = {};
+
+            dashboardFollowups.forEach(function (followup) {
+                if (followup.status !== 'Pending' || !followup.scheduled_at) { return; }
+                const scheduled = new Date(followup.scheduled_at);
+                if (isNaN(scheduled.getTime())) { return; }
+
+                if (followup.loan_lead_id) {
+                    pendingFollowupLeadIds[followup.loan_lead_id] = true;
+                }
+
+                const lead = leadById[followup.loan_lead_id] || null;
+                let category;
+                let priority;
+                let reason;
+
+                if (scheduled < today) {
+                    const days = Math.max(1, dayDiff(scheduled, today));
+                    category = 'overdue';
+                    priority = 'critical';
+                    reason = 'Missed follow-up — ' + (days === 1 ? '1 day' : days + ' days') + ' overdue';
+                } else if (scheduled < tomorrow) {
+                    category = 'today';
+                    priority = 'high';
+                    reason = 'Follow-up due today at ' +
+                        scheduled.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                } else if (scheduled < weekEnd) {
+                    const days = Math.max(1, dayDiff(today, scheduled));
+                    category = 'upcoming';
+                    priority = days <= 3 ? 'medium' : 'low';
+                    reason = days === 1 ? 'Follow-up due tomorrow' : 'Follow-up due in ' + days + ' days';
+                } else {
+                    return;
+                }
+
+                items.push({
+                    id: 'followup-' + followup.id,
+                    category: category,
+                    priority: priority,
+                    kind: 'followup',
+                    title: lead ? lead.full_name : 'Unknown applicant',
+                    reference: lead ? lead.reference_no : '',
+                    reason: reason,
+                    meta: [
+                        followup.interaction_type || 'Follow-up',
+                        scheduled.toLocaleString('en-GB', {
+                            day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                        })
+                    ],
+                    followupId: followup.id,
+                    leadIndex: lead ? leadIndexById[lead.id] : -1,
+                    sortDate: scheduled.getTime()
+                });
+            });
+
+            applicants.forEach(function (lead, index) {
+                if (['Approved', 'Rejected', 'Closed'].indexOf(lead.status) > -1) { return; }
+                if (pendingFollowupLeadIds[lead.id]) { return; }
+
+                const created = new Date(lead.created_at);
+                const createdTime = isNaN(created.getTime()) ? now.getTime() : created.getTime();
+                const ageMs = Math.max(0, now.getTime() - createdTime);
+                const ageHours = Math.floor(ageMs / 3600000);
+                const ageDays = Math.floor(ageMs / 86400000);
+
+                if (lead.status === 'New') {
+                    let reason;
+                    if (ageDays >= 1) {
+                        reason = 'New lead waiting ' + ageDays + ' day' + (ageDays === 1 ? '' : 's') + ' for first contact';
+                    } else if (ageHours >= 1) {
+                        reason = 'New lead waiting ' + ageHours + ' hour' + (ageHours === 1 ? '' : 's') + ' for first contact';
+                    } else {
+                        reason = 'New lead awaiting first contact';
+                    }
+
+                    items.push({
+                        id: 'lead-' + lead.id,
+                        category: 'attention',
+                        priority: ageDays >= 1 || ageHours >= 4 ? 'high' : 'medium',
+                        kind: 'lead',
+                        title: lead.full_name,
+                        reference: lead.reference_no,
+                        reason: reason,
+                        meta: ['No follow-up scheduled', lead.loan_type || 'Loan enquiry', money(lead.loan_amount)],
+                        leadIndex: index,
+                        sortDate: createdTime
+                    });
+                } else {
+                    items.push({
+                        id: 'lead-' + lead.id,
+                        category: 'attention',
+                        priority: 'medium',
+                        kind: 'lead',
+                        title: lead.full_name,
+                        reference: lead.reference_no,
+                        reason: 'No next follow-up scheduled',
+                        meta: [lead.status || 'In progress', lead.loan_type || 'Loan enquiry', money(lead.loan_amount)],
+                        leadIndex: index,
+                        sortDate: createdTime
+                    });
+                }
+            });
+
+            const docsByLead = {};
+            dashboardDocuments.forEach(function (doc) {
+                if (!doc.loan_lead_id) { return; }
+                if (!docsByLead[doc.loan_lead_id]) { docsByLead[doc.loan_lead_id] = []; }
+                docsByLead[doc.loan_lead_id].push(doc);
+            });
+
+            Object.keys(docsByLead).forEach(function (leadId) {
+                const lead = leadById[leadId];
+                if (!lead) { return; }
+
+                const docs = docsByLead[leadId];
+                const rejected = docs.filter(function (doc) { return doc.status === 'Rejected'; });
+                const pending = docs.filter(function (doc) { return doc.status === 'Pending'; });
+                const leadIndex = leadIndexById[leadId];
+
+                if (rejected.length) {
+                    items.push({
+                        id: 'docs-rejected-' + leadId,
+                        category: 'attention',
+                        priority: 'critical',
+                        kind: 'document',
+                        title: lead.full_name,
+                        reference: lead.reference_no,
+                        reason: rejected.length + ' rejected document' + (rejected.length === 1 ? ' needs' : 's need') + ' re-upload',
+                        meta: [
+                            rejected.map(function (doc) { return doc.document_type || 'Document'; }).join(', '),
+                            'Documents module'
+                        ],
+                        leadIndex: leadIndex,
+                        sortDate: safeTime(rejected[0].created_at)
+                    });
+                }
+
+                if (pending.length) {
+                    const oldest = Math.min.apply(null, pending.map(function (doc) {
+                        return safeTime(doc.created_at);
+                    }));
+                    const ageDays = Math.max(0, Math.floor((now.getTime() - oldest) / 86400000));
+
+                    items.push({
+                        id: 'docs-pending-' + leadId,
+                        category: 'attention',
+                        priority: ageDays >= 2 || lead.status === 'Documents Pending' ? 'high' : 'medium',
+                        kind: 'document',
+                        title: lead.full_name,
+                        reference: lead.reference_no,
+                        reason: pending.length + ' document' + (pending.length === 1 ? '' : 's') + ' awaiting verification',
+                        meta: [
+                            pending.map(function (doc) { return doc.document_type || 'Document'; }).join(', '),
+                            ageDays >= 1
+                                ? 'Oldest ' + (ageDays === 1 ? '1 day' : ageDays + ' days')
+                                : 'Uploaded today'
+                        ],
+                        leadIndex: leadIndex,
+                        sortDate: oldest
+                    });
+                }
+            });
+
+            items.sort(function (a, b) {
+                const rank = worklistPriorityRank(a.priority) - worklistPriorityRank(b.priority);
+                if (rank !== 0) { return rank; }
+                return (a.sortDate || 0) - (b.sortDate || 0);
+            });
+
+            worklistItems = items;
+        }
+
+        function renderWorklist() {
+            const count = worklistItems.length;
+            $('#worklistCount').text(count + (count === 1 ? ' action' : ' actions'));
+
+            const counts = { all: count, overdue: 0, today: 0, upcoming: 0, attention: 0 };
+            worklistItems.forEach(function (item) {
+                if (counts[item.category] !== undefined) { counts[item.category] += 1; }
+            });
+
+            $('#wlAll').text(counts.all);
+            $('#wlOverdue').text(counts.overdue);
+            $('#wlToday').text(counts.today);
+            $('#wlUpcoming').text(counts.upcoming);
+            $('#wlAttention').text(counts.attention);
+
+            $('#worklistChips .worklist-chip')
+                .removeClass('active')
+                .filter('[data-filter="' + worklistFilter + '"]')
+                .addClass('active');
+
+            const filtered = worklistFilter === 'all'
+                ? worklistItems
+                : worklistItems.filter(function (item) { return item.category === worklistFilter; });
+
+            if (!filtered.length) {
+                const messages = {
+                    all: ['You are all caught up', 'No missed follow-ups or pending actions right now.'],
+                    overdue: ['No missed follow-ups', 'Nothing is overdue. Great work.'],
+                    today: ['Nothing due today', 'No follow-ups are scheduled for today.'],
+                    upcoming: ['Nothing in the next 7 days', 'Upcoming follow-ups will appear here.'],
+                    attention: ['No pending actions', 'All active leads have a next step scheduled.']
+                };
+                const message = messages[worklistFilter] || messages.all;
+                $('#followupsList').html(
+                    '<div class="worklist-empty"><i class="fa fa-check-circle-o"></i>' +
+                    '<strong>' + message[0] + '</strong>' + message[1] + '</div>'
+                );
+                return;
+            }
+
+            $('#followupsList').html(filtered.map(renderWorklistItem).join(''));
+        }
+
+        function renderWorklistItem(item) {
+            const icons = { followup: 'fa-calendar-check-o', lead: 'fa-user', document: 'fa-file-text-o' };
+            const icon = icons[item.kind] || 'fa-tasks';
+            let actions = '';
+
+            if (item.kind === 'followup') {
+                actions += '<button type="button" class="worklist-btn done wl-done" data-followup-id="' +
+                    esc(item.followupId) + '" aria-label="Mark follow-up as completed">' +
+                    '<i class="fa fa-check" aria-hidden="true"></i> Done</button>';
+            }
+
+            if (item.kind === 'document') {
+                actions += '<a class="worklist-btn primary" href="admin-documents.html">Review docs</a>';
+            }
+
+            if (item.leadIndex > -1) {
+                actions += '<button type="button" class="worklist-btn wl-open" data-lead-index="' + item.leadIndex +
+                    '" title="Open application">Open</button>';
+            }
+
+            return '<div class="worklist-item priority-' + esc(item.priority) + '" data-category="' + esc(item.category) + '">' +
+                '<span class="worklist-item-icon"><i class="fa ' + icon + '" aria-hidden="true"></i></span>' +
+                '<div class="worklist-item-main">' +
+                    '<div class="worklist-item-title">' + esc(item.title) +
+                        (item.reference ? '<span class="worklist-ref">' + esc(item.reference) + '</span>' : '') +
+                    '</div>' +
+                    '<div class="worklist-item-reason">' + esc(item.reason) + '</div>' +
+                    '<div class="worklist-item-meta">' +
+                        item.meta.map(function (value) { return '<span>' + esc(value) + '</span>'; }).join('') +
+                    '</div>' +
+                '</div>' +
+                '<div class="worklist-actions">' + actions + '</div>' +
+            '</div>';
+        }
+
+        function renderWorklistUnavailable() {
+            worklistItems = [];
+            $('#worklistCount').text('—');
+            $('#wlAll, #wlOverdue, #wlToday, #wlUpcoming, #wlAttention').text('—');
+            $('#followupsList').html(
+                '<div class="worklist-empty"><i class="fa fa-exclamation-circle"></i>' +
+                '<strong>Worklist unavailable</strong>Follow-up suggestions could not be loaded. Please refresh the page.</div>'
+            );
+        }
+
+        async function completeFollowup(id, button) {
+            if (!id) { return; }
+            const btn = $(button);
+            btn.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>');
+
+            try {
+                await backend().adminGql(COMPLETE_FOLLOWUP_MUTATION, { id: id });
+                await fetchApplications();
+                showDashboardAlert('success', 'Follow-up marked as completed.');
+            } catch (err) {
+                console.error('Follow-up completion failed:', err);
+                showDashboardAlert('error', err.message || 'Could not complete the follow-up.');
+                btn.prop('disabled', false).html('<i class="fa fa-check" aria-hidden="true"></i> Done');
+            }
+        }
+
         function renderModalDocuments(leadId) {
             const docs = dashboardDocuments.filter(doc => doc.loan_lead_id === leadId);
             if (!docs.length) {
@@ -1357,6 +1821,27 @@
             $('#searchInput').on('keyup', filterTable);
             $('#statusFilter').on('change', filterTable);
             $('#saveDashboardBtn').on('click', saveModal);
+
+            $('#worklistChips').on('click', '.worklist-chip', function () {
+                worklistFilter = $(this).attr('data-filter') || 'all';
+                renderWorklist();
+            });
+
+            $('#followupsList').on('click', '.wl-open', function () {
+                const index = Number($(this).attr('data-lead-index'));
+                if (index > -1) { openModal(index); }
+            });
+
+            $('#followupsList').on('click', '.wl-done', function () {
+                completeFollowup($(this).attr('data-followup-id'), this);
+            });
+
+            $('#refreshWorklist').on('click', async function () {
+                const btn = $(this);
+                btn.prop('disabled', true).find('i').addClass('fa-spin');
+                await fetchApplications();
+                btn.prop('disabled', false).find('i').removeClass('fa-spin');
+            });
         });
 
         function filterTable() {
