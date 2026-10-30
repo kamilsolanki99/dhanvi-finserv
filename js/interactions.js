@@ -81,8 +81,10 @@
             return;
         }
 
-        // Target milestone stats in about.html, admin dashboard, etc.
-        var statElements = document.querySelectorAll('.big-title, .stat-number');
+        // Target milestone stats in about.html and other marketing pages.
+        // Admin dashboard .stat-number elements are live values populated from
+        // the database, so they must not be treated as animated counters.
+        var statElements = document.querySelectorAll('.big-title');
         if (!statElements.length) return;
 
         var counterObserver = new IntersectionObserver(function (entries, obs) {
