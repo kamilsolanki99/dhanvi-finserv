@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <link href="css/admin.css" rel="stylesheet">
     <link href="css/loader.css" rel="stylesheet">
     <link href="css/animations.css" rel="stylesheet">
@@ -230,15 +232,18 @@
         }
 
         function showAlert(id, type, message) {
-            var el = document.getElementById(id);
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: id });
+            }
         }
 
         function hideAlert(id) {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext(id); }
             var el = document.getElementById(id);
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) {
+                el.className = 'admin-alert';
+                el.innerHTML = '';
+            }
         }
 
         async function fetchRequests() {
@@ -250,6 +255,7 @@
             } catch (err) {
                 console.error('Could not load support requests:', err);
                 tbody.html('<tr><td colspan="7" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load support requests</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
+                showAlert('pageAlert', 'error', 'Support requests could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -329,7 +335,7 @@
                 await fetchRequests();
             } catch (err) {
                 console.error('Support request update failed:', err);
-                showAlert('modalAlert', 'error', esc(err.message || 'Could not update the request.'));
+                showAlert('modalAlert', 'error', err.message || 'Could not update the request.');
             } finally {
                 btn.prop('disabled', false).text('Save changes');
             }

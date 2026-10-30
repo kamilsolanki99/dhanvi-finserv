@@ -47,18 +47,81 @@
         return d.length >= 8 && d.length <= 15;
     }
 
-    function showAlert(el, type, message) {
+    function normalizeAlertType(type) {
+        var value = String(type || 'info').toLowerCase();
+        if (value === 'warn') { return 'warning'; }
+        if (value === 'danger') { return 'error'; }
+        if (value === 'information') { return 'info'; }
+        return value;
+    }
+
+    /**
+     * Track toasts created for a specific inline alert element so that the
+     * existing hideAlert() calls also dismiss the matching notifications.
+     */
+    function trackToast(el, id) {
+        if (!el || !id) { return; }
+        if (!el._dhanviToastIds) { el._dhanviToastIds = []; }
+        el._dhanviToastIds.push(id);
+    }
+
+    function dismissTrackedToasts(el) {
+        if (!el || !el._dhanviToastIds || !window.DhanviNotify) { return; }
+        el._dhanviToastIds.forEach(function (id) {
+            window.DhanviNotify.dismiss(id);
+        });
+        el._dhanviToastIds = [];
+    }
+
+    /**
+     * All customer-facing service messages go through the centralized toast
+     * component. The inline element is cleared so old pages never show a
+     * duplicate message. If notifications.js is unavailable, fall back to the
+     * original inline alert so the form still communicates with the user.
+     */
+    function showAlert(el, type, message, title) {
+        var normalized = normalizeAlertType(type);
+
+        if (el) {
+            el.className = 'cp-alert';
+            el.innerHTML = '';
+            el.removeAttribute('role');
+        }
+
+        if (window.DhanviNotify) {
+            var id = window.DhanviNotify.show({
+                type: normalized,
+                title: title || '',
+                message: message
+            });
+            trackToast(el, id);
+            return;
+        }
+
         if (!el) { return; }
-        el.className = 'cp-alert cp-alert-' + type + ' show';
+        var fallbackType = normalized === 'warning' ? 'warn' : normalized;
+        el.className = 'cp-alert cp-alert-' + fallbackType + ' show';
         el.innerHTML = message;
-        el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        el.setAttribute('role', normalized === 'error' ? 'alert' : 'status');
     }
 
     function hideAlert(el) {
+        dismissTrackedToasts(el);
         if (!el) { return; }
         el.className = 'cp-alert';
         el.innerHTML = '';
         el.removeAttribute('role');
+    }
+
+    function notify(type, title, message, options) {
+        if (!window.DhanviNotify) { return null; }
+        var normalized = normalizeAlertType(type);
+        return window.DhanviNotify.show({
+            type: normalized,
+            title: title || '',
+            message: message,
+            duration: options && options.duration
+        });
     }
 
     function errorElement(field) {
@@ -201,6 +264,7 @@
         isInternationalPhone: isInternationalPhone,
         showAlert: showAlert,
         hideAlert: hideAlert,
+        notify: notify,
         setFieldError: setFieldError,
         clearFieldError: clearFieldError,
         clearErrors: clearErrors,

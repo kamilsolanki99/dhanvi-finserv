@@ -51,7 +51,12 @@
 
         if (available === 0) {
             slotNote.textContent = 'All slots are booked for this date. Please choose another date.';
-            D.showAlert(alertBox, 'warn', 'No callback slots are available on the selected date. Please choose another working day.');
+            D.showAlert(
+                alertBox,
+                'warning',
+                'No callback slots are available on the selected date. Please choose another working day.',
+                'No slots available'
+            );
         } else {
             slotNote.textContent = available + ' of ' + SLOTS.length + ' slots available. Each slot is 30 minutes.';
             D.hideAlert(alertBox);
@@ -69,7 +74,12 @@
         if (D.isSunday(date)) {
             slotGrid.innerHTML = '';
             slotNote.textContent = 'Callbacks are not available on Sundays. Please choose another date.';
-            D.showAlert(alertBox, 'warn', 'Callbacks are not available on Sundays. Please choose a working day.');
+            D.showAlert(
+                alertBox,
+                'warning',
+                'Callbacks are not available on Sundays. Please choose a working day.',
+                'Sunday unavailable'
+            );
             return;
         }
 
@@ -89,8 +99,12 @@
             console.error('Could not load callback slots:', err);
             slotGrid.innerHTML = '';
             slotNote.textContent = '';
-            D.showAlert(alertBox, 'error',
-                'Callback scheduling is temporarily unavailable. Please call +91 99250 02324 or try again later.');
+            D.showAlert(
+                alertBox,
+                'error',
+                'Callback scheduling is temporarily unavailable. Please call +91 99250 02324 or try again later.',
+                'Scheduling unavailable'
+            );
         }
     }
 
@@ -139,11 +153,16 @@
             ok = false;
         }
         if (!selectedSlot()) {
-            D.showAlert(alertBox, 'error', 'Choose an available time slot.');
+            D.showAlert(alertBox, 'warning', 'Choose an available time slot.', 'Time slot required');
             ok = false;
         }
         if (!consent.checked) {
-            D.showAlert(alertBox, 'error', 'Please accept the privacy notice before scheduling a callback.');
+            D.showAlert(
+                alertBox,
+                'warning',
+                'Please accept the privacy notice before scheduling a callback.',
+                'Consent required'
+            );
             ok = false;
         }
         if (!ok) {
@@ -168,12 +187,16 @@
         } catch (err) {
             console.error('Callback booking failed:', err);
             if (err.code === '23505' || err.code === 'constraint-violation') {
-                D.showAlert(alertBox, 'error', 'That slot was just booked by someone else. Please choose another time.');
+                D.showAlert(
+                    alertBox,
+                    'warning',
+                    'That slot was just booked by someone else. Please choose another time.',
+                    'Slot just taken'
+                );
                 await loadSlots();
             } else {
-                D.showAlert(alertBox, 'error', D.escapeHtml(D.friendlyError(err)));
+                D.showAlert(alertBox, 'error', D.friendlyError(err), 'Callback not booked');
             }
-            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } finally {
             D.setLoading(submitBtn, false);
         }
@@ -185,6 +208,13 @@
         document.getElementById('callbackReference').textContent = result.reference_no || '—';
         document.getElementById('callbackWhen').textContent =
             D.prettyDate(result.preferred_date) + ' at ' + D.prettySlot(result.preferred_slot) + ' (IST)';
+        D.showAlert(
+            alertBox,
+            'success',
+            'Reference: ' + (result.reference_no || '—') + '. We will call you on ' +
+                D.prettyDate(result.preferred_date) + ' at ' + D.prettySlot(result.preferred_slot) + ' (IST).',
+            'Callback scheduled'
+        );
         successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 

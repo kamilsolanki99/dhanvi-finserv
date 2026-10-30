@@ -49,6 +49,8 @@ GraphQL API, authentication and private file storage.
 - ITR filing service page.
 - EMI calculator and loan eligibility checker.
 - Document checklist, FAQs, blog, team, about and contact pages.
+- Site-wide accessible toast notifications for success, warning, error and
+  information feedback across forms, uploads and admin actions.
 - SEO metadata, sitemap and `robots.txt`.
 
 ### Customer self-service
@@ -132,9 +134,10 @@ Browser
 .
 ├── index.html, *.html           # public pages
 ├── admin-*.html                 # admin portal (auth-guarded)
-├── css/                         # site, admin and customer-portal styles
+├── css/                         # site, admin, portal and notification styles
 ├── js/
 │   ├── nhost-client.js          # single Nhost config + backend helpers
+│   ├── notifications.js         # centralized accessible toast notifications
 │   ├── public-api.js            # shared public form helpers
 │   ├── apply-loan.js            # loan application + co-applicants/guarantors
 │   ├── callback.js              # callback booking and slot availability

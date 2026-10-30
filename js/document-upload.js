@@ -96,6 +96,12 @@
         } catch (err) {
             console.error('Could not load documents:', err);
             docsList.innerHTML = '<li class="cp-empty"><i class="fa fa-exclamation-circle"></i>We could not load your documents. Please refresh the page.</li>';
+            D.showAlert(
+                null,
+                'error',
+                'We could not load your documents. Please refresh the page.',
+                'Documents unavailable'
+            );
         }
     }
 
@@ -155,7 +161,7 @@
             showWorkspace(result, result.access_token);
         } catch (err) {
             console.error('Application lookup failed:', err);
-            D.showAlert(lookupAlert, 'error', D.escapeHtml(D.friendlyError(err)));
+            D.showAlert(lookupAlert, 'error', D.friendlyError(err), 'Application not found');
         } finally {
             setLookupBusy(false);
         }
@@ -174,20 +180,30 @@
 
     function validateFile(file) {
         if (!file) {
-            D.showAlert(uploadAlert, 'error', 'Choose a document to upload.');
+            D.showAlert(uploadAlert, 'warning', 'Choose a document to upload.', 'Document required');
             return false;
         }
         var extension = fileExtension(file.name);
         if (ALLOWED_TYPES.indexOf(file.type) === -1 && ALLOWED_EXT.indexOf(extension) === -1) {
-            D.showAlert(uploadAlert, 'error', 'Only PDF, JPG, PNG or WEBP files are accepted.');
+            D.showAlert(
+                uploadAlert,
+                'warning',
+                'Only PDF, JPG, PNG or WEBP files are accepted.',
+                'Unsupported file type'
+            );
             return false;
         }
         if (file.size > MAX_BYTES) {
-            D.showAlert(uploadAlert, 'error', 'This file is larger than 5 MB. Please compress it or upload a smaller scan.');
+            D.showAlert(
+                uploadAlert,
+                'warning',
+                'This file is larger than 5 MB. Please compress it or upload a smaller scan.',
+                'File too large'
+            );
             return false;
         }
         if (file.size <= 0) {
-            D.showAlert(uploadAlert, 'error', 'This file appears to be empty.');
+            D.showAlert(uploadAlert, 'warning', 'This file appears to be empty.', 'Empty file');
             return false;
         }
         return true;
@@ -208,7 +224,12 @@
 
         var consent = document.getElementById('uploadConsent');
         if (!consent.checked) {
-            D.showAlert(uploadAlert, 'error', 'Please confirm that these documents belong to you or the applicant and accept the privacy notice.');
+            D.showAlert(
+                uploadAlert,
+                'warning',
+                'Please confirm that these documents belong to you or the applicant and accept the privacy notice.',
+                'Confirmation required'
+            );
             return;
         }
 
@@ -230,7 +251,12 @@
             uploadForm.reset();
             fileChip.classList.remove('show');
             fileChip.innerHTML = '';
-            D.showAlert(uploadAlert, 'success', 'Document uploaded successfully. It is now pending verification by our team.');
+            D.showAlert(
+                uploadAlert,
+                'success',
+                'Document uploaded successfully. It is now pending verification by our team.',
+                'Document uploaded'
+            );
             await loadDocuments();
         } catch (err) {
             console.error('Document upload failed:', err);
@@ -239,7 +265,7 @@
                 err.code === 'permission-denied' || /row-level security|policy|permission/i.test(message)) {
                 message = 'This upload was blocked for security reasons. Please check that you opened the correct application link, then try again.';
             }
-            D.showAlert(uploadAlert, 'error', D.escapeHtml(message));
+            D.showAlert(uploadAlert, 'error', message, 'Upload failed');
         } finally {
             D.setLoading(uploadBtn, false);
         }
@@ -294,6 +320,20 @@
         }
         if (!id || !token) { return; }
 
+        // Malformed links would otherwise reach Postgres as an invalid UUID
+        // and surface a technical database error. Reject them with the same
+        // friendly message used for expired links.
+        var uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!uuidPattern.test(id) || !uuidPattern.test(token)) {
+            D.showAlert(
+                lookupAlert,
+                'error',
+                'This document link is invalid or has expired. Please request a new link from our team.',
+                'Invalid document link'
+            );
+            return;
+        }
+
         D.setLoading(document.getElementById('lookupSubmit'), true, 'Opening application…');
         D.rpc('get_application_by_token', { p_lead_id: id, p_access_token: token })
             .then(function (application) {
@@ -301,7 +341,7 @@
             })
             .catch(function (err) {
                 console.error('Invalid document link:', err);
-                D.showAlert(lookupAlert, 'error', D.escapeHtml(D.friendlyError(err)));
+                D.showAlert(lookupAlert, 'error', D.friendlyError(err), 'Invalid document link');
             })
             .finally(function () {
                 D.setLoading(document.getElementById('lookupSubmit'), false);

@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles from Dashboard */
         *, *::before, *::after { box-sizing: border-box; }
@@ -605,27 +607,27 @@
         }
 
         function showPageAlert(type, message) {
-            const el = document.getElementById('appsAlert');
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: 'appsAlert' });
+            }
         }
 
         function hidePageAlert() {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('appsAlert'); }
             const el = document.getElementById('appsAlert');
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) { el.className = 'admin-alert'; el.innerHTML = ''; }
         }
 
         function showModalAlert(type, message) {
-            const el = document.getElementById('modalAlert');
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: 'modalAlert' });
+            }
         }
 
         function hideModalAlert() {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('modalAlert'); }
             const el = document.getElementById('modalAlert');
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) { el.className = 'admin-alert'; el.innerHTML = ''; }
         }
 
         function groupByLead(rows) {
@@ -657,7 +659,7 @@
             } catch (err) {
                 console.error('Error loading applications:', err);
                 tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
-                showPageAlert('error', 'Applications could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+                showPageAlert('error', 'Applications could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -788,7 +790,7 @@
                 await fetchApplications();
             } catch (err) {
                 console.error('Application update failed:', err);
-                showModalAlert('error', esc(err.message || 'Could not update the application.'));
+                showModalAlert('error', err.message || 'Could not update the application.');
             } finally {
                 btn.prop('disabled', false).text('Save Changes');
             }

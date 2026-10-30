@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles */
         *, *::before, *::after { box-sizing: border-box; }
@@ -377,6 +379,12 @@
             return window.DhanviBackend;
         }
 
+        function notify(type, title, message) {
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, title: title, message: message });
+            }
+        }
+
         function loadProfile() {
             const admin = window.DhanviAdmin;
             if (!admin || !admin.user) { return; }
@@ -391,11 +399,11 @@
             const admin = window.DhanviAdmin;
 
             if (!newName) {
-                alert('Please enter your full name.');
+                notify('warning', 'Name required', 'Please enter your full name.');
                 return;
             }
             if (!admin || !admin.user) {
-                alert('Your session could not be verified. Please sign in again.');
+                notify('error', 'Session expired', 'Your session could not be verified. Please sign in again.');
                 return;
             }
 
@@ -414,10 +422,10 @@
                     window.DhanviAdminLayout.profile = admin.profile;
                     window.DhanviAdminLayout.setupProfile();
                 }
-                alert('Profile updated successfully!');
+                notify('success', 'Profile updated', 'Your account details have been saved.');
             } catch (err) {
                 console.error('Profile update failed:', err);
-                alert('Error updating profile: ' + backend().errorMessage(err));
+                notify('error', 'Profile not updated', backend().errorMessage(err));
             } finally {
                 btn.prop('disabled', false).text('Update Profile');
             }
@@ -431,15 +439,15 @@
             const admin = window.DhanviAdmin;
 
             if (newPass !== confirmPass) {
-                alert('New passwords do not match!');
+                notify('warning', 'Passwords do not match', 'Re-enter the new password in both fields.');
                 return;
             }
             if (newPass.length < 8) {
-                alert('Use a password of at least 8 characters.');
+                notify('warning', 'Password too short', 'Use a password of at least 8 characters.');
                 return;
             }
             if (!admin || !admin.user || !admin.user.email) {
-                alert('Your session could not be verified. Please sign in again.');
+                notify('error', 'Session expired', 'Your session could not be verified. Please sign in again.');
                 return;
             }
 
@@ -463,11 +471,11 @@
                 }
 
                 await backend().changePassword(newPass);
-                alert('Password updated successfully!');
+                notify('success', 'Password updated', 'Your new password is now active.');
                 form.reset();
             } catch (err) {
                 console.error('Password update failed:', err);
-                alert('Error updating password: ' + backend().errorMessage(err));
+                notify('error', 'Password not updated', backend().errorMessage(err));
             } finally {
                 btn.prop('disabled', false).text('Update Password');
             }

@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles */
         *, *::before, *::after { box-sizing: border-box; }
@@ -573,13 +575,13 @@
         }
 
         function showPageAlert(type, message) {
-            const el = document.getElementById('docsAlert');
-            if (!el) { return; }
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: 'docsAlert' });
+            }
         }
 
         function hidePageAlert() {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('docsAlert'); }
             const el = document.getElementById('docsAlert');
             if (el) { el.className = 'admin-alert'; el.innerHTML = ''; }
         }
@@ -604,7 +606,7 @@
             } catch (err) {
                 console.error('Error loading documents:', err);
                 tbody.html('<tr><td colspan="7" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load documents</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
-                showPageAlert('error', 'Documents could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+                showPageAlert('error', 'Documents could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -682,6 +684,7 @@
             } catch (err) {
                 console.error('Signed URL error:', err);
                 note.text('Could not open the document: ' + (err.message || 'unknown error'));
+                showPageAlert('error', 'Could not open the document. ' + (err.message || 'Please try again.'));
             } finally {
                 btn.prop('disabled', false).html('<i class="fa fa-external-link"></i> Open document securely');
             }
@@ -713,6 +716,7 @@
             } catch (err) {
                 console.error('Document update failed:', err);
                 $('#documentLinkNote').text('Could not save the decision: ' + (err.message || 'unknown error'));
+                showPageAlert('error', 'Could not save the document decision. ' + (err.message || 'Please try again.'));
             } finally {
                 btn.prop('disabled', false).text('Save Decision');
             }

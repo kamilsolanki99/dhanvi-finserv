@@ -356,7 +356,12 @@
     function validateConsent() {
         var consent = document.getElementById('applicationConsent');
         if (consent && !consent.checked) {
-            D.showAlert(alertBox, 'error', 'Please accept the privacy notice and consent to be contacted before submitting.');
+            D.showAlert(
+                alertBox,
+                'warning',
+                'Please accept the privacy notice and consent to be contacted before submitting.',
+                'Consent required'
+            );
             consent.focus();
             return false;
         }
@@ -415,8 +420,12 @@
             showSuccess(result);
         } catch (err) {
             console.error('Application submission failed:', err);
-            D.showAlert(alertBox, 'error', D.escapeHtml(D.friendlyError(err)));
-            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            D.showAlert(
+                alertBox,
+                'error',
+                D.friendlyError(err),
+                'Application not submitted'
+            );
         } finally {
             D.setLoading(submitBtn, false);
         }
@@ -425,6 +434,12 @@
     function showSuccess(result) {
         form.classList.add('cp-hidden');
         successBox.classList.add('show');
+        D.showAlert(
+            alertBox,
+            'success',
+            'Your application has been received. Reference: ' + (result.reference_no || '—') + '. Our team will contact you shortly.',
+            'Application submitted'
+        );
         document.getElementById('successReference').textContent = result.reference_no || '—';
         var link = document.getElementById('uploadDocsLink');
         if (link) {

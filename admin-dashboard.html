@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         /* ===== Reset & Base ===== */
         *, *::before, *::after { box-sizing: border-box; }
@@ -1056,15 +1058,15 @@
         }
 
         function showDashboardAlert(type, message) {
-            const el = document.getElementById('dashboardAlert');
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: 'dashboardAlert' });
+            }
         }
 
         function hideDashboardAlert() {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('dashboardAlert'); }
             const el = document.getElementById('dashboardAlert');
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) { el.className = 'admin-alert'; el.innerHTML = ''; }
         }
 
         function backend() {
@@ -1084,7 +1086,7 @@
             } catch (err) {
                 console.error('Error fetching applications:', err);
                 tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
-                showDashboardAlert('error', 'Application data could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+                showDashboardAlert('error', 'Application data could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -1148,6 +1150,9 @@
         function openModal(idx) {
             const a = applicants[idx];
             if (!a) { return; }
+            // A toast from a previous refresh or save should not hover over the
+            // application the administrator just opened.
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('dashboardAlert'); }
             $('#modalAlert').removeClass('show').empty();
             $('#modalTitle').text((a.full_name || 'Application') + ' — ' + (a.loan_type || ''));
             $('#modalName').text(a.full_name || '—');
@@ -1172,11 +1177,8 @@
             const status = $('#modalStatusSelect').val();
             const notes = $('#modalNotes').val().trim();
             const btn = $('#saveDashboardBtn');
-            const alertEl = document.getElementById('modalAlert');
 
             btn.prop('disabled', true).text('Saving…');
-            alertEl.className = 'admin-alert';
-            alertEl.innerHTML = '';
 
             try {
                 await backend().adminGql(UPDATE_LEAD_MUTATION, {
@@ -1190,8 +1192,7 @@
                 await fetchApplications();
             } catch (err) {
                 console.error('Dashboard application update failed:', err);
-                alertEl.className = 'admin-alert admin-alert-error show';
-                alertEl.innerHTML = esc(err.message || 'Could not update the application.');
+                showDashboardAlert('error', err.message || 'Could not update the application.');
             } finally {
                 btn.prop('disabled', false).text('Save Changes');
             }
@@ -1214,6 +1215,7 @@
                 ['#countCallbacks', '#countSupport', '#countComplaints', '#countDocuments'].forEach(function (selector) {
                     $(selector).text('—');
                 });
+                showDashboardAlert('error', 'Some dashboard counts could not be loaded. Please refresh the page.');
             }
         }
 

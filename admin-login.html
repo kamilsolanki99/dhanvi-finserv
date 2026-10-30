@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -264,9 +266,7 @@
                     Sign In <i class="fa fa-arrow-right"></i>
                 </button>
 
-                <div class="error-msg" id="errorMsg">
-                    <i class="fa fa-exclamation-circle"></i> Invalid email or password
-                </div>
+                <div class="error-msg" id="errorMsg" role="alert"></div>
             </form>
 
             <div class="card-footer-text">
@@ -283,17 +283,31 @@
             var form = document.getElementById('adminLoginForm');
             var errorMsg = document.getElementById('errorMsg');
             var submitBtn = form.querySelector('button[type="submit"]');
+            var lastErrorId = null;
 
             function showError(message) {
+                var text = String(message || 'Invalid email or password');
+                if (window.DhanviNotify) {
+                    lastErrorId = window.DhanviNotify.error('Admin sign-in', text);
+                    if (errorMsg) {
+                        errorMsg.classList.remove('show');
+                        errorMsg.textContent = '';
+                    }
+                    return;
+                }
+                if (!errorMsg) { return; }
                 errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> ' +
-                    String(message || 'Invalid email or password')
-                        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                    text.replace(/&/g, '&amp;').replace(/</g, '&lt;')
                         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                 errorMsg.classList.add('show');
             }
 
             function hideError() {
-                errorMsg.classList.remove('show');
+                if (lastErrorId && window.DhanviNotify) {
+                    window.DhanviNotify.dismiss(lastErrorId);
+                    lastErrorId = null;
+                }
+                if (errorMsg) { errorMsg.classList.remove('show'); }
             }
 
             function setBusy(busy) {

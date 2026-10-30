@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <style>
         /* Reuse Base Styles */
         *, *::before, *::after { box-sizing: border-box; }
@@ -530,15 +532,15 @@
         }
 
         function showAlert(type, message) {
-            const el = document.getElementById('followupsAlert');
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: 'followupsAlert' });
+            }
         }
 
         function hideAlert() {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext('followupsAlert'); }
             const el = document.getElementById('followupsAlert');
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) { el.className = 'admin-alert'; el.innerHTML = ''; }
         }
 
         function applicantName(fu) {
@@ -561,7 +563,7 @@
             } catch (err) {
                 console.error('Error fetching follow-ups:', err);
                 tbody.html('<tr><td colspan="5" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load follow-ups</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
-                showAlert('error', 'Follow-up data could not be loaded. ' + esc(err.message || 'Please refresh the page.'));
+                showAlert('error', 'Follow-up data could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -624,11 +626,8 @@
             const status = $('#modalStatusSelect').val();
             const notes = $('#modalNotes').val().trim();
             const btn = $('#saveFollowupBtn');
-            const alertEl = document.getElementById('followupModalAlert');
 
             btn.prop('disabled', true).text('Saving…');
-            alertEl.className = 'admin-alert';
-            alertEl.innerHTML = '';
 
             try {
                 await backend().adminGql(UPDATE_FOLLOWUP_MUTATION, {
@@ -642,8 +641,7 @@
                 await fetchFollowups();
             } catch (err) {
                 console.error('Follow-up update failed:', err);
-                alertEl.className = 'admin-alert admin-alert-error show';
-                alertEl.innerHTML = esc(err.message || 'Could not update the follow-up.');
+                showAlert('error', err.message || 'Could not update the follow-up.');
             } finally {
                 btn.prop('disabled', false).text('Save Changes');
             }

@@ -63,7 +63,12 @@
                 ok = false;
             }
             if (!consent.checked) {
-                D.showAlert(alertBox, 'error', 'Please accept the privacy notice before submitting.');
+                D.showAlert(
+                    alertBox,
+                    'warning',
+                    'Please accept the privacy notice before submitting.',
+                    'Consent required'
+                );
                 ok = false;
             }
             if (!ok) {
@@ -90,14 +95,25 @@
             D.setLoading(submitBtn, true, config.loadingLabel);
             try {
                 var result = await D.rpc(config.rpc, params);
+                var reference = (config.referenceKey === 'ticket_no' ? result.ticket_no : result.reference_no) || '—';
                 form.classList.add('cp-hidden');
                 successBox.classList.add('show');
-                refEl.textContent = (config.referenceKey === 'ticket_no' ? result.ticket_no : result.reference_no) || '—';
+                refEl.textContent = reference;
+                D.showAlert(
+                    alertBox,
+                    'success',
+                    'Reference: ' + reference + '. Our team will review your submission and contact you shortly.',
+                    config.successTitle || 'Request submitted'
+                );
                 successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } catch (err) {
                 console.error(config.rpc + ' failed:', err);
-                D.showAlert(alertBox, 'error', D.escapeHtml(D.friendlyError(err)));
-                alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                D.showAlert(
+                    alertBox,
+                    'error',
+                    D.friendlyError(err),
+                    config.errorTitle || 'Submission failed'
+                );
             } finally {
                 D.setLoading(submitBtn, false);
             }
@@ -133,7 +149,9 @@
         minDescription: 10,
         loadingLabel: 'Submitting request…',
         rpc: 'submit_post_disbursal_request',
-        referenceKey: 'reference_no'
+        referenceKey: 'reference_no',
+        successTitle: 'Request submitted',
+        errorTitle: 'Request not submitted'
     });
 
     handleForm({
@@ -153,6 +171,8 @@
         minDescription: 20,
         loadingLabel: 'Submitting complaint…',
         rpc: 'submit_complaint',
-        referenceKey: 'ticket_no'
+        referenceKey: 'ticket_no',
+        successTitle: 'Complaint registered',
+        errorTitle: 'Complaint not registered'
     });
 })(window, document);

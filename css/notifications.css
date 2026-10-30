@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Dhanvi Finserv - centralized toast notifications
+   Used by js/notifications.js on every page.
+   ========================================================================== */
+
+.dhanvi-toast-viewport {
+    --dhanvi-toast-font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    position: fixed;
+    top: max(18px, env(safe-area-inset-top));
+    right: max(18px, env(safe-area-inset-right));
+    z-index: 2147483000;
+    width: min(400px, calc(100vw - 32px));
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    pointer-events: none;
+    font-family: var(--dhanvi-toast-font);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dhanvi-toast-region {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 2px;
+    pointer-events: none;
+}
+
+.dhanvi-toast {
+    --toast-accent: #15549a;
+    --toast-icon-bg: #eaf2fb;
+    --toast-border: #d7e5f5;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 14px 12px 14px 14px;
+    border: 1px solid var(--toast-border);
+    border-left: 4px solid var(--toast-accent);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    box-shadow:
+        0 18px 40px -18px rgba(16, 63, 115, 0.38),
+        0 4px 14px rgba(16, 63, 115, 0.08);
+    color: #1d2b3a;
+    pointer-events: auto;
+    animation: dhanvi-toast-in 240ms cubic-bezier(0.21, 1.02, 0.73, 1) both;
+    will-change: transform, opacity;
+}
+
+.dhanvi-toast--success {
+    --toast-accent: #0d7a53;
+    --toast-icon-bg: #e8f7f0;
+    --toast-border: #cfeade;
+}
+
+.dhanvi-toast--warning {
+    --toast-accent: #b77900;
+    --toast-icon-bg: #fff5df;
+    --toast-border: #f2e0b8;
+}
+
+.dhanvi-toast--error {
+    --toast-accent: #b23b3b;
+    --toast-icon-bg: #fdeeee;
+    --toast-border: #f2d2d2;
+}
+
+.dhanvi-toast--info {
+    --toast-accent: #15549a;
+    --toast-icon-bg: #eaf2fb;
+    --toast-border: #d7e5f5;
+}
+
+.dhanvi-toast__icon {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--toast-icon-bg);
+    color: var(--toast-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dhanvi-toast__icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.dhanvi-toast__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-top: 1px;
+}
+
+.dhanvi-toast__title {
+    margin: 0 0 3px;
+    padding: 0;
+    font-family: var(--dhanvi-toast-font);
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.1px;
+    color: #14263a;
+}
+
+.dhanvi-toast__message {
+    margin: 0;
+    padding: 0;
+    font-family: var(--dhanvi-toast-font);
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: #5c6b7c;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+.dhanvi-toast__close {
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    margin: -1px -2px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #8492a3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.dhanvi-toast__close:hover {
+    background: #f1f5fa;
+    color: #1d2b3a;
+}
+
+.dhanvi-toast__close:focus-visible {
+    outline: 2px solid #15549a;
+    outline-offset: 2px;
+}
+
+.dhanvi-toast__close svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+
+.dhanvi-toast.is-paused {
+    animation-play-state: paused;
+}
+
+.dhanvi-toast.is-leaving {
+    animation: dhanvi-toast-out 200ms ease-in both;
+}
+
+@keyframes dhanvi-toast-in {
+    from {
+        opacity: 0;
+        transform: translate3d(12px, -6px, 0) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes dhanvi-toast-out {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(12px, -6px, 0) scale(0.97);
+    }
+}
+
+@media (max-width: 640px) {
+    .dhanvi-toast-viewport {
+        top: max(10px, env(safe-area-inset-top));
+        left: max(10px, env(safe-area-inset-left));
+        right: max(10px, env(safe-area-inset-right));
+        width: auto;
+        max-height: calc(100vh - 20px);
+        max-height: calc(100dvh - 20px);
+    }
+
+    .dhanvi-toast-region {
+        gap: 8px;
+    }
+
+    .dhanvi-toast {
+        gap: 10px;
+        padding: 13px 11px 13px 13px;
+        border-radius: 13px;
+    }
+
+    .dhanvi-toast__icon {
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+    }
+
+    .dhanvi-toast__icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .dhanvi-toast__title {
+        font-size: 13px;
+    }
+
+    .dhanvi-toast__message {
+        font-size: 12.5px;
+    }
+
+    @keyframes dhanvi-toast-in {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -10px, 0) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+    }
+
+    @keyframes dhanvi-toast-out {
+        from {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translate3d(0, -8px, 0) scale(0.98);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dhanvi-toast {
+        animation: none;
+    }
+
+    .dhanvi-toast.is-leaving {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+@media (forced-colors: active) {
+    .dhanvi-toast {
+        border: 1px solid CanvasText;
+    }
+
+    .dhanvi-toast__icon {
+        border: 1px solid CanvasText;
+    }
+}
+
+@media print {
+    .dhanvi-toast-viewport {
+        display: none !important;
+    }
+}

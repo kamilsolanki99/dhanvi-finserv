@@ -9,6 +9,8 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
     <link href="css/admin.css" rel="stylesheet">
     <link href="css/loader.css" rel="stylesheet">
     <link href="css/animations.css" rel="stylesheet">
@@ -248,15 +250,18 @@
         }
 
         function showAlert(id, type, message) {
-            var el = document.getElementById(id);
-            el.className = 'admin-alert admin-alert-' + type + ' show';
-            el.innerHTML = message;
+            if (window.DhanviNotify) {
+                window.DhanviNotify.show({ type: type, message: message, context: id });
+            }
         }
 
         function hideAlert(id) {
+            if (window.DhanviNotify && window.DhanviNotify.dismissContext) { window.DhanviNotify.dismissContext(id); }
             var el = document.getElementById(id);
-            el.className = 'admin-alert';
-            el.innerHTML = '';
+            if (el) {
+                el.className = 'admin-alert';
+                el.innerHTML = '';
+            }
         }
 
         async function fetchCallbacks() {
@@ -268,6 +273,7 @@
             } catch (err) {
                 console.error('Could not load callbacks:', err);
                 tbody.html('<tr><td colspan="7" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load callbacks</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
+                showAlert('pageAlert', 'error', 'Callbacks could not be loaded. ' + (err.message || 'Please refresh the page.'));
             }
         }
 
@@ -346,7 +352,7 @@
                     var newDate = $('#modalNewDate').val();
                     var newSlot = $('#modalNewSlot').val();
                     if (!newDate || !newSlot) {
-                        showAlert('modalAlert', 'error', 'Choose the new date and slot.');
+                        showAlert('modalAlert', 'warning', 'Choose the new date and slot.');
                         return;
                     }
                     await backend().adminGql(RESCHEDULE_CALLBACK_MUTATION, {
@@ -375,7 +381,7 @@
                 if (String(err.code) === '23505' || String(err.code) === 'constraint-violation' || /already booked/i.test(message)) {
                     message = 'That date and slot is already booked. Choose another slot.';
                 }
-                showAlert('modalAlert', 'error', esc(message));
+                showAlert('modalAlert', 'error', message);
             } finally {
                 btn.prop('disabled', false).text('Save changes');
             }
