@@ -1305,3 +1305,126 @@ textarea.form-control { min-height: 120px; }
     .blog-grid .post-block h3 { font-size: 17px; }
     .blog-no-results { padding: 36px 20px; }
 }
+
+
+/* Desktop Navbar Single-Line Layout & Right-Aligned Apply Loan CTA */
+@media (min-width: 992px) {
+    .header .container {
+        max-width: 100%;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    #navigation {
+        float: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 4px;
+    }
+    #navigation > ul {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+    }
+    #navigation > ul > li {
+        float: none !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
+    #navigation > ul > li > a {
+        font-size: 11.5px !important;
+        letter-spacing: .2px !important;
+        padding: 14px 6px !important;
+        white-space: nowrap !important;
+    }
+    #navigation > ul > li.has-sub > a {
+        padding-right: 22px !important;
+    }
+    #navigation > ul > li.has-sub > a:before {
+        right: 8px !important;
+    }
+    #navigation > ul > li:last-child {
+        margin-left: 8px !important;
+    }
+    #navigation > ul > li > a.btn-nav-cta,
+    #navigation > ul > li > a.btn-default,
+    #navigation > ul > li > a.btn {
+        margin-top: 0 !important;
+        margin-left: 4px !important;
+        padding: 8px 14px !important;
+        font-size: 11px !important;
+        letter-spacing: .4px !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+}
+
+@media (min-width: 1300px) {
+    .header .container {
+        max-width: 1360px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    #navigation > ul > li > a {
+        font-size: 12px !important;
+        padding: 14px 7px !important;
+    }
+    #navigation > ul > li.has-sub > a {
+        padding-right: 24px !important;
+    }
+    #navigation > ul > li.has-sub > a:before {
+        right: 10px !important;
+    }
+    #navigation > ul > li > a.btn-nav-cta,
+    #navigation > ul > li > a.btn-default,
+    #navigation > ul > li > a.btn {
+        padding: 8px 16px !important;
+        font-size: 11.5px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility: each page keeps a single <h1> (the page banner).
+   Secondary headings are demoted to <h2> but carry the "keep-h1" helper
+   class so they keep the exact <h1> typography used before, with no visual
+   change to the design.
+   -------------------------------------------------------------------------- */
+.keep-h1 {
+    font-size: 32px;
+    line-height: 44px;
+    letter-spacing: -1px;
+}
+.section-title .keep-h1 {
+    font-size: clamp(28px, 3vw, 42px);
+    line-height: 1.18;
+    letter-spacing: -.6px;
+    margin: 0 0 14px;
+}
+.section-title:not(.text-center) .keep-h1 { padding-left: 0; }
+.section-title:not(.text-center) .keep-h1:before { content: none; }
+.section-title.text-center .keep-h1:after {
+    content: "";
+    display: block;
+    width: 52px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--brand-gold), var(--brand-gold-light));
+    margin: 18px auto 0;
+}
+.bg-default .section-title .keep-h1 { color: #fff; }
+.bg-default .section-title.text-center .keep-h1:after { background: #fff; }
+.wrapper-content .keep-h1 {
+    font-size: clamp(26px, 2.6vw, 34px);
+    letter-spacing: -.5px;
+}
+.bg-default.pinside80 .keep-h1 {
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 30px);
+    color: #fff;
+}
