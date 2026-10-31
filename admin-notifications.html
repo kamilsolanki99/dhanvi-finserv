@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Notification Center | Dhanvi Finserv Admin</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
+    <link href="css/admin.css" rel="stylesheet">
+    <link href="css/admin-notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body>
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box"><div class="loader-spinner-ring"></div></div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},2000);</script>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-logo">
+            <a href="admin-dashboard.html"><img src="images/logo.png" alt="Dhanvi Finserv"></a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a>
+            <a href="admin-notifications.html" class="active"><i class="fa fa-bell-o"></i> Notifications</a>
+            <a href="admin-applications.html"><i class="fa fa-file-text"></i> Loan Applications</a>
+            <a href="admin-leads.html"><i class="fa fa-users"></i> Customer Leads</a>
+            <a href="admin-documents.html"><i class="fa fa-folder-open"></i> Documents</a>
+            <a href="admin-followups.html"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
+            <a href="admin-callbacks.html"><i class="fa fa-phone"></i> Callbacks</a>
+            <a href="admin-support.html"><i class="fa fa-life-ring"></i> Support Requests</a>
+            <a href="admin-complaints.html"><i class="fa fa-exclamation-circle"></i> Complaints</a>
+            <a href="admin-settings.html"><i class="fa fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" style="margin-bottom: 12px;"><i class="fa fa-globe"></i> View Website</a>
+            <a href="admin-login.html"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <h4>Notifications</h4>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile">
+                    <div class="topbar-avatar">AD</div>
+                    <span class="topbar-profile-name">Admin</span>
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div class="dnc-page">
+                <div class="dnc-hero">
+                    <div class="dnc-hero__title">
+                        <h2>Notification Center</h2>
+                        <p>Every lead, document, callback and customer request in one place.</p>
+                    </div>
+                    <div class="dnc-hero__actions">
+                        <button type="button" class="dnc-btn" id="notifMarkAll">
+                            <i class="fa fa-check-circle-o" aria-hidden="true"></i> Mark all as read
+                        </button>
+                        <button type="button" class="dnc-btn danger" id="notifClearAll">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i> Clear all
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dnc-panel">
+                    <div class="dnc-tabs" id="notifTabs" role="tablist" aria-label="Notification filters">
+                        <button type="button" class="dnc-tab active" data-status="all" role="tab" aria-selected="true">
+                            All <span class="count" id="notifCountAll">0</span>
+                        </button>
+                        <button type="button" class="dnc-tab" data-status="unread" role="tab" aria-selected="false">
+                            Unread <span class="count" id="notifCountUnread">0</span>
+                        </button>
+                        <button type="button" class="dnc-tab" data-status="read" role="tab" aria-selected="false">
+                            Read <span class="count" id="notifCountRead">0</span>
+                        </button>
+                    </div>
+
+                    <div class="dnc-toolbar">
+                        <div class="dnc-search">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <input type="text" id="notifSearch" placeholder="Search title or message…" autocomplete="off" aria-label="Search notifications">
+                        </div>
+                        <select class="dnc-select" id="notifType" aria-label="Filter by notification type">
+                            <option value="">All types</option>
+                            <option value="lead">Loan application</option>
+                            <option value="callback">Callback</option>
+                            <option value="document">Document</option>
+                            <option value="followup">Follow-up</option>
+                            <option value="support">Support</option>
+                            <option value="complaint">Complaint</option>
+                            <option value="system">System</option>
+                        </select>
+                        <select class="dnc-select" id="notifSort" aria-label="Sort notifications">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                        </select>
+                        <div class="dnc-toolbar__actions">
+                            <button type="button" class="dnc-icon-btn" id="notifRefresh" title="Refresh notifications" aria-label="Refresh notifications">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dnc-meta">
+                        <span id="notifMeta">Loading notifications…</span>
+                        <span class="dhanvi-notif__live is-connecting" id="notifLive">
+                            <span class="dot"></span>Connecting
+                        </span>
+                    </div>
+
+                    <div class="dnc-list" id="notifList" aria-live="polite"></div>
+
+                    <div class="dnc-pagination" id="notifPagination">
+                        <span class="dnc-pagination__text" id="notifPaginationText"></span>
+                        <button type="button" class="dnc-btn" id="notifLoadMore">
+                            <i class="fa fa-chevron-down" aria-hidden="true"></i> Load more notifications
+                        </button>
+                        <div class="dnc-pagination__sentinel" id="notifSentinel" aria-hidden="true"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js?v=2"></script>
+    <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js?v=2"></script>
+    <script src="js/admin-notifications.js?v=1"></script>
+    <script>
+        (function (window, document) {
+            'use strict';
+
+            var api = window.DhanviAdminNotifications;
+            var state = {
+                status: 'all',
+                search: '',
+                type: '',
+                sort: 'newest',
+                rows: [],
+                total: 0,
+                counts: { all: 0, unread: 0, read: 0 },
+                loading: false,
+                loadingMore: false,
+                loadPromise: null,
+                error: null,
+                requestSeq: 0,
+                reloadTimer: null,
+                searchTimer: null,
+                pageSize: 15,
+                lastLoadAt: 0,
+                sentinelObserver: null
+            };
+            var els = {};
+
+            function esc(value) {
+                return String(value === undefined || value === null ? '' : value).replace(/[&<>"']/g, function (character) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[character];
+                });
+            }
+
+            function typeMeta(type) {
+                return api.utils.typeMeta(type);
+            }
+
+            function relativeTime(value) {
+                return api.utils.relativeTime(value);
+            }
+
+            function fullTime(value) {
+                return api.utils.fullTime(value);
+            }
+
+            function dayLabel(value) {
+                var date = new Date(value);
+                if (isNaN(date.getTime())) { return 'Unknown date'; }
+
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var target = new Date(date);
+                target.setHours(0, 0, 0, 0);
+                var diff = Math.round((today.getTime() - target.getTime()) / 86400000);
+
+                if (diff === 0) { return 'Today'; }
+                if (diff === 1) { return 'Yesterday'; }
+                if (diff > 1 && diff < 7) { return 'Earlier this week'; }
+                return date.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+
+            function cacheEls() {
+                els.tabs = document.getElementById('notifTabs');
+                els.tabButtons = document.querySelectorAll('#notifTabs .dnc-tab');
+                els.countAll = document.getElementById('notifCountAll');
+                els.countUnread = document.getElementById('notifCountUnread');
+                els.countRead = document.getElementById('notifCountRead');
+                els.search = document.getElementById('notifSearch');
+                els.type = document.getElementById('notifType');
+                els.sort = document.getElementById('notifSort');
+                els.refresh = document.getElementById('notifRefresh');
+                els.markAll = document.getElementById('notifMarkAll');
+                els.clearAll = document.getElementById('notifClearAll');
+                els.meta = document.getElementById('notifMeta');
+                els.live = document.getElementById('notifLive');
+                els.list = document.getElementById('notifList');
+                els.pagination = document.getElementById('notifPagination');
+                els.paginationText = document.getElementById('notifPaginationText');
+                els.loadMore = document.getElementById('notifLoadMore');
+                els.sentinel = document.getElementById('notifSentinel');
+            }
+
+            function setButtonBusy(button, busy, label) {
+                if (!button) { return; }
+                if (busy) {
+                    if (!button.getAttribute('data-original-html')) {
+                        button.setAttribute('data-original-html', button.innerHTML);
+                    }
+                    button.disabled = true;
+                    button.innerHTML = '<span class="dnc-loading-inline"><i class="fa fa-circle-o-notch fa-spin dnc-spin" aria-hidden="true"></i>' +
+                        (label || 'Working…') + '</span>';
+                } else {
+                    var original = button.getAttribute('data-original-html');
+                    if (original) {
+                        button.innerHTML = original;
+                        button.removeAttribute('data-original-html');
+                    }
+                    button.disabled = false;
+                }
+            }
+
+            function updateLive(status) {
+                if (!els.live) { return; }
+                var labels = {
+                    connecting: 'Connecting',
+                    live: 'Live',
+                    reconnecting: 'Reconnecting',
+                    polling: 'Polling',
+                    offline: 'Offline'
+                };
+                els.live.className = 'dhanvi-notif__live is-' + status;
+                els.live.innerHTML = '<span class="dot"></span>' + (labels[status] || 'Live');
+            }
+
+            function updateTabs() {
+                Array.prototype.forEach.call(els.tabButtons || [], function (button) {
+                    var isActive = button.getAttribute('data-status') === state.status;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+                if (els.countAll) { els.countAll.textContent = String(state.counts.all); }
+                if (els.countUnread) { els.countUnread.textContent = String(state.counts.unread); }
+                if (els.countRead) { els.countRead.textContent = String(state.counts.read); }
+                if (els.markAll) { els.markAll.disabled = state.counts.unread === 0 || !!state.error; }
+                if (els.clearAll) { els.clearAll.disabled = state.counts.all === 0 || !!state.error; }
+            }
+
+            function skeletonHtml() {
+                var html = '';
+                for (var i = 0; i < 6; i += 1) {
+                    html += '<div class="dnc-skeleton" aria-hidden="true">' +
+                        '<div class="dnc-skeleton__icon"></div>' +
+                        '<div class="dnc-skeleton__lines">' +
+                            '<div class="dnc-skeleton__line w-45"></div>' +
+                            '<div class="dnc-skeleton__line w-90"></div>' +
+                            '<div class="dnc-skeleton__line w-65"></div>' +
+                        '</div>' +
+                    '</div>';
+                }
+                return html;
+            }
+
+            function emptyHtml() {
+                var filtered = state.search || state.type || state.status !== 'all';
+                if (filtered) {
+                    return '<div class="dnc-empty">' +
+                        '<i class="fa fa-search" aria-hidden="true"></i>' +
+                        '<strong>No matching notifications</strong>' +
+                        'Try a different search, type or status filter.' +
+                        '<div><button type="button" class="dnc-btn" data-action="clear-filters">Clear filters</button></div>' +
+                    '</div>';
+                }
+                return '<div class="dnc-empty">' +
+                    '<i class="fa fa-bell-o" aria-hidden="true"></i>' +
+                    '<strong>No notifications yet</strong>' +
+                    'New leads, documents, callbacks and customer requests will appear here automatically.' +
+                '</div>';
+            }
+
+            function errorHtml() {
+                return '<div class="dnc-empty">' +
+                    '<i class="fa fa-exclamation-circle" aria-hidden="true"></i>' +
+                    '<strong>Notifications could not be loaded</strong>' +
+                    esc(state.error && state.error.message ? state.error.message : 'Please check your connection and try again.') +
+                    '<div><button type="button" class="dnc-btn" data-action="retry">Try again</button></div>' +
+                '</div>';
+            }
+
+            function itemHtml(item) {
+                var meta = typeMeta(item.type);
+                var unread = !item.is_read;
+                var reference = item.metadata
+                    ? (item.metadata.reference_no || item.metadata.ticket_no || '')
+                    : '';
+                var toggleLabel = unread ? 'Mark read' : 'Mark unread';
+                var toggleTitle = unread ? 'Mark as read' : 'Mark as unread';
+
+                return '<article class="dnc-item' + (unread ? ' is-unread' : '') + '" data-id="' + esc(item.id) + '">' +
+                    '<span class="dnc-item__icon ' + meta.className + '">' +
+                        '<i class="fa ' + meta.icon + '" aria-hidden="true"></i>' +
+                    '</span>' +
+                    '<div class="dnc-item__main" role="button" tabindex="0" data-action="open"' +
+                        ' aria-label="Open notification: ' + esc(item.title || 'Notification') + '">' +
+                        '<div class="dnc-item__top">' +
+                            '<h3 class="dnc-item__title">' + esc(item.title || 'Notification') + '</h3>' +
+                            (unread ? '<span class="dhanvi-notif__new">New</span>' : '') +
+                            '<span class="dnc-item__type">' + esc(meta.label) + '</span>' +
+                        '</div>' +
+                        (item.message
+                            ? '<p class="dnc-item__message">' + esc(item.message) + '</p>'
+                            : '') +
+                        '<div class="dnc-item__meta">' +
+                            '<time datetime="' + esc(item.created_at) + '"' +
+                                ' title="' + esc(fullTime(item.created_at)) + '"' +
+                                ' data-relative-time="' + esc(item.created_at) + '">' +
+                                esc(relativeTime(item.created_at)) +
+                            '</time>' +
+                            '<span class="sep"></span>' +
+                            '<span>' + esc(fullTime(item.created_at)) + '</span>' +
+                            (reference
+                                ? '<span class="sep"></span><span>Ref: ' + esc(reference) + '</span>'
+                                : '') +
+                            (item.read_at
+                                ? '<span class="sep"></span><span>Read ' + esc(relativeTime(item.read_at)) + '</span>'
+                                : '') +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="dnc-item__actions">' +
+                        '<button type="button" class="dnc-action primary" data-action="open">' +
+                            '<i class="fa fa-external-link" aria-hidden="true"></i> Open' +
+                        '</button>' +
+                        '<button type="button" class="dnc-action" data-action="toggle-read"' +
+                            ' title="' + toggleTitle + '" aria-label="' + toggleTitle + '">' +
+                            '<i class="fa ' + (unread ? 'fa-check-circle-o' : 'fa-circle-o') + '" aria-hidden="true"></i> ' +
+                            toggleLabel +
+                        '</button>' +
+                        '<button type="button" class="dnc-action danger" data-action="delete"' +
+                            ' title="Delete notification" aria-label="Delete notification">' +
+                            '<i class="fa fa-trash-o" aria-hidden="true"></i> Delete' +
+                        '</button>' +
+                    '</div>' +
+                '</article>';
+            }
+
+            function renderRows() {
+                if (!els.list) { return; }
+
+                if (state.loading && !state.rows.length) {
+                    els.list.innerHTML = skeletonHtml();
+                    return;
+                }
+                if (state.error && !state.rows.length) {
+                    els.list.innerHTML = errorHtml();
+                    return;
+                }
+                if (!state.rows.length) {
+                    els.list.innerHTML = emptyHtml();
+                    return;
+                }
+
+                var html = '';
+                var currentGroup = '';
+                state.rows.forEach(function (item) {
+                    var group = dayLabel(item.created_at);
+                    if (group !== currentGroup) {
+                        html += '<div class="dnc-date-label">' + esc(group) + '</div>';
+                        currentGroup = group;
+                    }
+                    html += itemHtml(item);
+                });
+                els.list.innerHTML = html;
+            }
+
+            function renderPagination() {
+                if (!els.pagination) { return; }
+
+                var hasRows = state.rows.length > 0;
+                var hasMore = state.rows.length < state.total;
+
+                els.pagination.hidden = !hasRows;
+                if (els.paginationText) {
+                    els.paginationText.textContent = hasRows
+                        ? 'Showing ' + state.rows.length + ' of ' + state.total +
+                            ' notification' + (state.total === 1 ? '' : 's')
+                        : '';
+                }
+                if (els.loadMore) {
+                    els.loadMore.hidden = !hasMore;
+                    els.loadMore.disabled = state.loadingMore;
+                    if (state.loadingMore) {
+                        els.loadMore.innerHTML = '<span class="dnc-loading-inline">' +
+                            '<i class="fa fa-circle-o-notch fa-spin dnc-spin" aria-hidden="true"></i>' +
+                            'Loading…</span>';
+                    } else {
+                        els.loadMore.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i> Load more notifications';
+                    }
+                }
+                if (els.sentinel) { els.sentinel.hidden = !hasMore; }
+            }
+
+            function render() {
+                updateTabs();
+                renderRows();
+                renderPagination();
+
+                if (els.meta) {
+                    if (state.error) {
+                        els.meta.textContent = 'Unable to load notifications';
+                    } else if (state.loading && !state.rows.length) {
+                        els.meta.textContent = 'Loading notifications…';
+                    } else if (!state.rows.length) {
+                        els.meta.textContent = 'No notifications to show';
+                    } else {
+                        els.meta.textContent = 'Showing ' + state.rows.length + ' of ' + state.total +
+                            ' notification' + (state.total === 1 ? '' : 's');
+                    }
+                }
+            }
+
+            function load(reset) {
+                if (!api) { return Promise.resolve(); }
+
+                if (state.loading) {
+                    state.pendingReset = state.pendingReset || reset;
+                    return state.loadPromise || Promise.resolve();
+                }
+
+                state.loading = true;
+                if (reset) {
+                    state.rows = [];
+                    state.total = 0;
+                    state.error = null;
+                    render();
+                } else {
+                    state.loadingMore = true;
+                    renderPagination();
+                }
+
+                var seq = state.requestSeq + 1;
+                state.requestSeq = seq;
+                var offset = reset ? 0 : state.rows.length;
+
+                var listPromise = api.list({
+                    status: state.status,
+                    search: state.search,
+                    type: state.type,
+                    sort: state.sort,
+                    limit: state.pageSize,
+                    offset: offset
+                });
+                var countsPromise = reset
+                    ? api.counts().catch(function () { return state.counts; })
+                    : Promise.resolve(state.counts);
+
+                var chain = Promise.all([listPromise, countsPromise]).then(function (results) {
+                    if (seq !== state.requestSeq) { return; }
+
+                    var result = results[0] || { rows: [], total: 0 };
+                    var countResult = results[1] || state.counts;
+
+                    if (reset) {
+                        state.rows = result.rows || [];
+                    } else {
+                        var seen = {};
+                        state.rows.forEach(function (row) { seen[row.id] = true; });
+                        (result.rows || []).forEach(function (row) {
+                            if (!seen[row.id]) {
+                                seen[row.id] = true;
+                                state.rows.push(row);
+                            }
+                        });
+                    }
+
+                    state.total = result.total || 0;
+                    state.counts = countResult;
+                    state.error = null;
+                    state.lastLoadAt = Date.now();
+                }).catch(function (err) {
+                    if (seq !== state.requestSeq) { return; }
+                    state.error = err;
+                    if (window.console) { window.console.warn('Notification center load failed:', err); }
+                }).then(function () {
+                    if (seq !== state.requestSeq) { return; }
+                    state.loading = false;
+                    state.loadingMore = false;
+                    state.loadPromise = null;
+                    render();
+
+                    if (state.pendingReset) {
+                        state.pendingReset = false;
+                        scheduleReload();
+                    }
+                });
+
+                state.loadPromise = chain;
+                return chain;
+            }
+
+            function scheduleReload() {
+                window.clearTimeout(state.reloadTimer);
+                state.reloadTimer = window.setTimeout(function () {
+                    load(true);
+                }, 350);
+            }
+
+            function openItem(id) {
+                if (!api || !id) { return; }
+                api.open(id).then(function (navigated) {
+                    if (!navigated) { scheduleReload(); }
+                }).catch(function (err) {
+                    if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
+                        window.DhanviNotify.error('Could not open notification', err.message || 'Please try again.');
+                    }
+                });
+            }
+
+            function toggleRead(id, row) {
+                if (!api || !id || !row) { return; }
+                var markAsRead = !row.is_read;
+                api.markRead(id, markAsRead).then(function () {
+                    if (window.DhanviNotify && typeof window.DhanviNotify.success === 'function') {
+                        window.DhanviNotify.success(
+                            markAsRead ? 'Marked as read' : 'Marked as unread',
+                            markAsRead
+                                ? 'The notification is now marked as read.'
+                                : 'The notification is back in your unread list.'
+                        );
+                    }
+                    scheduleReload();
+                }).catch(function (err) {
+                    if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
+                        window.DhanviNotify.error('Could not update notification', err.message || 'Please try again.');
+                    }
+                });
+            }
+
+            function deleteItem(id, button) {
+                if (!api || !id) { return; }
+                api.utils.confirm({
+                    title: 'Delete notification?',
+                    message: 'This notification will be permanently removed from your inbox.',
+                    details: 'This action cannot be undone.',
+                    confirmLabel: 'Delete notification'
+                }).then(function (confirmed) {
+                    if (!confirmed) { return; }
+                    if (button) { button.disabled = true; }
+                    api.remove(id).then(function () {
+                        if (window.DhanviNotify && typeof window.DhanviNotify.success === 'function') {
+                            window.DhanviNotify.success('Notification deleted', 'The notification has been removed.');
+                        }
+                        scheduleReload();
+                    }).catch(function (err) {
+                        if (button) { button.disabled = false; }
+                        if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
+                            window.DhanviNotify.error('Could not delete notification', err.message || 'Please try again.');
+                        }
+                    });
+                });
+            }
+
+            function markAllRead() {
+                if (!api || state.counts.unread === 0) { return; }
+                setButtonBusy(els.markAll, true, 'Marking read…');
+                api.markAllRead().then(function (affected) {
+                    setButtonBusy(els.markAll, false);
+                    if (window.DhanviNotify && typeof window.DhanviNotify.success === 'function') {
+                        window.DhanviNotify.success(
+                            'All notifications marked as read',
+                            affected
+                                ? affected + ' notification' + (affected === 1 ? '' : 's') + ' updated.'
+                                : 'Your inbox is already up to date.'
+                        );
+                    }
+                    load(true);
+                }).catch(function (err) {
+                    setButtonBusy(els.markAll, false);
+                    if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
+                        window.DhanviNotify.error('Could not mark all as read', err.message || 'Please try again.');
+                    }
+                });
+            }
+
+            function clearAll() {
+                if (!api || state.counts.all === 0) { return; }
+                api.utils.confirm({
+                    title: 'Clear all notifications?',
+                    message: 'This permanently removes every notification from your inbox.',
+                    details: 'This action cannot be undone.',
+                    confirmLabel: 'Clear all notifications'
+                }).then(function (confirmed) {
+                    if (!confirmed) { return; }
+                    setButtonBusy(els.clearAll, true, 'Clearing…');
+                    api.clearAll().then(function (affected) {
+                        setButtonBusy(els.clearAll, false);
+                        if (window.DhanviNotify && typeof window.DhanviNotify.success === 'function') {
+                            window.DhanviNotify.success(
+                                'Notifications cleared',
+                                affected
+                                    ? affected + ' notification' + (affected === 1 ? '' : 's') + ' removed.'
+                                    : 'Your inbox was already empty.'
+                            );
+                        }
+                        load(true);
+                    }).catch(function (err) {
+                        setButtonBusy(els.clearAll, false);
+                        if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
+                            window.DhanviNotify.error('Could not clear notifications', err.message || 'Please try again.');
+                        }
+                    });
+                });
+            }
+
+            function findRow(id) {
+                for (var i = 0; i < state.rows.length; i += 1) {
+                    if (state.rows[i].id === id) { return state.rows[i]; }
+                }
+                return null;
+            }
+
+            function bind() {
+                Array.prototype.forEach.call(els.tabButtons || [], function (button) {
+                    button.addEventListener('click', function () {
+                        var status = button.getAttribute('data-status') || 'all';
+                        if (status === state.status) { return; }
+                        state.status = status;
+                        load(true);
+                    });
+                });
+
+                if (els.search) {
+                    els.search.addEventListener('input', function () {
+                        state.search = els.search.value.trim();
+                        window.clearTimeout(state.searchTimer);
+                        state.searchTimer = window.setTimeout(function () {
+                            load(true);
+                        }, 300);
+                    });
+                }
+
+                if (els.type) {
+                    els.type.addEventListener('change', function () {
+                        state.type = els.type.value;
+                        load(true);
+                    });
+                }
+
+                if (els.sort) {
+                    els.sort.addEventListener('change', function () {
+                        state.sort = els.sort.value;
+                        load(true);
+                    });
+                }
+
+                if (els.refresh) {
+                    els.refresh.addEventListener('click', function () {
+                        if (!api) { return; }
+                        setButtonBusy(els.refresh, true, '');
+                        Promise.all([api.refresh(), load(true)]).then(function () {
+                            setButtonBusy(els.refresh, false);
+                        }).catch(function () {
+                            setButtonBusy(els.refresh, false);
+                        });
+                    });
+                }
+
+                if (els.markAll) {
+                    els.markAll.addEventListener('click', markAllRead);
+                }
+
+                if (els.clearAll) {
+                    els.clearAll.addEventListener('click', clearAll);
+                }
+
+                if (els.loadMore) {
+                    els.loadMore.addEventListener('click', function () {
+                        if (!state.loading) { load(false); }
+                    });
+                }
+
+                if (els.list) {
+                    els.list.addEventListener('click', function (event) {
+                        var actionElement = event.target.closest('[data-action]');
+                        var action = actionElement ? actionElement.getAttribute('data-action') : null;
+
+                        if (action === 'retry') {
+                            load(true);
+                            return;
+                        }
+                        if (action === 'clear-filters') {
+                            state.status = 'all';
+                            state.search = '';
+                            state.type = '';
+                            if (els.search) { els.search.value = ''; }
+                            if (els.type) { els.type.value = ''; }
+                            load(true);
+                            return;
+                        }
+
+                        var itemElement = event.target.closest('.dnc-item');
+                        if (!itemElement) { return; }
+                        var id = itemElement.getAttribute('data-id');
+                        var row = findRow(id);
+                        if (!row) { return; }
+
+                        if (action === 'toggle-read') {
+                            toggleRead(id, row);
+                            return;
+                        }
+                        if (action === 'delete') {
+                            deleteItem(id, actionElement);
+                            return;
+                        }
+                        if (action === 'open') {
+                            openItem(id);
+                        }
+                    });
+
+                    els.list.addEventListener('keydown', function (event) {
+                        if (event.key !== 'Enter' && event.key !== ' ') { return; }
+                        var main = event.target.closest('.dnc-item__main');
+                        if (!main) { return; }
+                        event.preventDefault();
+                        var itemElement = main.closest('.dnc-item');
+                        if (itemElement) { openItem(itemElement.getAttribute('data-id')); }
+                    });
+                }
+
+                if ('IntersectionObserver' in window && els.sentinel) {
+                    state.sentinelObserver = new window.IntersectionObserver(function (entries) {
+                        if (!entries[0] || !entries[0].isIntersecting) { return; }
+                        if (state.loading || state.rows.length >= state.total) { return; }
+                        load(false);
+                    }, { rootMargin: '180px' });
+                    state.sentinelObserver.observe(els.sentinel);
+                }
+
+                document.addEventListener('visibilitychange', function () {
+                    if (document.hidden) { return; }
+                    if (Date.now() - state.lastLoadAt > 60000) { load(true); }
+                });
+
+                window.addEventListener('online', function () { load(true); });
+
+                window.setInterval(function () {
+                    var nodes = document.querySelectorAll('[data-relative-time]');
+                    Array.prototype.forEach.call(nodes, function (node) {
+                        node.textContent = relativeTime(node.getAttribute('data-relative-time'));
+                    });
+                }, 30000);
+            }
+
+            function start() {
+                cacheEls();
+                bind();
+
+                if (!api) {
+                    if (els.list) {
+                        els.list.innerHTML = '<div class="dnc-empty">' +
+                            '<i class="fa fa-exclamation-circle"></i>' +
+                            '<strong>Notifications could not start</strong>' +
+                            'The notification module did not load. Please refresh the page.' +
+                        '</div>';
+                    }
+                    return;
+                }
+
+                api.on('change', scheduleReload);
+                api.on('connection', function (detail) {
+                    updateLive(detail && detail.status ? detail.status : 'polling');
+                });
+
+                var current = api.getState();
+                updateLive(current.connection);
+                load(true);
+            }
+
+            if (window.DhanviAdminReady && typeof window.DhanviAdminReady.then === 'function') {
+                window.DhanviAdminReady.then(function () {
+                    if (api && api.ready) { return api.ready; }
+                    return null;
+                }).then(start).catch(function (err) {
+                    if (window.console) { window.console.warn('Notification center could not start:', err); }
+                    start();
+                });
+            } else if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', start);
+            } else {
+                start();
+            }
+        })(window, document);
+    </script>
+</body>
+</html>

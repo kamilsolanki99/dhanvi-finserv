@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Calculate how much interest and tenure you save by making a part-payment or prepayment on your loan with Dhanvi Finserv's Prepayment Calculator.">
+    <title>Loan Prepayment & Part-Payment Calculator - Dhanvi Finserv</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/fontello.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700%7CMerriweather:300,300i,400,400i,700,700i" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <link href="css/modern.css" rel="stylesheet">
+    <link href="css/layout.css" rel="stylesheet">
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+    <style>
+        .calc-output-card {
+            background: #15549a;
+            color: #fff;
+            padding: 30px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .calc-output-card .savings-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #f89d13;
+            margin: 10px 0;
+        }
+        .comparison-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
+        }
+        .comp-item { flex: 1; text-align: center; }
+        .comp-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+    <!-- Page Preloader -->
+    <div id="page-loader" class="page-loader" aria-live="polite" role="status">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60" onerror="handleDhanviLogoError(this)">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box">
+                <div class="loader-spinner-ring"></div>
+            </div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},3000);</script>
+    <noscript><style>#page-loader { display: none !important; }</style></noscript>
+    <div class="top-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6 col-6 d-none d-xl-block d-lg-block">
+                    <p class="mail-text">Welcome to Dhanvi Finserv</p>
+                </div>
+                <div class="col-xl-8 col-lg-7 col-md-12 col-sm-12 col-12 text-right">
+                    <div class="top-nav"> <span class="top-text"><a href="contact-us.html">View Locations</a> </span> <span class="top-text"><a href="tel:+919925002324">+91 99250 02324</a></span> <span class="top-text"><a href="loan-calculator.html">EMI calculator</a></span> <span class="top-text"><a href="documents.html">Documents</a></span> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-6 col-6">
+                    <div class="logo">
+                        <a href="index.html"><img src="images/logo.png" alt="Dhanvi Finserv - Loan Company"></a>
+                    </div>
+                </div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-12">
+                    <div id="navigation">
+                        <!-- navigation start-->
+                        <ul>
+                            <li><a href="index.html" class="animsition-link">Home</a></li>
+                            <li><a href="services.html" class="animsition-link">Loan Services</a>
+                                <ul>
+                                    <li><a href="home-loan.html" class="animsition-link">Home Loan</a></li>
+                                    <li><a href="home-loan-top-up.html" class="animsition-link">Home Loan Top-Up</a></li>
+                                    <li><a href="home-loan-takeover.html" class="animsition-link">Home Loan Takeover</a></li>
+                                    <li><a href="loan-against-property.html" class="animsition-link">Loan Against Property (LAP)</a></li>
+                                    <li><a href="education-loan.html" class="animsition-link">Education Loan</a></li>
+                                    <li><a href="vehicle-loan.html" class="animsition-link">Vehicle Loan</a></li>
+                                    <li><a href="business-loan.html" class="animsition-link">Business Loan</a></li>
+                                    <li><a href="personal-loan.html" class="animsition-link">Personal Loan</a></li>
+                                    <li><a href="gold-loan.html" class="animsition-link">Gold Loan</a></li>
+                                    <li><a href="working-capital-loan.html" class="animsition-link">Working Capital (CC/OD)</a></li>
+                                    <li><a href="commercial-vehicle-loan.html" class="animsition-link">Commercial Vehicle &amp; Machinery</a></li>
+                                    <li><a href="professional-loan.html" class="animsition-link">Professional Loan</a></li>
+                                    <li><a href="government-loan-schemes.html" class="animsition-link">Govt Schemes (MUDRA/CGTMSE)</a></li>
+                                    <li><a href="debt-consolidation.html" class="animsition-link">Debt Consolidation</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="services.html#financial-services" class="animsition-link">Financial Services</a>
+                                <ul>
+                                    <li><a href="itr-filing.html" class="animsition-link">ITR Filing</a></li>
+                                    <li><a href="gst-filing.html" class="animsition-link">GST Registration &amp; Filing</a></li>
+                                    <li><a href="msme-udyam-registration.html" class="animsition-link">MSME / Udyam Registration</a></li>
+                                    <li><a href="loan-insurance.html" class="animsition-link">Loan Protection Insurance</a></li>
+                                    <li><a href="credit-health-cibil.html" class="animsition-link">Credit Health / CIBIL Advisory</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="loan-calculator.html" class="animsition-link">Tools</a>
+                                <ul>
+                                    <li><a href="loan-calculator.html" class="animsition-link">EMI Calculator</a></li>
+                                    <li><a href="loan-eligibility.html" class="animsition-link">Check Eligibility</a></li>
+                                    <li><a href="balance-transfer-calculator.html" class="animsition-link">Balance Transfer Calculator</a></li>
+                                    <li><a href="prepayment-calculator.html" class="animsition-link">Prepayment Calculator</a></li>
+                                    <li><a href="track-my-loan.html" class="animsition-link">Track My Loan</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="partner-program.html" class="animsition-link">Partner Program</a></li>
+                            <li><a href="about.html" class="animsition-link">About Us</a></li>
+                            <li><a href="blog-listing.html" class="animsition-link">Blog</a></li>
+                            <li><a href="faq.html" class="animsition-link">FAQ</a></li>
+                            <li><a href="contact-us.html" class="animsition-link">Contact Us</a></li>
+                            <li><a href="apply-loan.html" class="btn btn-default btn-sm animsition-link btn-nav-cta">Apply for Loan</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="loan-calculator.html">Tools</a></li>
+                            <li class="active">Prepayment Calculator</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside30">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <h1 class="page-title">Prepayment Calculator</h1>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 text-right">
+                                <a href="contact-us.html" class="btn btn-default">Speak to Loan Advisor</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-space80">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside40 outline mb30">
+                        <h2 class="mb30">Prepayment Parameters</h2>
+                        <div class="emi-field mb20">
+                            <label for="prep_principal">Current Outstanding Loan: <strong id="prep_principal_val" class="text-primary">₹25,00,000</strong></label>
+                            <input type="range" class="emi-amount" id="prep_principal" min="100000" max="20000000" step="50000" value="2500000">
+                        </div>
+                        <div class="emi-field mb20">
+                            <label for="prep_rate">Interest Rate (% p.a.): <strong id="prep_rate_val" class="text-primary">9.00%</strong></label>
+                            <input type="range" class="emi-rate" id="prep_rate" min="6.5" max="20.0" step="0.1" value="9.0">
+                        </div>
+                        <div class="emi-field mb20">
+                            <label for="prep_tenure">Remaining Tenure (Years): <strong id="prep_tenure_val" class="text-primary">15 Years</strong></label>
+                            <input type="range" class="emi-tenure" id="prep_tenure" min="1" max="30" step="1" value="15">
+                        </div>
+                        <div class="emi-field mb20">
+                            <label for="prep_lump">Lump-Sum Prepayment Amount: <strong id="prep_lump_val" class="text-primary">₹3,00,000</strong></label>
+                            <input type="range" class="emi-amount" id="prep_lump" min="25000" max="5000000" step="25000" value="300000">
+                        </div>
+                        <small class="text-muted">Assumes constant monthly EMI and recalculation of remaining loan tenure upon prepayment credit.</small>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="calc-output-card">
+                        <h3>Interest Saved via Prepayment</h3>
+                        <div class="savings-amount" id="prep_interest_saved">₹4,82,410</div>
+                        <p style="margin-bottom:0;">Total interest outgo reduced from your loan schedule</p>
+                        <div class="comparison-grid">
+                            <div class="comp-item">
+                                <small>Original Tenure</small>
+                                <h4 style="color:#fff; margin-top:5px;" id="prep_orig_tenure">180 Months</h4>
+                            </div>
+                            <div class="comp-item">
+                                <small>New Reduced Tenure</small>
+                                <h4 style="color:#f89d13; margin-top:5px;" id="prep_new_tenure">142 Months</h4>
+                            </div>
+                        </div>
+                        <div style="margin-top:15px; font-size:15px;">
+                            Time Saved on Loan: <strong id="prep_time_saved" style="color:#f89d13;">38 Months Earlier Freedom!</strong>
+                        </div>
+                    </div>
+                    <div class="bg-white pinside30 outline text-center">
+                        <h3>Plan Your Loan Foreclosure Smartly</h3>
+                        <p>Under RBI rules, floating rate home loans carry zero penalty for partial prepayments. Talk to our advisors to structure part-payments for maximum interest relief.</p>
+                        <a href="contact-us.html" class="btn btn-default btn-block">Get Advice on Prepayment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function calculatePrepayment() {
+        var P = parseFloat(document.getElementById('prep_principal').value);
+        var r = (parseFloat(document.getElementById('prep_rate').value) / 100) / 12;
+        var n = parseFloat(document.getElementById('prep_tenure').value) * 12;
+        var L = parseFloat(document.getElementById('prep_lump').value);
+
+        if (L >= P) { L = P - 10000; }
+
+        document.getElementById('prep_principal_val').innerText = '₹' + P.toLocaleString('en-IN');
+        document.getElementById('prep_rate_val').innerText = document.getElementById('prep_rate').value + '%';
+        document.getElementById('prep_tenure_val').innerText = document.getElementById('prep_tenure').value + ' Years';
+        document.getElementById('prep_lump_val').innerText = '₹' + L.toLocaleString('en-IN');
+
+        var emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        var origTotalInterest = (emi * n) - P;
+
+        var newP = P - L;
+        var newN = Math.log(emi / (emi - (newP * r))) / Math.log(1 + r);
+        newN = Math.ceil(newN);
+
+        var newTotalInterest = (emi * newN) - newP;
+        var interestSaved = Math.max(0, origTotalInterest - newTotalInterest);
+        var monthsSaved = Math.max(0, n - newN);
+
+        document.getElementById('prep_orig_tenure').innerText = n + ' Months';
+        document.getElementById('prep_new_tenure').innerText = newN + ' Months';
+        document.getElementById('prep_interest_saved').innerText = '₹' + Math.round(interestSaved).toLocaleString('en-IN');
+        document.getElementById('prep_time_saved').innerText = monthsSaved + ' Months (' + (monthsSaved / 12).toFixed(1) + ' Years) Earlier!';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        ['prep_principal', 'prep_rate', 'prep_tenure', 'prep_lump'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', calculatePrepayment);
+        });
+        calculatePrepayment();
+    });
+    </script>
+    <div class="footer section-space100">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="footer-logo">
+                        <img src="images/ft-logo.png" alt="Dhanvi Finserv - Loan Company"> </div>
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                            <h3 class="newsletter-title">Signup Our Newsletter</h3>
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+                            <div class="newsletter-form">
+                                <form action="#" method="post">
+                                    <div class="input-group">
+                                        <input type="email" class="form-control" id="newsletter" name="newsletter" placeholder="Write E-Mail Address" required>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit">Go!</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="dark-line">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="widget-text mt40">
+                        <p>Dhanvi Finserv is your trusted financial partner in Ahmedabad, helping you get Home, Business, Education, Vehicle, Personal and Property loans from leading nationalised banks, private banks &amp; NBFCs - with expert guidance and end-to-end support.</p>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="address-text"><span><i class="icon-placeholder-3 icon-1x"></i> </span>Ahmedabad, Gujarat, India </p>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="call-text"><span><i class="icon-phone-call icon-1x"></i></span>+91 99250 02324</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <ul class="listnone">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="services.html">Loan Services</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="blog-listing.html">Blog</a></li>
+                            <li><a href="faq.html">FAQ</a></li>
+                            <li><a href="contact-us.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <ul class="listnone">
+                            <li><a href="home-loan.html">Home Loan</a></li>
+                            <li><a href="home-loan-top-up.html">Home Loan Top-Up</a></li>
+                            <li><a href="home-loan-takeover.html">Home Loan Takeover</a></li>
+                            <li><a href="loan-against-property.html">Loan Against Property</a></li>
+                            <li><a href="business-loan.html">Business Loan</a></li>
+                            <li><a href="personal-loan.html">Personal Loan</a></li>
+                            <li><a href="working-capital-loan.html">Working Capital (CC/OD)</a></li>
+                            <li><a href="gold-loan.html">Gold Loan</a></li>
+                            <li><a href="commercial-vehicle-loan.html">Commercial Vehicle &amp; Machinery</a></li>
+                            <li><a href="itr-filing.html">ITR &amp; GST Filing</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-social mt40">
+                        <ul class="listnone">
+                            <li><a href="#"><i class="fa fa-facebook"></i>Facebook</a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i>Instagram</a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i>Twitter</a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i>Linked In</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tiny-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                    <p>&copy; Dhanvi Finserv. All rights reserved. <span class="legal-links"><a href="documents.html">Documents</a> &middot; <a href="post-disbursal.html">Post-Disbursal</a> &middot; <a href="partner-program.html">Partner Program</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="disclaimer.html">Disclaimer</a> &middot; <a href="grievance.html">Grievance</a></span></p>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 text-right">
+                    <p>Grow your dreams with the right financial support.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#0" class="cd-top" title="Go to top">Top</a>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/menumaker.js"></script>
+    <script type="text/javascript" src="js/jquery.sticky.js"></script>
+    <script type="text/javascript" src="js/sticky-header.js"></script>
+    <script src="js/back-to-top.js" type="text/javascript"></script>
+    <script src="js/wa-forms.js"></script>
+    <script src="js/modern.js"></script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

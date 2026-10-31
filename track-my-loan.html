@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Track your Dhanvi Finserv loan application status online. Check real-time progress from document verification to sanction and disbursal.">
+    <title>Track My Loan Application Status - Dhanvi Finserv</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/fontello.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700%7CMerriweather:300,300i,400,400i,700,700i" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <link href="css/modern.css" rel="stylesheet">
+    <link href="css/layout.css" rel="stylesheet">
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+    <link href="css/customer-portal.css" rel="stylesheet">
+    <style>
+        .tracker-stage-box {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 40px 0 20px;
+        }
+        .tracker-stage-box::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #e1e8f1;
+            z-index: 1;
+        }
+        .stage-item {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+        .stage-dot {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid #e1e8f1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #5d6b80;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        .stage-item.completed .stage-dot {
+            background: #15549a;
+            border-color: #15549a;
+            color: #fff;
+        }
+        .stage-item.active .stage-dot {
+            background: #f89d13;
+            border-color: #f89d13;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(248,157,19,0.2);
+        }
+        .stage-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #34415c;
+            display: block;
+        }
+        .stage-sub {
+            font-size: 12px;
+            color: #7b889b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Preloader -->
+    <div id="page-loader" class="page-loader" aria-live="polite" role="status">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60" onerror="handleDhanviLogoError(this)">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box">
+                <div class="loader-spinner-ring"></div>
+            </div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},3000);</script>
+    <noscript><style>#page-loader { display: none !important; }</style></noscript>
+    <div class="top-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6 col-6 d-none d-xl-block d-lg-block">
+                    <p class="mail-text">Welcome to Dhanvi Finserv</p>
+                </div>
+                <div class="col-xl-8 col-lg-7 col-md-12 col-sm-12 col-12 text-right">
+                    <div class="top-nav"> <span class="top-text"><a href="contact-us.html">View Locations</a> </span> <span class="top-text"><a href="tel:+919925002324">+91 99250 02324</a></span> <span class="top-text"><a href="loan-calculator.html">EMI calculator</a></span> <span class="top-text"><a href="documents.html">Documents</a></span> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-6 col-6">
+                    <div class="logo">
+                        <a href="index.html"><img src="images/logo.png" alt="Dhanvi Finserv - Loan Company"></a>
+                    </div>
+                </div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-12">
+                    <div id="navigation">
+                        <!-- navigation start-->
+                        <ul>
+                            <li><a href="index.html" class="animsition-link">Home</a></li>
+                            <li><a href="services.html" class="animsition-link">Loan Services</a>
+                                <ul>
+                                    <li><a href="home-loan.html" class="animsition-link">Home Loan</a></li>
+                                    <li><a href="home-loan-top-up.html" class="animsition-link">Home Loan Top-Up</a></li>
+                                    <li><a href="home-loan-takeover.html" class="animsition-link">Home Loan Takeover</a></li>
+                                    <li><a href="loan-against-property.html" class="animsition-link">Loan Against Property (LAP)</a></li>
+                                    <li><a href="education-loan.html" class="animsition-link">Education Loan</a></li>
+                                    <li><a href="vehicle-loan.html" class="animsition-link">Vehicle Loan</a></li>
+                                    <li><a href="business-loan.html" class="animsition-link">Business Loan</a></li>
+                                    <li><a href="personal-loan.html" class="animsition-link">Personal Loan</a></li>
+                                    <li><a href="gold-loan.html" class="animsition-link">Gold Loan</a></li>
+                                    <li><a href="working-capital-loan.html" class="animsition-link">Working Capital (CC/OD)</a></li>
+                                    <li><a href="commercial-vehicle-loan.html" class="animsition-link">Commercial Vehicle &amp; Machinery</a></li>
+                                    <li><a href="professional-loan.html" class="animsition-link">Professional Loan</a></li>
+                                    <li><a href="government-loan-schemes.html" class="animsition-link">Govt Schemes (MUDRA/CGTMSE)</a></li>
+                                    <li><a href="debt-consolidation.html" class="animsition-link">Debt Consolidation</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="services.html#financial-services" class="animsition-link">Financial Services</a>
+                                <ul>
+                                    <li><a href="itr-filing.html" class="animsition-link">ITR Filing</a></li>
+                                    <li><a href="gst-filing.html" class="animsition-link">GST Registration &amp; Filing</a></li>
+                                    <li><a href="msme-udyam-registration.html" class="animsition-link">MSME / Udyam Registration</a></li>
+                                    <li><a href="loan-insurance.html" class="animsition-link">Loan Protection Insurance</a></li>
+                                    <li><a href="credit-health-cibil.html" class="animsition-link">Credit Health / CIBIL Advisory</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="loan-calculator.html" class="animsition-link">Tools</a>
+                                <ul>
+                                    <li><a href="loan-calculator.html" class="animsition-link">EMI Calculator</a></li>
+                                    <li><a href="loan-eligibility.html" class="animsition-link">Check Eligibility</a></li>
+                                    <li><a href="balance-transfer-calculator.html" class="animsition-link">Balance Transfer Calculator</a></li>
+                                    <li><a href="prepayment-calculator.html" class="animsition-link">Prepayment Calculator</a></li>
+                                    <li><a href="track-my-loan.html" class="animsition-link">Track My Loan</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="partner-program.html" class="animsition-link">Partner Program</a></li>
+                            <li><a href="about.html" class="animsition-link">About Us</a></li>
+                            <li><a href="blog-listing.html" class="animsition-link">Blog</a></li>
+                            <li><a href="faq.html" class="animsition-link">FAQ</a></li>
+                            <li><a href="contact-us.html" class="animsition-link">Contact Us</a></li>
+                            <li><a href="apply-loan.html" class="btn btn-default btn-sm animsition-link btn-nav-cta">Apply for Loan</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="loan-calculator.html">Tools</a></li>
+                            <li class="active">Track Application</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside30">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <h1 class="page-title">Track Loan Application</h1>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 text-right">
+                                <a href="apply-loan.html" class="btn btn-default">Apply for New Loan</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-space80">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside40 outline mb30">
+                        <div class="section-title mb30">
+                            <h2>Check Your Application Status</h2>
+                            <p>Enter your 10-digit mobile number or Application Reference (e.g., DF-2026-XXXX) to view current progress.</p>
+                        </div>
+                        <form id="trackForm" onsubmit="event.preventDefault(); simulateTracking();">
+                            <div class="row">
+                                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 form-group">
+                                    <label class="control-label" for="trackInput">Application Reference / Mobile Number</label>
+                                    <input type="text" id="trackInput" class="form-control" placeholder="e.g. 9925002324 or DF-2026-00123" required>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 form-group" style="margin-top:28px;">
+                                    <button type="submit" class="btn btn-primary btn-block">Track Status</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="trackResult" style="display:none; margin-top:30px; padding:20px; background:#f4f7fb; border-radius:6px; border:1px solid #dce4ed;">
+                            <div class="d-flex justify-content-between align-items-center mb20">
+                                <div>
+                                    <h3 style="margin-bottom:4px;" id="resLoanType">Home Loan Application</h3>
+                                    <p style="margin-bottom:0; color:#5d6b80;">Reference: <strong id="resRefNumber">DF-2026-8812</strong> | Submitted on: <strong id="resDate">Today</strong></p>
+                                </div>
+                                <span class="badge badge-warning" id="resStatusBadge" style="font-size:14px; padding:8px 14px; background:#f89d13; color:#fff;">Document Verification In Progress</span>
+                            </div>
+                            <div class="tracker-stage-box">
+                                <div class="stage-item completed">
+                                    <div class="stage-dot"><i class="fa fa-check"></i></div>
+                                    <span class="stage-title">Received</span>
+                                    <span class="stage-sub">Application logged</span>
+                                </div>
+                                <div class="stage-item completed">
+                                    <div class="stage-dot"><i class="fa fa-check"></i></div>
+                                    <span class="stage-title">Under Review</span>
+                                    <span class="stage-sub">Advisor assigned</span>
+                                </div>
+                                <div class="stage-item active">
+                                    <div class="stage-dot">3</div>
+                                    <span class="stage-title">Bank Processing</span>
+                                    <span class="stage-sub">Verification stage</span>
+                                </div>
+                                <div class="stage-item">
+                                    <div class="stage-dot">4</div>
+                                    <span class="stage-title">Sanction</span>
+                                    <span class="stage-sub">Letter issuance</span>
+                                </div>
+                                <div class="stage-item">
+                                    <div class="stage-dot">5</div>
+                                    <span class="stage-title">Disbursal</span>
+                                    <span class="stage-sub">Account credited</span>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt20" style="background:#e8f1fa; border-color:#bcd6f3; color:#15549a;">
+                                <i class="fa fa-info-circle"></i> <strong>Next Step:</strong> Our representative is coordinating the bank valuation and KYC inspection. For priority status, call your advisor directly at <a href="tel:+919925002324"><strong>+91 99250 02324</strong></a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <div class="bg-white pinside30 outline mb30">
+                        <h3>Need Immediate Help?</h3>
+                        <p>Speak to our central loan operations desk in Ahmedabad for real-time file updates.</p>
+                        <div class="contact-box mb20">
+                            <p class="mb-1"><i class="fa fa-phone"></i> <strong>Direct Helpline:</strong></p>
+                            <h4 class="text-primary">+91 99250 02324</h4>
+                        </div>
+                        <div class="contact-box mb20">
+                            <p class="mb-1"><i class="fa fa-whatsapp"></i> <strong>WhatsApp Support:</strong></p>
+                            <a href="https://wa.me/919925002324?text=Hi%2C%20I%20want%20to%20check%20my%20loan%20application%20status." target="_blank" class="btn btn-default btn-sm"><i class="fa fa-whatsapp"></i> Chat with Support</a>
+                        </div>
+                        <hr>
+                        <h4>Stages Explained</h4>
+                        <ul class="listnone" style="font-size:13px; color:#5d6b80; padding-left:0;">
+                            <li class="mb10"><strong>1. Received:</strong> We have logged your application and profile details.</li>
+                            <li class="mb10"><strong>2. Review:</strong> Documents and banking eligibility are audited.</li>
+                            <li class="mb10"><strong>3. Bank Processing:</strong> Field inspection, legal, and valuation in progress.</li>
+                            <li class="mb10"><strong>4. Sanction:</strong> Lender has issued the formal sanction letter.</li>
+                            <li><strong>5. Disbursal:</strong> Loan agreement signed and funds released.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function simulateTracking() {
+        var input = document.getElementById('trackInput').value.trim();
+        if(!input) return;
+        var res = document.getElementById('trackResult');
+        document.getElementById('resRefNumber').innerText = input.length === 10 ? 'DF-2026-' + input.substr(6) : input.toUpperCase();
+        document.getElementById('resDate').innerText = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        res.style.display = 'block';
+        res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    </script>
+    <div class="footer section-space100">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="footer-logo">
+                        <img src="images/ft-logo.png" alt="Dhanvi Finserv - Loan Company"> </div>
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                            <h3 class="newsletter-title">Signup Our Newsletter</h3>
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+                            <div class="newsletter-form">
+                                <form action="#" method="post">
+                                    <div class="input-group">
+                                        <input type="email" class="form-control" id="newsletter" name="newsletter" placeholder="Write E-Mail Address" required>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit">Go!</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="dark-line">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="widget-text mt40">
+                        <p>Dhanvi Finserv is your trusted financial partner in Ahmedabad, helping you get Home, Business, Education, Vehicle, Personal and Property loans from leading nationalised banks, private banks &amp; NBFCs - with expert guidance and end-to-end support.</p>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="address-text"><span><i class="icon-placeholder-3 icon-1x"></i> </span>Ahmedabad, Gujarat, India </p>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                <p class="call-text"><span><i class="icon-phone-call icon-1x"></i></span>+91 99250 02324</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <ul class="listnone">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="services.html">Loan Services</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="blog-listing.html">Blog</a></li>
+                            <li><a href="faq.html">FAQ</a></li>
+                            <li><a href="contact-us.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-footer mt40">
+                        <ul class="listnone">
+                            <li><a href="home-loan.html">Home Loan</a></li>
+                            <li><a href="home-loan-top-up.html">Home Loan Top-Up</a></li>
+                            <li><a href="home-loan-takeover.html">Home Loan Takeover</a></li>
+                            <li><a href="loan-against-property.html">Loan Against Property</a></li>
+                            <li><a href="business-loan.html">Business Loan</a></li>
+                            <li><a href="personal-loan.html">Personal Loan</a></li>
+                            <li><a href="working-capital-loan.html">Working Capital (CC/OD)</a></li>
+                            <li><a href="gold-loan.html">Gold Loan</a></li>
+                            <li><a href="commercial-vehicle-loan.html">Commercial Vehicle &amp; Machinery</a></li>
+                            <li><a href="itr-filing.html">ITR &amp; GST Filing</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-6">
+                    <div class="widget-social mt40">
+                        <ul class="listnone">
+                            <li><a href="#"><i class="fa fa-facebook"></i>Facebook</a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i>Instagram</a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i>Twitter</a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i>Linked In</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tiny-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                    <p>&copy; Dhanvi Finserv. All rights reserved. <span class="legal-links"><a href="documents.html">Documents</a> &middot; <a href="post-disbursal.html">Post-Disbursal</a> &middot; <a href="partner-program.html">Partner Program</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="disclaimer.html">Disclaimer</a> &middot; <a href="grievance.html">Grievance</a></span></p>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 text-right">
+                    <p>Grow your dreams with the right financial support.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#0" class="cd-top" title="Go to top">Top</a>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/menumaker.js"></script>
+    <script type="text/javascript" src="js/jquery.sticky.js"></script>
+    <script type="text/javascript" src="js/sticky-header.js"></script>
+    <script src="js/back-to-top.js" type="text/javascript"></script>
+    <script src="js/wa-forms.js"></script>
+    <script src="js/modern.js"></script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

@@ -5,11 +5,12 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 9 business tables
+--   * all 10 business tables (including admin_notifications)
 --   * every column in those tables
---   * all 9 callable API functions plus the 2 helpers
---   * all 6 updated_at triggers
---   * all named indexes
+--   * all 9 callable API functions plus the 4 helpers
+--   * all 6 updated_at triggers, the 7 notification triggers and the
+--     notification read-state trigger
+--   * all named indexes (including the notification indexes)
 --   * the private loan-documents bucket and its settings
 --   * the custom admin auth role
 --   * the reference sequence
@@ -20,6 +21,7 @@
 WITH expected_tables(name) AS (
     VALUES
         ('admin_profiles'),
+        ('admin_notifications'),
         ('api_result'),
         ('callback_bookings'),
         ('complaints'),
@@ -41,7 +43,9 @@ expected_functions(name, signature) AS (
         ('lookup_application', 'public.lookup_application(text,text,text)'),
         ('get_application_by_token', 'public.get_application_by_token(uuid,uuid)'),
         ('register_document', 'public.register_document(uuid,uuid,text,uuid)'),
-        ('get_application_documents', 'public.get_application_documents(uuid,uuid)')
+        ('get_application_documents', 'public.get_application_documents(uuid,uuid)'),
+        ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
+        ('notify_admin_event', 'public.notify_admin_event()')
 ),
 expected_triggers(trigger_name, table_name) AS (
     VALUES
@@ -50,7 +54,15 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_loan_documents_modtime', 'loan_documents'),
         ('update_callback_bookings_modtime', 'callback_bookings'),
         ('update_post_disbursal_requests_modtime', 'post_disbursal_requests'),
-        ('update_complaints_modtime', 'complaints')
+        ('update_complaints_modtime', 'complaints'),
+        ('notify_admin_new_lead', 'loan_leads'),
+        ('notify_admin_new_callback', 'callback_bookings'),
+        ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
+        ('notify_admin_new_complaint', 'complaints'),
+        ('notify_admin_new_document', 'loan_documents'),
+        ('notify_admin_document_status', 'loan_documents'),
+        ('notify_admin_new_followup', 'loan_followups'),
+        ('set_admin_notification_read_state', 'admin_notifications')
 ),
 expected_indexes(name) AS (
     VALUES
@@ -69,7 +81,11 @@ expected_indexes(name) AS (
         ('complaints_status_idx'),
         ('loan_documents_lead_idx'),
         ('loan_documents_status_idx'),
-        ('loan_followups_scheduled_idx')
+        ('loan_followups_scheduled_idx'),
+        ('admin_notifications_created_at_idx'),
+        ('admin_notifications_unread_idx'),
+        ('admin_notifications_recipient_idx'),
+        ('admin_notifications_dedupe_key')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (

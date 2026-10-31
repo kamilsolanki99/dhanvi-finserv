@@ -11,6 +11,7 @@
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
     <link href="css/admin-delete.css" rel="stylesheet">
+    <link href="css/admin-notifications.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
     <style>
         /* ===== Reset & Base ===== */
@@ -138,30 +139,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-        }
-        .topbar-notification {
-            position: relative;
-            color: #5d6b80;
-            font-size: 20px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .topbar-notification:hover { color: #15549a; }
-        .topbar-notification .notif-badge {
-            position: absolute;
-            top: -6px;
-            right: -8px;
-            background: #e14b4b;
-            color: #fff;
-            font-size: 10px;
-            font-weight: 600;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
         }
         .topbar-profile {
             display: flex;
@@ -815,6 +792,9 @@
         <a href="admin-dashboard.html" class="active">
             <i class="fa fa-tachometer"></i> Dashboard
         </a>
+        <a href="admin-notifications.html">
+            <i class="fa fa-bell-o"></i> Notifications
+        </a>
         <a href="admin-applications.html">
             <i class="fa fa-file-text"></i> Loan Applications
         </a>
@@ -862,10 +842,6 @@
             <h4>Dashboard</h4>
         </div>
         <div class="topbar-right">
-            <div class="topbar-notification">
-                <i class="fa fa-bell-o"></i>
-                <span class="notif-badge">3</span>
-            </div>
             <div class="topbar-profile">
                 <div class="topbar-avatar">KS</div>
                 <span class="topbar-profile-name">Kamil Solanki</span>
@@ -1191,6 +1167,7 @@
     <script src="js/nhost-client.js?v=2"></script>
     <script src="js/admin-layout.js"></script>
     <script src="js/admin-delete.js?v=2"></script>
+    <script src="js/admin-notifications.js?v=1"></script>
     <script>
         // ===== Nhost / Hasura admin dashboard =====
         let applicants = [];

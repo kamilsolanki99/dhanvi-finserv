@@ -46,6 +46,12 @@ It lets `register_document` accept uploads when Nhost leaves the deprecated
 `storage.files.uploaded_by_user_id` column empty, while still enforcing the
 ownership check whenever the column is populated.
 
+Then run
+[`migrations/003_admin_notifications.sql`](migrations/003_admin_notifications.sql).
+It creates the admin notification inbox, its indexes, the read-state trigger and
+the real business-event triggers. The script is idempotent and safe to run
+again.
+
 Do **not** enable Postgres RLS on these tables. Access is enforced by Hasura
 permissions, which is how Nhost is designed to work.
 
@@ -60,6 +66,7 @@ Open **GraphQL → Hasura Console → Data**.
 Under `public`:
 
 - `admin_profiles`
+- `admin_notifications`
 - `loan_leads`
 - `loan_applicants`
 - `callback_bookings`
@@ -140,6 +147,7 @@ Grant only what the admin panel uses:
 | Table | select | insert | update | delete |
 | --- | --- | --- | --- | --- |
 | `admin_profiles` | yes | no | yes | no |
+| `admin_notifications` | yes | no | yes | yes |
 | `loan_leads` | yes | no | yes | yes |
 | `loan_applicants` | yes | no | no | no |
 | `loan_documents` | yes | no | yes | yes |
@@ -172,7 +180,43 @@ admin panel:
 
 Do not add `public` or `anonymous` permissions on any business table.
 
-### 4.4 Column presets / insert permissions
+### 4.4 `admin_notifications` permissions
+
+The notification inbox is written only by the `SECURITY DEFINER` triggers in
+migration `003`. The browser must never be able to insert a notification.
+
+For the `admin` role:
+
+| Permission | Configuration |
+| --- | --- |
+| `select` | All columns. Row filter: `_or: [{recipient_user_id: {_is_null: true}}, {recipient_user_id: {_eq: "X-Hasura-User-Id"}}]`. Enable **Allow aggregations**. |
+| `update` | Columns: **`is_read` only**. Same row filter as `select`. |
+| `delete` | Same row filter as `select`. |
+| `insert` | **No permission.** |
+
+**Allow aggregations** is required: the bell badge, dropdown summary and
+Notification Center totals use `admin_notifications_aggregate`. Without it,
+Hasura returns a permission error for the aggregate fields and the inbox shows
+as unavailable.
+
+The row filter is the authorization boundary: an administrator can only see,
+update or delete notifications addressed to their own `auth.users.id`, plus
+shared notifications with `recipient_user_id = NULL`.
+
+Do **not** grant `read_at` or `read_by` as update columns. The
+`set_admin_notification_read_state` trigger writes them from the verified
+Hasura session and preserves them when `is_read` does not change.
+
+Hasura real-time subscriptions use the same `select` permission. Once the table
+is tracked and the permission is saved, no extra real-time configuration is
+needed. The admin panel subscribes over the Nhost GraphQL WebSocket endpoint and
+falls back to polling if the socket cannot connect.
+
+The trigger creates one private notification per row in `admin_profiles`, so
+mark-read and delete actions are isolated per administrator. If no admin profile
+exists yet, it writes one shared row so the event is not lost.
+
+### 4.5 Column presets / insert permissions
 
 No column presets are needed on the business tables because the public site
 never inserts into them directly. All public writes go through the
@@ -296,7 +340,8 @@ The admin pages send `x-hasura-role: admin` explicitly. The JWT must contain
 First run [`verify_setup.sql`](verify_setup.sql) in **Database → SQL Editor**.
 It is read-only and returns a single JSON report confirming the tables, columns,
 functions, triggers, indexes, private bucket, `admin` role, sequence and
-`api_result` grant. Every expected object should show `OK`.
+`api_result` grant. Every expected object should show `OK`. The report includes
+`admin_notifications`, the notification triggers and their indexes.
 
 Then test the full flow:
 
@@ -311,6 +356,16 @@ Then test the full flow:
    each public form.
 6. Try to sign in with a non-admin account. The guard must sign it out and
    return it to the login page.
+7. Open the admin panel in two tabs. Submit a new public form (or upload a
+   document). The bell and unread badge must update in both tabs without a
+   refresh.
+8. Open the bell, then mark one notification read/unread, mark all read, delete
+   one and clear all. Confirm that the badge and the Notification Center counts
+   stay correct.
+9. Open `admin-notifications.html` and test All/Unread/Read, search, type
+   filter, newest/oldest sort and **Load more**.
+10. Refresh the page and sign out/in. The unread count must still match the
+    database.
 
 ---
 
@@ -329,6 +384,12 @@ Then test the full flow:
 | Admin page redirects to login immediately | The JWT does not contain the `admin` role, or `admin_profiles` has no row. Re-run section 7 and sign in again. |
 | `The administrator profile could not be verified` | The `admin_profiles` row is missing or the Hasura role header is not accepted. Check section 7. |
 | Public forms fail while signed in | A normal Nhost `user` account intentionally has no execute permissions. Sign out (or use a private window); customers normally use the site without an account. |
+| `field 'admin_notifications' not found` | Migration `003` has not been run, or the table is not tracked in Hasura. Run the migration and track the table under Data. |
+| `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
+| The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
+| New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |
+| Real-time updates do not arrive instantly | The WebSocket may be blocked by a proxy or firewall. The panel automatically falls back to polling every 30 seconds. Allow `wss://*.nhost.run` and check the browser console. |
+| Notifications disappear for another admin | Each admin receives a private row, so delete/clear is isolated. Shared `recipient_user_id = NULL` rows are intentionally visible to all admins. |
 
 ---
 
@@ -353,6 +414,10 @@ Never upload `nhost/` to a public web root. Only the site files (`*.html`,
 - [ ] `public` and `anonymous` have no business-table permissions.
 - [ ] `register_document` is not executable by `public`.
 - [ ] `user` role has no business-table permissions.
+- [ ] `admin_notifications` has no insert permission for any browser role.
+- [ ] Admin notification select/update/delete use the recipient row filter.
+- [ ] The notification select permission has **Allow aggregations** enabled.
+- [ ] The notification update permission is limited to `is_read`.
 - [ ] Admin role is granted only through `auth.user_roles` + `admin_profiles`.
 - [ ] Presigned document links expire quickly and are never stored in the page.
 - [ ] RLS is not enabled; Hasura permissions are the access-control layer.
