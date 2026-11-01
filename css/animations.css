@@ -61,6 +61,12 @@ body {
         display: block;
     }
 
+    /* Third-level Loan Services submenus open beside the parent dropdown,
+       so the parent must not clip them. */
+    #navigation > ul > li > ul {
+        overflow: visible;
+    }
+
     #navigation li:hover > ul {
         opacity: 1;
         visibility: visible;

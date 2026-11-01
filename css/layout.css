@@ -99,6 +99,16 @@ button:focus-visible,
     color: var(--blue);
     background: #f2f7fd;
 }
+/* Keep the first and last links inside the rounded dropdown now that the
+   parent no longer clips its children for the nested Loan Services menus. */
+#navigation > ul > li > ul > li:first-child > a {
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+}
+#navigation > ul > li > ul > li:last-child > a {
+    border-bottom-left-radius: 9px;
+    border-bottom-right-radius: 9px;
+}
 
 /* Navbar Call-to-Action Button */
 #navigation > ul > li > a.btn-nav-cta,
