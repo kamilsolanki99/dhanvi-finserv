@@ -174,6 +174,7 @@
                 loading: false,
                 loadingMore: false,
                 loadPromise: null,
+                pendingLoad: null,
                 error: null,
                 requestSeq: 0,
                 reloadTimer: null,
@@ -466,18 +467,22 @@
                 }
             }
 
-            function load(reset) {
+            function load(reset, preserve) {
                 if (!api) { return Promise.resolve(); }
 
                 if (state.loading) {
-                    state.pendingReset = state.pendingReset || reset;
+                    state.pendingLoad = { reset: !!reset, preserve: !!preserve };
                     return state.loadPromise || Promise.resolve();
                 }
 
                 state.loading = true;
                 if (reset) {
-                    state.rows = [];
-                    state.total = 0;
+                    // Background refreshes keep the current rows visible; a
+                    // filter change clears them and shows the skeleton.
+                    if (!preserve) {
+                        state.rows = [];
+                        state.total = 0;
+                    }
                     state.error = null;
                     render();
                 } else {
@@ -535,9 +540,10 @@
                     state.loadPromise = null;
                     render();
 
-                    if (state.pendingReset) {
-                        state.pendingReset = false;
-                        scheduleReload();
+                    if (state.pendingLoad) {
+                        var pending = state.pendingLoad;
+                        state.pendingLoad = null;
+                        scheduleReload(pending.reset, pending.preserve);
                     }
                 });
 
@@ -545,10 +551,11 @@
                 return chain;
             }
 
-            function scheduleReload() {
+            function scheduleReload(reset, preserve) {
                 window.clearTimeout(state.reloadTimer);
                 state.reloadTimer = window.setTimeout(function () {
-                    load(true);
+                    load(reset === undefined ? true : reset,
+                        preserve === undefined ? true : preserve);
                 }, 350);
             }
 
@@ -620,7 +627,7 @@
                                 : 'Your inbox is already up to date.'
                         );
                     }
-                    load(true);
+                    load(true, true);
                 }).catch(function (err) {
                     setButtonBusy(els.markAll, false);
                     if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
@@ -649,7 +656,7 @@
                                     : 'Your inbox was already empty.'
                             );
                         }
-                        load(true);
+                        load(true, true);
                     }).catch(function (err) {
                         setButtonBusy(els.clearAll, false);
                         if (window.DhanviNotify && typeof window.DhanviNotify.error === 'function') {
@@ -704,7 +711,7 @@
                     els.refresh.addEventListener('click', function () {
                         if (!api) { return; }
                         setButtonBusy(els.refresh, true, '');
-                        Promise.all([api.refresh(), load(true)]).then(function () {
+                        Promise.all([api.refresh(), load(true, true)]).then(function () {
                             setButtonBusy(els.refresh, false);
                         }).catch(function () {
                             setButtonBusy(els.refresh, false);
@@ -785,10 +792,10 @@
 
                 document.addEventListener('visibilitychange', function () {
                     if (document.hidden) { return; }
-                    if (Date.now() - state.lastLoadAt > 60000) { load(true); }
+                    if (Date.now() - state.lastLoadAt > 60000) { load(true, true); }
                 });
 
-                window.addEventListener('online', function () { load(true); });
+                window.addEventListener('online', function () { load(true, true); });
 
                 window.setInterval(function () {
                     var nodes = document.querySelectorAll('[data-relative-time]');
@@ -813,10 +820,16 @@
                     return;
                 }
 
-                api.on('change', scheduleReload);
+                api.on('change', function () { scheduleReload(true, true); });
                 api.on('connection', function (detail) {
                     updateLive(detail && detail.status ? detail.status : 'polling');
                 });
+
+                // Browsers can restore form values on reload. Keep the state
+                // in sync with what the controls actually show.
+                if (els.search) { state.search = els.search.value.trim(); }
+                if (els.type) { state.type = els.type.value; }
+                if (els.sort) { state.sort = els.sort.value; }
 
                 var current = api.getState();
                 updateLive(current.connection);
