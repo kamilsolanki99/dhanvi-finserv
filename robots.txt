@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /_backup_before_rebuild/
-Disallow: /_demo_backup/
 Disallow: /admin-
 Disallow: /upload-documents.html
 

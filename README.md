@@ -151,9 +151,6 @@ Browser
 │   ├── migrations/002_register_document_null_uploader.sql
 │   ├── verify_setup.sql         # read-only setup verification report
 │   └── README.md                # complete backend setup guide
-├── _backup_before_rebuild/      # historical templates — not deployed
-├── _demo_backup/                # historical templates — not deployed
-└── knowledge-base/              # internal reference notes — not deployed
 ```
 
 `nhost/` contains database migrations and documentation. It is **not** part of
@@ -232,9 +229,6 @@ sitemap.xml
 
 ```text
 nhost/
-_backup_before_rebuild/
-_demo_backup/
-knowledge-base/
 .git/
 ```
 
