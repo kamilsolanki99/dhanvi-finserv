@@ -507,6 +507,51 @@
                         <div class="detail-row"><span class="detail-label">Requirements</span><span class="detail-value" id="modalPurpose">—</span></div>
                         <div class="detail-row"><span class="detail-label">Applied on</span><span class="detail-value" id="modalDate">—</span></div>
                     </div>
+                    <div class="detail-group" id="modalHomeLoanGroup" style="display:none;">
+                        <h6><i class="fa fa-home" style="margin-right:6px;"></i>Home Loan — Applicant, Income &amp; Property</h6>
+                        <div id="modalHomeLoan"></div>
+                    </div>
+                    <div class="detail-group" id="modalTopupGroup" style="display:none;">
+                        <h6><i class="fa fa-plus-circle" style="margin-right:6px;"></i>Home Loan Top-Up — Existing Loan &amp; Top-Up Need</h6>
+                        <div id="modalTopup"></div>
+                    </div>
+                    <div class="detail-group" id="modalTakeoverGroup" style="display:none;">
+                        <h6><i class="fa fa-exchange" style="margin-right:6px;"></i>Home Loan Takeover — Old Bank, Transfer &amp; Savings</h6>
+                        <div id="modalTakeover"></div>
+                    </div>
+                    <div class="detail-group" id="modalLapGroup" style="display:none;">
+                        <h6><i class="fa fa-building-o" style="margin-right:6px;"></i>Loan Against Property — Collateral, Ownership &amp; Requirement</h6>
+                        <div id="modalLap"></div>
+                    </div>
+                    <div class="detail-group" id="modalBusinessLoanGroup" style="display:none;">
+                        <h6><i class="fa fa-briefcase" style="margin-right:6px;"></i>Business Loan — Business, Finance &amp; Banking</h6>
+                        <div id="modalBusinessLoan"></div>
+                    </div>
+                    <div class="detail-group" id="modalEmiGroup" style="display:none;">
+                        <h6>Existing EMIs</h6>
+                        <div id="modalEmis"></div>
+                    </div>
+                    <div class="detail-group" id="modalIdentityGroup" style="display:none;">
+                        <h6>Identity Verification</h6>
+                        <div class="detail-row"><span class="detail-label">Current status</span><span class="detail-value" id="modalIdentityBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Verification status</label>
+                                    <select class="form-control" id="modalIdentityStatus">
+                                        <option value="Pending">Pending</option>
+                                        <option value="Verified">Verified</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Verification notes</label>
+                            <textarea class="form-control" id="modalIdentityNotes" rows="2" placeholder="PAN / Aadhaar mismatch, document observation, etc."></textarea>
+                        </div>
+                        <button type="button" class="btn-save" id="saveIdentityBtn">Update verification</button>
+                    </div>
                     <div class="detail-group">
                         <h6>Co-applicants &amp; Guarantors</h6>
                         <div id="modalApplicants"><p class="admin-note" style="margin:0;">None added.</p></div>
@@ -514,6 +559,10 @@
                     <div class="detail-group">
                         <h6>Documents</h6>
                         <div id="modalDocs"><p class="admin-note" style="margin:0;">No documents uploaded yet.</p></div>
+                    </div>
+                    <div class="detail-group" id="modalFollowupGroup" style="display:none;">
+                        <h6>Follow-ups</h6>
+                        <div id="modalFollowups"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -570,12 +619,111 @@
             '  loan_documents {' +
             '    id loan_lead_id document_type status file_name created_at' +
             '  }' +
+            '  home_loan_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked pan_verified' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    employment_type employer_name business_name designation' +
+            '    monthly_income annual_income work_experience_years business_vintage_years' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    property_purpose property_address property_city property_state property_pincode' +
+            '    property_type builder_seller_name property_value agreement_value ownership_type' +
+            '    required_loan_amount down_payment tenure_months preferred_emi' +
+            '  }' +
+            '  home_loan_emis {' +
+            '    id loan_lead_id bank_name loan_type outstanding_amount monthly_emi' +
+            '  }' +
+            '  home_loan_topup_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    employment_type employer_name business_name designation' +
+            '    monthly_income annual_income work_experience_years business_vintage_years' +
+            '    existing_lender_name existing_lender_type loan_account_number original_sanctioned_amount' +
+            '    current_outstanding original_tenure_months remaining_tenure_months current_interest_rate' +
+            '    interest_type current_emi topup_amount topup_purpose' +
+            '    property_address property_city property_state property_pincode property_type property_market_value ownership_type' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    estimated_combined_emi estimated_ltv' +
+            '  }' +
+            '  home_loan_takeover_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    employment_type employer_name business_name designation' +
+            '    monthly_income annual_income work_experience_years business_vintage_years' +
+            '    existing_lender_name existing_lender_type loan_account_number original_sanctioned_amount' +
+            '    current_outstanding_principal current_interest_rate interest_type current_emi' +
+            '    original_tenure_months remaining_tenure_months loan_start_date repayment_history overdue_status' +
+            '    expected_new_loan_amount desired_interest_rate desired_tenure_months' +
+            '    additional_topup_required additional_topup_amount additional_topup_purpose' +
+            '    property_address property_city property_state property_pincode property_type property_market_value ownership_type' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    estimated_savings estimated_emi_difference estimated_new_emi' +
+            '  }' +
+            '  lap_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    employment_type employer_name business_name designation' +
+            '    monthly_income annual_income work_experience_years business_vintage_years' +
+            '    business_constitution business_turnover business_net_profit itr_filed' +
+            '    property_category property_type property_address property_city property_state property_pincode' +
+            '    property_ownership_type property_co_owners property_usage' +
+            '    property_market_value property_purchase_value property_area_sqft property_age_years' +
+            '    required_amount lap_purpose preferred_tenure_months preferred_emi' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    estimated_emi estimated_ltv' +
+            '  }' +
+            '  business_loan_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked applicant_role' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    business_name business_constitution industry nature_of_business establishment_date' +
+            '    partner_director_count business_ownership gstin business_pan udyam_number' +
+            '    registered_address_line registered_address_city registered_address_state registered_address_pincode' +
+            '    operating_same_as_registered' +
+            '    operating_address_line operating_address_city operating_address_state operating_address_pincode' +
+            '    annual_turnover monthly_sales net_profit existing_liabilities' +
+            '    primary_bank_name banking_years avg_monthly_bank_balance' +
+            '    required_amount loan_purpose preferred_tenure_months preferred_emi' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    estimated_emi' +
+            '  }' +
+            '  loan_followups {' +
+            '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
+            '  }' +
             '}';
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
             '  update_loan_leads_by_pk(pk_columns: {id: $id}, _set: {status: $status, admin_notes: $notes}) { id }' +
             '}';
+
+        // Identity verification is stored on the structured detail row of the loan
+        // type, so each detail table needs its own Hasura update mutation.
+        function identityMutation(table) {
+            return 'mutation UpdateIdentity($id: uuid!, $status: String!, $notes: String, $by: uuid, $at: timestamptz) {' +
+                '  update_' + table + '_by_pk(pk_columns: {id: $id}, _set: {' +
+                '    identity_verification_status: $status, identity_notes: $notes,' +
+                '    identity_verified_by: $by, identity_verified_at: $at' +
+                '  }) { id }' +
+                '}';
+        }
+
+        function identityDetailOf(app) {
+            if (app.home_loan_details) { return { table: 'home_loan_details', data: app.home_loan_details }; }
+            if (app.home_loan_topup_details) { return { table: 'home_loan_topup_details', data: app.home_loan_topup_details }; }
+            if (app.home_loan_takeover_details) { return { table: 'home_loan_takeover_details', data: app.home_loan_takeover_details }; }
+            if (app.lap_details) { return { table: 'lap_details', data: app.lap_details }; }
+            if (app.business_loan_details) { return { table: 'business_loan_details', data: app.business_loan_details }; }
+            return null;
+        }
 
         function backend() {
             return window.DhanviBackend;
@@ -655,10 +803,24 @@
                 const leads = (data && data.loan_leads) || [];
                 const applicantsByLead = groupByLead(data && data.loan_applicants);
                 const documentsByLead = groupByLead(data && data.loan_documents);
+                const detailsByLead = groupByLead(data && data.home_loan_details);
+                const topupByLead = groupByLead(data && data.home_loan_topup_details);
+                const takeoverByLead = groupByLead(data && data.home_loan_takeover_details);
+                const lapByLead = groupByLead(data && data.lap_details);
+                const businessLoanByLead = groupByLead(data && data.business_loan_details);
+                const emisByLead = groupByLead(data && data.home_loan_emis);
+                const followupsByLead = groupByLead(data && data.loan_followups);
 
                 applications = leads.map(function (lead) {
                     lead.loan_applicants = applicantsByLead[lead.id] || [];
                     lead.loan_documents = documentsByLead[lead.id] || [];
+                    lead.home_loan_details = (detailsByLead[lead.id] || [])[0] || null;
+                    lead.home_loan_topup_details = (topupByLead[lead.id] || [])[0] || null;
+                    lead.home_loan_takeover_details = (takeoverByLead[lead.id] || [])[0] || null;
+                    lead.lap_details = (lapByLead[lead.id] || [])[0] || null;
+                    lead.business_loan_details = (businessLoanByLead[lead.id] || [])[0] || null;
+                    lead.home_loan_emis = emisByLead[lead.id] || [];
+                    lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
                 });
                 renderTable();
@@ -787,6 +949,457 @@
             $('#modalDocs').html(rows.join('') + '<p class="admin-note" style="margin:10px 0 0;"><a href="admin-documents.html">Open the Documents module</a> to review files securely.</p>');
         }
 
+        function detailRow(label, value) {
+            const shown = (value === null || value === undefined || value === '') ? '—' : value;
+            return '<div class="detail-row"><span class="detail-label">' + esc(label) +
+                '</span><span class="detail-value">' + esc(shown) + '</span></div>';
+        }
+
+        function subHeading(text) {
+            return '<div class="admin-note" style="margin:14px 0 6px;font-weight:600;color:#34415c;">' + esc(text) + '</div>';
+        }
+
+        function fullAddress(line, city, state, pincode) {
+            const parts = [line, city, state, pincode].filter(function (part) {
+                return part !== null && part !== undefined && String(part).trim() !== '';
+            });
+            return parts.length ? parts.join(', ') : null;
+        }
+
+        // Structured Home Loan data is only rendered for Home Loan applications.
+        // Non-Home-Loan leads have no home_loan_details row, so the extra
+        // sections stay hidden and the modal looks exactly as before.
+        function renderHomeLoanDetails(app) {
+            const d = app.home_loan_details;
+            const group = $('#modalHomeLoanGroup');
+            if (!d) {
+                group.hide();
+                $('#modalHomeLoan').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number + (d.pan_verified ? ' (verified)' : '')); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+
+            const experience = d.employment_type === 'Self-employed'
+                ? d.business_vintage_years
+                : d.work_experience_years;
+            const experienceText = (experience === null || experience === undefined) ? null : experience + ' years';
+
+            let html = '';
+            html += subHeading('Personal details');
+            html += detailRow('Full name', name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+
+            html += subHeading('Employment & income');
+            html += detailRow('Employment type', d.employment_type);
+            html += detailRow('Employer', d.employer_name);
+            html += detailRow('Business', d.business_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Work experience', experienceText);
+            html += detailRow('Monthly income', d.monthly_income ? money(d.monthly_income) : null);
+            html += detailRow('Annual income', d.annual_income ? money(d.annual_income) : null);
+
+            html += subHeading('Addresses');
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            html += subHeading('Property details');
+            html += detailRow('Purpose', d.property_purpose);
+            html += detailRow('Property address', fullAddress(d.property_address, d.property_city, d.property_state, d.property_pincode));
+            html += detailRow('Property type', d.property_type);
+            html += detailRow('Builder / Seller', d.builder_seller_name);
+            html += detailRow('Property value', d.property_value ? money(d.property_value) : null);
+            html += detailRow('Agreement value', d.agreement_value ? money(d.agreement_value) : null);
+            html += detailRow('Ownership', d.ownership_type);
+
+            html += subHeading('Loan requirement');
+            html += detailRow('Required amount', d.required_loan_amount ? money(d.required_loan_amount) : null);
+            html += detailRow('Down payment', (d.down_payment === null || d.down_payment === undefined) ? null : money(d.down_payment));
+            html += detailRow('Tenure', d.tenure_months ? d.tenure_months + ' months' : null);
+            html += detailRow('Preferred EMI', d.preferred_emi ? money(d.preferred_emi) : null);
+
+            $('#modalHomeLoan').html(html);
+            return d;
+        }
+
+        // Structured Top-Up data is only rendered for Home Loan Top-Up applications.
+        // The existing home loan is shown as its own block, clearly separated from
+        // the new top-up requirement.
+        function renderTopupDetails(app) {
+            const d = app.home_loan_topup_details;
+            const group = $('#modalTopupGroup');
+            if (!d) {
+                group.hide();
+                $('#modalTopup').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+            const experience = d.employment_type === 'Self-employed' ? d.business_vintage_years : d.work_experience_years;
+
+            let html = '';
+            html += subHeading('Applicant & income');
+            html += detailRow('Full name', name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+            html += detailRow('Employment type', d.employment_type);
+            html += detailRow('Employer', d.employer_name);
+            html += detailRow('Business', d.business_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Work experience', (experience === null || experience === undefined) ? null : experience + ' years');
+            html += detailRow('Monthly income', d.monthly_income ? money(d.monthly_income) : null);
+            html += detailRow('Annual income', d.annual_income ? money(d.annual_income) : null);
+
+            html += subHeading('Existing home loan (old lender)');
+            html += detailRow('Bank / NBFC', d.existing_lender_name);
+            html += detailRow('Lender type', d.existing_lender_type);
+            html += detailRow('Loan account number', d.loan_account_number);
+            html += detailRow('Original sanctioned amount', d.original_sanctioned_amount ? money(d.original_sanctioned_amount) : null);
+            html += detailRow('Current outstanding', d.current_outstanding ? money(d.current_outstanding) : null);
+            html += detailRow('Original tenure', d.original_tenure_months ? d.original_tenure_months + ' months' : null);
+            html += detailRow('Remaining tenure', d.remaining_tenure_months ? d.remaining_tenure_months + ' months' : null);
+            html += detailRow('Current interest rate', d.current_interest_rate ? d.current_interest_rate + '%' : null);
+            html += detailRow('Interest type', d.interest_type);
+            html += detailRow('Current EMI', d.current_emi ? money(d.current_emi) : null);
+
+            html += subHeading('New top-up requirement');
+            html += detailRow('Top-up amount', d.topup_amount ? money(d.topup_amount) : null);
+            html += detailRow('Purpose', d.topup_purpose);
+            html += detailRow('Estimated combined EMI', d.estimated_combined_emi ? money(d.estimated_combined_emi) : null);
+            html += detailRow('Estimated LTV', (d.estimated_ltv === null || d.estimated_ltv === undefined) ? null : d.estimated_ltv + '%');
+
+            html += subHeading('Property & addresses');
+            html += detailRow('Property address', fullAddress(d.property_address, d.property_city, d.property_state, d.property_pincode));
+            html += detailRow('Property type', d.property_type);
+            html += detailRow('Current market value', d.property_market_value ? money(d.property_market_value) : null);
+            html += detailRow('Ownership', d.ownership_type);
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            $('#modalTopup').html(html);
+            return d;
+        }
+
+        // Structured Takeover data is only rendered for Home Loan Takeover
+        // applications: old-bank details, the proposed transfer and the savings.
+        function renderTakeoverDetails(app) {
+            const d = app.home_loan_takeover_details;
+            const group = $('#modalTakeoverGroup');
+            if (!d) {
+                group.hide();
+                $('#modalTakeover').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+            const experience = d.employment_type === 'Self-employed' ? d.business_vintage_years : d.work_experience_years;
+
+            let html = '';
+            html += subHeading('Applicant & income');
+            html += detailRow('Full name', name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+            html += detailRow('Employment type', d.employment_type);
+            html += detailRow('Employer', d.employer_name);
+            html += detailRow('Business', d.business_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Work experience', (experience === null || experience === undefined) ? null : experience + ' years');
+            html += detailRow('Monthly income', d.monthly_income ? money(d.monthly_income) : null);
+            html += detailRow('Annual income', d.annual_income ? money(d.annual_income) : null);
+
+            html += subHeading('Existing loan (old bank)');
+            html += detailRow('Bank / NBFC', d.existing_lender_name);
+            html += detailRow('Lender type', d.existing_lender_type);
+            html += detailRow('Loan account number', d.loan_account_number);
+            html += detailRow('Original sanctioned amount', d.original_sanctioned_amount ? money(d.original_sanctioned_amount) : null);
+            html += detailRow('Current outstanding principal', d.current_outstanding_principal ? money(d.current_outstanding_principal) : null);
+            html += detailRow('Current interest rate', d.current_interest_rate ? d.current_interest_rate + '%' : null);
+            html += detailRow('Interest type', d.interest_type);
+            html += detailRow('Existing EMI', d.current_emi ? money(d.current_emi) : null);
+            html += detailRow('Original tenure', d.original_tenure_months ? d.original_tenure_months + ' months' : null);
+            html += detailRow('Remaining tenure', d.remaining_tenure_months ? d.remaining_tenure_months + ' months' : null);
+            html += detailRow('Loan start date', prettyDate(d.loan_start_date));
+            html += detailRow('Repayment history', d.repayment_history);
+            html += detailRow('Overdue status', d.overdue_status);
+
+            html += subHeading('Proposed transfer');
+            html += detailRow('Expected new loan amount', d.expected_new_loan_amount ? money(d.expected_new_loan_amount) : null);
+            html += detailRow('Desired interest rate', d.desired_interest_rate ? d.desired_interest_rate + '%' : 'Best available rate');
+            html += detailRow('Desired tenure', d.desired_tenure_months ? d.desired_tenure_months + ' months' : null);
+            html += detailRow('Additional top-up required', d.additional_topup_required ? 'Yes' : 'No');
+            if (d.additional_topup_required) {
+                html += detailRow('Additional top-up amount', d.additional_topup_amount ? money(d.additional_topup_amount) : null);
+                html += detailRow('Additional top-up purpose', d.additional_topup_purpose);
+            }
+
+            html += subHeading('Estimated savings');
+            html += detailRow('Estimated new EMI', d.estimated_new_emi ? money(d.estimated_new_emi) : null);
+            html += detailRow('EMI difference', (d.estimated_emi_difference === null || d.estimated_emi_difference === undefined) ? null : money(d.estimated_emi_difference));
+            html += detailRow('Estimated savings', (d.estimated_savings === null || d.estimated_savings === undefined) ? null : money(d.estimated_savings));
+
+            html += subHeading('Property & addresses');
+            html += detailRow('Property address', fullAddress(d.property_address, d.property_city, d.property_state, d.property_pincode));
+            html += detailRow('Property type', d.property_type);
+            html += detailRow('Current market value', d.property_market_value ? money(d.property_market_value) : null);
+            html += detailRow('Ownership', d.ownership_type);
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            $('#modalTakeover').html(html);
+            return d;
+        }
+
+        // Structured Loan Against Property data: collateral valuation, ownership,
+        // the loan requirement, and the self-employed business financials.
+        function renderLapDetails(app) {
+            const d = app.lap_details;
+            const group = $('#modalLapGroup');
+            if (!d) {
+                group.hide();
+                $('#modalLap').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+            const experience = d.employment_type === 'Self-employed' ? d.business_vintage_years : d.work_experience_years;
+
+            let html = '';
+            html += subHeading('Applicant & income');
+            html += detailRow('Full name', name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+            html += detailRow('Employment type', d.employment_type);
+            html += detailRow('Employer', d.employer_name);
+            html += detailRow('Business', d.business_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Experience', (experience === null || experience === undefined) ? null : experience + ' years');
+            html += detailRow('Monthly income', d.monthly_income ? money(d.monthly_income) : null);
+            html += detailRow('Annual income', d.annual_income ? money(d.annual_income) : null);
+
+            if (d.employment_type === 'Self-employed') {
+                html += subHeading('Business financials');
+                html += detailRow('Constitution', d.business_constitution);
+                html += detailRow('Annual turnover', d.business_turnover ? money(d.business_turnover) : null);
+                html += detailRow('Net profit', d.business_net_profit ? money(d.business_net_profit) : null);
+                html += detailRow('ITR filed', d.itr_filed ? 'Yes' : 'No');
+            }
+
+            html += subHeading('Collateral valuation & ownership');
+            html += detailRow('Property category', d.property_category);
+            html += detailRow('Property type', d.property_type);
+            html += detailRow('Property address', fullAddress(d.property_address, d.property_city, d.property_state, d.property_pincode));
+            html += detailRow('Ownership type', d.property_ownership_type);
+            html += detailRow('Co-owners', d.property_co_owners);
+            html += detailRow('Usage', d.property_usage);
+            html += detailRow('Market value', d.property_market_value ? money(d.property_market_value) : null);
+            html += detailRow('Purchase value', d.property_purchase_value ? money(d.property_purchase_value) : null);
+            html += detailRow('Area', (d.property_area_sqft === null || d.property_area_sqft === undefined) ? null : d.property_area_sqft + ' sq ft');
+            html += detailRow('Property age', (d.property_age_years === null || d.property_age_years === undefined) ? null : d.property_age_years + ' years');
+
+            html += subHeading('Loan requirement');
+            html += detailRow('Required LAP amount', d.required_amount ? money(d.required_amount) : null);
+            html += detailRow('Purpose', d.lap_purpose);
+            html += detailRow('Preferred tenure', d.preferred_tenure_months ? d.preferred_tenure_months + ' months' : null);
+            html += detailRow('Preferred EMI', d.preferred_emi ? money(d.preferred_emi) : null);
+            html += detailRow('Estimated EMI', d.estimated_emi ? money(d.estimated_emi) : null);
+            html += detailRow('Estimated LTV', (d.estimated_ltv === null || d.estimated_ltv === undefined) ? null : d.estimated_ltv + '%');
+
+            html += subHeading('Addresses');
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            $('#modalLap').html(html);
+            return d;
+        }
+
+        // Structured Business Loan data: the business entity, registrations,
+        // registered / operating addresses, business finance and banking.
+        function renderBusinessLoanDetails(app) {
+            const d = app.business_loan_details;
+            const group = $('#modalBusinessLoanGroup');
+            if (!d) {
+                group.hide();
+                $('#modalBusinessLoan').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+
+            let html = '';
+            html += subHeading('Applicant');
+            html += detailRow('Full name', name);
+            html += detailRow('Role', d.applicant_role);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+
+            html += subHeading('Business entity');
+            html += detailRow('Business name', d.business_name);
+            html += detailRow('Constitution', d.business_constitution);
+            html += detailRow('Industry', d.industry);
+            html += detailRow('Nature of business', d.nature_of_business);
+            html += detailRow('Established on', prettyDate(d.establishment_date));
+            html += detailRow('Partners / directors', d.partner_director_count);
+            html += detailRow('Business ownership', d.business_ownership);
+
+            html += subHeading('Registrations');
+            html += detailRow('GSTIN', d.gstin);
+            html += detailRow('Business PAN', d.business_pan);
+            html += detailRow('Udyam number', d.udyam_number);
+
+            html += subHeading('Registered & operating address');
+            html += detailRow('Registered address', fullAddress(d.registered_address_line, d.registered_address_city, d.registered_address_state, d.registered_address_pincode));
+            html += detailRow('Operating address', d.operating_same_as_registered
+                ? 'Same as registered address'
+                : fullAddress(d.operating_address_line, d.operating_address_city, d.operating_address_state, d.operating_address_pincode));
+
+            html += subHeading('Business finance & banking');
+            html += detailRow('Annual turnover', d.annual_turnover ? money(d.annual_turnover) : null);
+            html += detailRow('Monthly sales', d.monthly_sales ? money(d.monthly_sales) : null);
+            html += detailRow('Net profit', d.net_profit ? money(d.net_profit) : null);
+            html += detailRow('Existing liabilities', d.existing_liabilities ? money(d.existing_liabilities) : null);
+            html += detailRow('Primary bank', d.primary_bank_name);
+            html += detailRow('Banking relationship', (d.banking_years === null || d.banking_years === undefined) ? null : d.banking_years + ' years');
+            html += detailRow('Average bank balance', d.avg_monthly_bank_balance ? money(d.avg_monthly_bank_balance) : null);
+
+            html += subHeading('Loan requirement');
+            html += detailRow('Required amount', d.required_amount ? money(d.required_amount) : null);
+            html += detailRow('Purpose', d.loan_purpose);
+            html += detailRow('Repayment tenure', d.preferred_tenure_months ? d.preferred_tenure_months + ' months' : null);
+            html += detailRow('Preferred EMI', d.preferred_emi ? money(d.preferred_emi) : null);
+            html += detailRow('Estimated EMI', d.estimated_emi ? money(d.estimated_emi) : null);
+
+            html += subHeading('Personal addresses');
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            $('#modalBusinessLoan').html(html);
+            return d;
+        }
+
+        function renderEmis(app) {
+            const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
+            const group = $('#modalEmiGroup');
+            if (!list.length) {
+                group.hide();
+                $('#modalEmis').empty();
+                return;
+            }
+            group.show();
+
+            const rows = list.map(function (emi) {
+                const details = [
+                    emi.loan_type ? 'Type: ' + emi.loan_type : '',
+                    (emi.outstanding_amount === null || emi.outstanding_amount === undefined) ? '' : 'Outstanding: ' + money(emi.outstanding_amount),
+                    (emi.monthly_emi === null || emi.monthly_emi === undefined) ? '' : 'Monthly EMI: ' + money(emi.monthly_emi)
+                ].filter(Boolean).join(' · ');
+
+                return '<div class="detail-row" style="align-items:flex-start;">' +
+                    '<span class="detail-label">Bank</span>' +
+                    '<span class="detail-value">' + esc(emi.bank_name) +
+                    (details ? '<div class="admin-note" style="margin:2px 0 0;">' + esc(details) + '</div>' : '') +
+                    '</span></div>';
+            });
+
+            $('#modalEmis').html(rows.join(''));
+        }
+
+        function renderFollowups(app) {
+            const list = Array.isArray(app.loan_followups) ? app.loan_followups : [];
+            const group = $('#modalFollowupGroup');
+            if (!list.length) {
+                group.hide();
+                $('#modalFollowups').empty();
+                return;
+            }
+            group.show();
+
+            const sorted = list.slice().sort(function (a, b) {
+                return String(a.scheduled_at || '').localeCompare(String(b.scheduled_at || ''));
+            });
+
+            const rows = sorted.map(function (item) {
+                const statusClass = item.status === 'Completed' ? 'badge-verified' : (item.status === 'Cancelled' ? 'badge-rejected' : 'badge-pending');
+                const meta = [
+                    item.interaction_type || 'Follow-up',
+                    item.scheduled_at ? 'Scheduled ' + prettyDate(item.scheduled_at) : ''
+                ].filter(Boolean).join(' · ');
+
+                return '<div class="detail-row" style="align-items:flex-start;">' +
+                    '<span class="detail-label">' + esc(prettyDate(item.scheduled_at)) + '</span>' +
+                    '<span class="detail-value">' + esc(meta) +
+                    ' <span class="badge-status ' + statusClass + '">' + esc(item.status) + '</span>' +
+                    (item.notes ? '<div class="admin-note" style="margin:2px 0 0;">' + esc(item.notes) + '</div>' : '') +
+                    '</span></div>';
+            });
+
+            $('#modalFollowups').html(rows.join('') +
+                '<p class="admin-note" style="margin:10px 0 0;"><a href="admin-followups.html">Open the Follow-ups module</a> to schedule or update follow-ups.</p>');
+        }
+
+        function renderIdentity(app) {
+            const src = identityDetailOf(app);
+            const group = $('#modalIdentityGroup');
+            if (!src) {
+                group.hide();
+                $('#modalIdentityBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const d = src.data;
+            const status = d.identity_verification_status || 'Pending';
+            const statusClass = status === 'Verified' ? 'badge-verified' : (status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+            let badge = '<span class="badge-status ' + statusClass + '">' + esc(status) + '</span>';
+            if (d.identity_verified_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">on ' + esc(prettyDate(d.identity_verified_at)) + '</span>';
+            }
+            $('#modalIdentityBadge').html(badge);
+            $('#modalIdentityStatus').val(status);
+            $('#modalIdentityNotes').val(d.identity_notes || '');
+            return src;
+        }
+
         function openModal(idx) {
             const app = applications[idx];
             if (!app) { return; }
@@ -812,8 +1425,59 @@
             $('#modalNotes').val(app.admin_notes || '');
             renderApplicants(app);
             renderDocuments(app);
+            renderHomeLoanDetails(app);
+            renderTopupDetails(app);
+            renderTakeoverDetails(app);
+            renderLapDetails(app);
+            renderBusinessLoanDetails(app);
+            renderEmis(app);
+            renderFollowups(app);
+            const identitySrc = renderIdentity(app);
             $('#viewModal').data('app-id', app.id);
+            $('#viewModal').data('identity-table', identitySrc ? identitySrc.table : null);
+            $('#viewModal').data('identity-detail-id', identitySrc ? identitySrc.data.id : null);
             $('#viewModal').modal('show');
+        }
+
+        async function saveIdentity() {
+            const table = $('#viewModal').data('identity-table');
+            const id = $('#viewModal').data('identity-detail-id');
+            if (!table || !id) { return; }
+
+            const status = $('#modalIdentityStatus').val();
+            const notes = $('#modalIdentityNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+            const verified = status !== 'Pending';
+            const at = verified ? new Date().toISOString() : null;
+            const btn = $('#saveIdentityBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(identityMutation(table), {
+                    id: id,
+                    status: status,
+                    notes: notes || null,
+                    by: (verified && admin) ? admin.id : null,
+                    at: at
+                });
+
+                const app = applications.filter(function (item) {
+                    return item[table] && item[table].id === id;
+                })[0];
+                if (app) {
+                    app[table].identity_verification_status = status;
+                    app[table].identity_notes = notes || null;
+                    app[table].identity_verified_by = (verified && admin) ? admin.id : null;
+                    app[table].identity_verified_at = at;
+                    renderIdentity(app);
+                }
+                showModalAlert('success', 'Identity verification updated.');
+            } catch (err) {
+                console.error('Identity verification update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the identity verification.');
+            } finally {
+                btn.prop('disabled', false).text('Update verification');
+            }
         }
 
         async function saveModal() {
@@ -846,6 +1510,7 @@
             $('#searchInput').on('keyup', filterTable);
             $('#statusFilter').on('change', filterTable);
             $('#saveApplicationBtn').on('click', saveModal);
+            $('#saveIdentityBtn').on('click', saveIdentity);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

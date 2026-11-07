@@ -52,6 +52,69 @@ It creates the admin notification inbox, its indexes, the read-state trigger and
 the real business-event triggers. The script is idempotent and safe to run
 again.
 
+Finally run
+[`migrations/004_home_loan_application.sql`](migrations/004_home_loan_application.sql).
+It adds the structured Home Loan system behind `home-loan-apply.html`:
+
+- `home_loan_details` — one structured row per Home Loan lead (personal,
+  employment, address, property and loan-requirement data plus the
+  administrator-driven identity verification fields).
+- `home_loan_emis` — the applicant's declared existing EMI obligations.
+- `home_loan_drafts` — server-side save/resume drafts (never exposed to the
+  browser).
+- `save_home_loan_draft`, `get_home_loan_draft` and
+  `submit_home_loan_application` — the secure functions the wizard calls.
+
+Then run
+[`migrations/005_home_loan_topup_takeover.sql`](migrations/005_home_loan_topup_takeover.sql).
+It adds the structured Home Loan **Top-Up** and **Takeover (balance transfer)**
+systems behind `home-loan-topup-apply.html` and `home-loan-takeover-apply.html`:
+
+- `home_loan_topup_details` — one structured row per Top-Up lead: applicant,
+  employment and income, the existing home loan being topped up, the requested
+  top-up amount and purpose, property, addresses and the indicative
+  combined-EMI / LTV figures.
+- `home_loan_takeover_details` — one structured row per Takeover lead: applicant,
+  employment and income, the existing loan at the old bank, the proposed
+  transfer (new amount, desired rate and tenure, optional additional top-up),
+  property, addresses and the indicative new-EMI / savings figures.
+- `submit_home_loan_topup_application` and
+  `submit_home_loan_takeover_application` — the secure functions the two
+  wizards call.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so the extra Top-Up / Takeover documents (sanction
+  letter, loan statement, outstanding certificate, repayment history) can be
+  stored.
+
+Then run
+[`migrations/006_lap_business_loan_application.sql`](migrations/006_lap_business_loan_application.sql).
+It adds the structured **Loan Against Property (LAP)** and **Business Loan**
+systems behind `loan-against-property-apply.html` and `business-loan-apply.html`:
+
+- `lap_details` — one structured row per LAP lead: applicant identity,
+  employment and income, business financials (self-employed only), the mortgaged
+  property (category, address, ownership, co-owners, usage, market value,
+  purchase value, area and age), the required amount, purpose and tenure, both
+  addresses and the indicative EMI / LTV figures.
+- `business_loan_details` — one structured row per Business Loan lead: applicant
+  and role, the business entity and constitution, registrations (GSTIN, PAN,
+  Udyam), registered and operating addresses, financials and banking history,
+  the required amount, purpose and tenure, and addresses.
+- `submit_lap_application` and `submit_business_loan_application` — the secure
+  functions the two wizards call.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so the extra LAP / Business Loan documents (title
+  chain, property tax receipt, approved plans, GST returns, financial
+  statements, Udyam certificate) can be stored.
+
+All four wizards reuse the existing `home_loan_drafts` table and the
+`save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
+shared `home_loan_emis` and `loan_applicants` tables for other running loans and
+co-applicants / guarantors.
+
+The other loan types are untouched: they keep using
+`submit_loan_application_v2` through `apply-loan.html`.
+
 Do **not** enable Postgres RLS on these tables. Access is enforced by Hasura
 permissions, which is how Nhost is designed to work.
 
@@ -74,10 +137,19 @@ Under `public`:
 - `complaints`
 - `loan_documents`
 - `loan_followups`
+- `home_loan_details`
+- `home_loan_emis`
+- `home_loan_drafts`
+- `home_loan_topup_details`
+- `home_loan_takeover_details`
+- `lap_details`
+- `business_loan_details`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
-written by the application.
+written by the application. `home_loan_drafts` is created, updated and read
+only by the `SECURITY DEFINER` functions; tracking it is enough — no browser
+role may be granted any permission on it.
 
 ### 3.2 Track these functions
 
@@ -92,6 +164,13 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `get_application_by_token`
 - `register_document`
 - `get_application_documents`
+- `save_home_loan_draft`
+- `get_home_loan_draft`
+- `submit_home_loan_application`
+- `submit_home_loan_topup_application`
+- `submit_home_loan_takeover_application`
+- `submit_lap_application`
+- `submit_business_loan_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -130,6 +209,13 @@ Open **Data → [function] → Permissions**.
 | `lookup_application` | execute | execute | execute |
 | `get_application_by_token` | execute | execute | execute |
 | `get_application_documents` | execute | execute | execute |
+| `save_home_loan_draft` | execute | execute | execute |
+| `get_home_loan_draft` | execute | execute | execute |
+| `submit_home_loan_application` | execute | execute | execute |
+| `submit_home_loan_topup_application` | execute | execute | execute |
+| `submit_home_loan_takeover_application` | execute | execute | execute |
+| `submit_lap_application` | execute | execute | execute |
+| `submit_business_loan_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -155,14 +241,22 @@ Grant only what the admin panel uses:
 | `callback_bookings` | yes | no | yes | yes |
 | `post_disbursal_requests` | yes | no | yes | yes |
 | `complaints` | yes | no | yes | yes |
+| `home_loan_details` | yes | no | yes | no |
+| `home_loan_emis` | yes | no | no | no |
+| `home_loan_topup_details` | yes | no | yes | no |
+| `home_loan_takeover_details` | yes | no | yes | no |
+| `lap_details` | yes | no | yes | no |
+| `business_loan_details` | yes | no | yes | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
 `delete` only on those tables. Deleting a `loan_leads` row cascades to
-`loan_applicants`, `loan_documents` and `loan_followups`; linked callbacks,
-complaints and support requests are kept with `loan_lead_id` set to `NULL`
-(`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants` must not be
-deletable from the admin UI.
+`loan_applicants`, `loan_documents`, `loan_followups`, `home_loan_details`,
+`home_loan_topup_details`, `home_loan_takeover_details`, `lap_details`,
+`business_loan_details` and `home_loan_emis`;
+linked callbacks, complaints and support requests are kept with `loan_lead_id`
+set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
+must not be deletable from the admin UI.
 
 For `admin_profiles` update, allow only `full_name` (and `updated_at` is
 maintained by the trigger). Restrict the update columns per table to match the
@@ -177,8 +271,23 @@ admin panel:
 | `callback_bookings` | `status`, `admin_notes`, `preferred_date`, `preferred_slot`, `rescheduled_to_date`, `rescheduled_to_slot` |
 | `post_disbursal_requests` | `status`, `admin_notes`, `resolved_at` |
 | `complaints` | `status`, `resolution_details`, `resolved_at` |
+| `home_loan_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `home_loan_topup_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `home_loan_takeover_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `lap_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `business_loan_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 
-Do not add `public` or `anonymous` permissions on any business table.
+`home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
+`lap_details`, `business_loan_details` and `home_loan_emis` are read-only for the
+admin panel except for the identity-verification fields above, which the
+**Applications** detail modal writes. The rest of the structured loan data is
+created by `submit_home_loan_application`, `submit_home_loan_topup_application`,
+`submit_home_loan_takeover_application`, `submit_lap_application` and
+`submit_business_loan_application` and must not be editable from the
+browser. `home_loan_emis` has `select` only.
+
+Do not add `public` or `anonymous` permissions on any business table. Do not
+grant _any_ role a permission on `home_loan_drafts`.
 
 ### 4.4 `admin_notifications` permissions
 
@@ -341,9 +450,72 @@ First run [`verify_setup.sql`](verify_setup.sql) in **Database → SQL Editor**.
 It is read-only and returns a single JSON report confirming the tables, columns,
 functions, triggers, indexes, private bucket, `admin` role, sequence and
 `api_result` grant. Every expected object should show `OK`. The report includes
-`admin_notifications`, the notification triggers and their indexes.
+`admin_notifications`, the notification triggers and their indexes, and the
+Home Loan tables, functions, triggers and indexes added by migration `004`,
+plus the Top-Up / Takeover tables and functions added by migration `005`, and
+the LAP / Business Loan tables and functions added by migration `006`.
 
-Then test the full flow:
+Test the Home Loan wizard (`home-loan-apply.html`) separately:
+
+1. Complete a step and use **Save & continue later**. The draft bar should show
+   a resume link and the row should appear in `home_loan_drafts` with
+   `status = 'draft'`.
+2. Open the resume link in a new private window. The saved answers must load.
+3. Complete all 8 steps and submit. You should get a `DF-2026-xxxxx` reference,
+   the draft row must become `status = 'submitted'`, and rows must appear in
+   `home_loan_details`, `home_loan_emis` (when EMIs were entered) and
+   `loan_applicants` (co-applicants / guarantors).
+4. Open **Applications** in the admin panel. The Home Loan sections
+   (applicant, income, property, loan requirement, existing EMIs, follow-ups)
+   must appear, and **Update verification** must set the identity status.
+
+Then test the Top-Up wizard (`home-loan-topup-apply.html`):
+
+1. Complete the 8 steps. The **Top-Up Need** step must show the estimated
+   combined EMI and LTV, updating as the top-up amount changes.
+2. Submit. Rows must appear in `home_loan_topup_details`, `home_loan_emis` (for
+   the other running loans entered) and `loan_applicants` (co-applicants /
+   guarantors).
+3. Open **Applications**. The **Home Loan Top-Up — Existing Loan & Top-Up Need**
+   section must show the old lender's details as a separate block from the new
+   top-up requirement, and identity verification must work.
+
+Then test the Takeover wizard (`home-loan-takeover-apply.html`):
+
+1. Complete the 8 steps. The **Takeover Need** step must show the new EMI, the
+   EMI difference and the estimated savings, and the additional top-up fields
+   must appear only when **Additional top-up required** is checked.
+2. Submit. A row must appear in `home_loan_takeover_details` (plus
+   `loan_applicants` when co-applicants/guarantors were added).
+3. Open **Applications**. The **Home Loan Takeover — Old Bank, Transfer &
+   Savings** section must show the old-bank details, the proposed transfer and
+   the estimated savings, and identity verification must work.
+
+Then test the Loan Against Property wizard (`loan-against-property-apply.html`):
+
+1. Complete the 8 steps. The **Loan Requirement** step must show the estimated
+   EMI and LTV, the business-financials fields must appear only when
+   **Self-employed** is selected, and the property fields must follow the
+   **Residential / Commercial** selection.
+2. Submit. A row must appear in `lap_details` (plus `home_loan_emis` for other
+   running loans and `loan_applicants` for co-applicants / guarantors).
+3. Open **Applications**. The **Loan Against Property — Collateral, Ownership &
+   Requirement** section must show the collateral valuation, ownership, loan
+   requirement and identity-verification blocks.
+
+Then test the Business Loan wizard (`business-loan-apply.html`):
+
+1. Complete the 8 steps, repeating for each constitution (Proprietorship,
+   Partnership, LLP, Private Limited). The partner / director fields must follow
+   the selected constitution, and the **Operating address** fields must appear
+   only when **Same as registered address** is unchecked.
+2. Submit. A row must appear in `business_loan_details` (plus `home_loan_emis`
+   and `loan_applicants` when entered).
+3. Open **Applications**. The **Business Loan — Business, Finance & Banking**
+   section must show the business entity, registrations, financials, banking
+   history, loan requirement and identity-verification blocks.
+
+Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
    `DF-2026-xxxxx` reference and an upload link.
@@ -385,6 +557,18 @@ Then test the full flow:
 | `The administrator profile could not be verified` | The `admin_profiles` row is missing or the Hasura role header is not accepted. Check section 7. |
 | Public forms fail while signed in | A normal Nhost `user` account intentionally has no execute permissions. Sign out (or use a private window); customers normally use the site without an account. |
 | `field 'admin_notifications' not found` | Migration `003` has not been run, or the table is not tracked in Hasura. Run the migration and track the table under Data. |
+| `field 'save_home_loan_draft' not found` | Migration `004` has not been run, or the Home Loan functions are not tracked in Hasura. Run the migration and track `save_home_loan_draft`, `get_home_loan_draft` and `submit_home_loan_application` under Data → SQL. |
+| `permission denied for table home_loan_details` | The `admin` select/update permission on `home_loan_details` (or select on `home_loan_emis`) is missing. See section 4.3. The public wizard never touches these tables directly — it uses the `SECURITY DEFINER` functions. |
+| `This draft link is invalid or has expired.` | The draft was already submitted, the link is for a different draft, or the token does not match. Start a new application. |
+| Home Loan sections do not appear in the admin modal | The application is not a Home Loan lead, or `home_loan_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| `field 'submit_home_loan_topup_application' not found` | Migration `005` has not been run, or the function is not tracked in Hasura. Run the migration and track both new functions under Data → SQL. |
+| Top-Up / Takeover sections do not appear in the admin modal | The lead is not a Top-Up / Takeover application, or `home_loan_topup_details` / `home_loan_takeover_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| `permission denied for table home_loan_topup_details` (or `home_loan_takeover_details`) | The `admin` select permission (and update limited to the identity-verification columns) is missing. See section 4.3. The wizards never touch these tables directly — they use the `SECURITY DEFINER` functions. |
+| Applications list fails to load after adding migration `005` | The two new detail tables are not tracked in Hasura, or the `admin` select permission is missing. Untracked/missing fields fail the whole query. Track both tables and grant `select`. |
+| `field 'submit_lap_application' not found` (or `submit_business_loan_application`) | Migration `006` has not been run, or the function is not tracked in Hasura. Run the migration and track both new functions under Data → SQL. |
+| LAP / Business Loan sections do not appear in the admin modal | The lead is not a LAP / Business Loan application, or `lap_details` / `business_loan_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| `permission denied for table lap_details` (or `business_loan_details`) | The `admin` select permission (and update limited to the identity-verification columns) is missing. See section 4.3. The wizards never touch these tables directly — they use the `SECURITY DEFINER` functions. |
+| Applications list fails to load after adding migration `006` | The two new detail tables are not tracked in Hasura, or the `admin` select permission is missing. Untracked/missing fields fail the whole query. Track both tables and grant `select`. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |
@@ -420,4 +604,9 @@ Never upload `nhost/` to a public web root. Only the site files (`*.html`,
 - [ ] The notification update permission is limited to `is_read`.
 - [ ] Admin role is granted only through `auth.user_roles` + `admin_profiles`.
 - [ ] Presigned document links expire quickly and are never stored in the page.
+- [ ] `home_loan_drafts` has no permissions for any browser role.
+- [ ] `home_loan_details` admin update is limited to the identity-verification columns.
+- [ ] `home_loan_topup_details` / `home_loan_takeover_details` admin update is limited to the identity-verification columns.
+- [ ] `lap_details` / `business_loan_details` admin update is limited to the identity-verification columns.
+- [ ] Aadhaar is masked server-side; only the last 4 digits are stored.
 - [ ] RLS is not enabled; Hasura permissions are the access-control layer.

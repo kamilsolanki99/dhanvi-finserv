@@ -5,12 +5,14 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 10 business tables (including admin_notifications)
+--   * all 17 business tables (including admin_notifications and the seven
+--     structured loan tables added by migrations 004, 005 and 006)
 --   * every column in those tables
---   * all 9 callable API functions plus the 4 helpers
---   * all 6 updated_at triggers, the 7 notification triggers and the
+--   * all 16 callable API functions plus the 4 helpers
+--   * all 12 updated_at triggers, the 7 notification triggers and the
 --     notification read-state trigger
---   * all named indexes (including the notification indexes)
+--   * all named indexes (including the notification, Home Loan, Top-Up /
+--     Takeover, LAP and Business Loan indexes)
 --   * the private loan-documents bucket and its settings
 --   * the custom admin auth role
 --   * the reference sequence
@@ -29,7 +31,14 @@ WITH expected_tables(name) AS (
         ('loan_documents'),
         ('loan_followups'),
         ('loan_leads'),
-        ('post_disbursal_requests')
+        ('post_disbursal_requests'),
+        ('home_loan_details'),
+        ('home_loan_emis'),
+        ('home_loan_drafts'),
+        ('home_loan_topup_details'),
+        ('home_loan_takeover_details'),
+        ('lap_details'),
+        ('business_loan_details')
 ),
 expected_functions(name, signature) AS (
     VALUES
@@ -44,6 +53,13 @@ expected_functions(name, signature) AS (
         ('get_application_by_token', 'public.get_application_by_token(uuid,uuid)'),
         ('register_document', 'public.register_document(uuid,uuid,text,uuid)'),
         ('get_application_documents', 'public.get_application_documents(uuid,uuid)'),
+        ('save_home_loan_draft', 'public.save_home_loan_draft(uuid,uuid,jsonb)'),
+        ('get_home_loan_draft', 'public.get_home_loan_draft(uuid,uuid)'),
+        ('submit_home_loan_application', 'public.submit_home_loan_application(jsonb,uuid,uuid)'),
+        ('submit_home_loan_topup_application', 'public.submit_home_loan_topup_application(jsonb,uuid,uuid)'),
+        ('submit_home_loan_takeover_application', 'public.submit_home_loan_takeover_application(jsonb,uuid,uuid)'),
+        ('submit_lap_application', 'public.submit_lap_application(jsonb,uuid,uuid)'),
+        ('submit_business_loan_application', 'public.submit_business_loan_application(jsonb,uuid,uuid)'),
         ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
         ('notify_admin_event', 'public.notify_admin_event()')
 ),
@@ -55,6 +71,12 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_callback_bookings_modtime', 'callback_bookings'),
         ('update_post_disbursal_requests_modtime', 'post_disbursal_requests'),
         ('update_complaints_modtime', 'complaints'),
+        ('update_home_loan_details_modtime', 'home_loan_details'),
+        ('update_home_loan_drafts_modtime', 'home_loan_drafts'),
+        ('update_home_loan_topup_details_modtime', 'home_loan_topup_details'),
+        ('update_home_loan_takeover_details_modtime', 'home_loan_takeover_details'),
+        ('update_lap_details_modtime', 'lap_details'),
+        ('update_business_loan_details_modtime', 'business_loan_details'),
         ('notify_admin_new_lead', 'loan_leads'),
         ('notify_admin_new_callback', 'callback_bookings'),
         ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
@@ -85,7 +107,26 @@ expected_indexes(name) AS (
         ('admin_notifications_created_at_idx'),
         ('admin_notifications_unread_idx'),
         ('admin_notifications_recipient_idx'),
-        ('admin_notifications_dedupe_key')
+        ('admin_notifications_dedupe_key'),
+        ('home_loan_details_lead_idx'),
+        ('home_loan_details_identity_idx'),
+        ('home_loan_emis_lead_idx'),
+        ('home_loan_drafts_token_key'),
+        ('home_loan_drafts_reference_key'),
+        ('home_loan_drafts_updated_at_idx'),
+        ('home_loan_topup_details_lead_idx'),
+        ('home_loan_topup_details_identity_idx'),
+        ('home_loan_topup_details_lender_idx'),
+        ('home_loan_takeover_details_lead_idx'),
+        ('home_loan_takeover_details_identity_idx'),
+        ('home_loan_takeover_details_lender_idx'),
+        ('lap_details_lead_idx'),
+        ('lap_details_identity_idx'),
+        ('lap_details_property_category_idx'),
+        ('business_loan_details_lead_idx'),
+        ('business_loan_details_identity_idx'),
+        ('business_loan_details_constitution_idx'),
+        ('business_loan_details_gstin_idx')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (

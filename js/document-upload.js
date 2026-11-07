@@ -22,12 +22,12 @@
 
     var DOCUMENT_REQUIREMENTS = {
         'Home Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Property Documents', 'Photograph', 'Other'],
-        'Home Loan Top-Up': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Property Documents', 'Other'],
-        'Home Loan Takeover': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Property Documents', 'Other'],
-        'Loan Against Property': ['PAN Card', 'Aadhaar Card', 'ITR', 'Bank Statement', 'Business Proof', 'Property Documents', 'Other'],
+        'Home Loan Top-Up': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'Salary Slips', 'Bank Statement', 'ITR', 'Sanction Letter', 'Loan Statement', 'Outstanding Certificate', 'Repayment History', 'Property Documents', 'Other'],
+        'Home Loan Takeover': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'Salary Slips', 'Bank Statement', 'ITR', 'Sanction Letter', 'Loan Statement', 'Outstanding Certificate', 'Repayment History', 'Property Documents', 'Other'],
+        'Loan Against Property': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'Bank Statement', 'Business Proof', 'Property Documents', 'Title Chain', 'Property Tax Receipt', 'Approved Plans', 'Other'],
         'Education Loan': ['PAN Card', 'Aadhaar Card', 'ITR', 'Bank Statement', 'Other'],
         'Vehicle Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Vehicle Documents', 'Other'],
-        'Business Loan': ['PAN Card', 'Aadhaar Card', 'ITR', 'Bank Statement', 'Business Proof', 'Other'],
+        'Business Loan': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Business Proof', 'Udyam Certificate', 'Other'],
         'Personal Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Other']
     };
 

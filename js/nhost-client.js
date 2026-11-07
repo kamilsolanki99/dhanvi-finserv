@@ -239,6 +239,67 @@
                 p_lead_id: 'uuid',
                 p_access_token: 'uuid'
             }
+        },
+        // Structured Home Loan application (migration 004)
+        save_home_loan_draft: {
+            type: 'mutation',
+            args: {
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid',
+                p_payload: 'jsonb'
+            }
+        },
+        get_home_loan_draft: {
+            type: 'query',
+            args: {
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        submit_home_loan_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        // Existing-loan application flows (migration 005). Both reuse the
+        // Home Loan draft functions for save / resume, because the draft
+        // payload is opaque JSONB.
+        submit_home_loan_topup_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        submit_home_loan_takeover_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        // Loan Against Property and Business Loan applications (migration 006).
+        // These also reuse the Home Loan draft functions for save / resume.
+        submit_lap_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        submit_business_loan_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
         }
     };
 

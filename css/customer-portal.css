@@ -781,3 +781,269 @@
     .cp-applicant { padding: 16px 16px 2px; }
     .cp-actions .cp-btn { width: 100%; }
 }
+
+/* ==========================================================================
+   Multi-step wizard (Home Loan application)
+   Used by: home-loan-apply
+   ========================================================================== */
+
+.cp-wizard {
+    margin-bottom: 28px;
+}
+
+/* Progress indicator ----------------------------------------------------- */
+.cp-stepper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 6px 2px 18px;
+    margin-bottom: 6px;
+    scrollbar-width: thin;
+}
+
+.cp-stepper-item {
+    flex: 1 0 auto;
+    min-width: 96px;
+    text-align: center;
+    position: relative;
+    padding: 0 4px;
+}
+
+.cp-stepper-item::before,
+.cp-stepper-item::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    height: 2px;
+    background: var(--line, #e5ecf4);
+    z-index: 0;
+}
+
+.cp-stepper-item::before { left: 0; width: 50%; }
+.cp-stepper-item::after { right: 0; width: 50%; }
+.cp-stepper-item:first-child::before,
+.cp-stepper-item:last-child::after { display: none; }
+
+.cp-stepper-item.is-complete::before,
+.cp-stepper-item.is-complete::after,
+.cp-stepper-item.is-active::before { background: var(--blue, #15549a); }
+
+.cp-stepper-num {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--line, #e5ecf4);
+    color: #8794a8;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.cp-stepper-item.is-active .cp-stepper-num {
+    border-color: var(--blue, #15549a);
+    background: var(--blue, #15549a);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(21, 84, 154, .12);
+}
+
+.cp-stepper-item.is-complete .cp-stepper-num {
+    border-color: var(--blue, #15549a);
+    background: #eaf2fb;
+    color: var(--blue, #15549a);
+}
+
+.cp-stepper-label {
+    display: block;
+    margin-top: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #8794a8;
+    line-height: 1.4;
+}
+
+.cp-stepper-item.is-active .cp-stepper-label,
+.cp-stepper-item.is-complete .cp-stepper-label { color: #34415c; }
+
+/* Step panels ------------------------------------------------------------- */
+.cp-step { display: none; }
+.cp-step.is-active { display: block; animation: cpStepIn .28s ease; }
+
+@keyframes cpStepIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cp-step-head { margin-bottom: 24px; }
+
+.cp-step-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--brand-text-accent, #A96500);
+    margin-bottom: 6px;
+}
+
+.cp-step-head h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--ink, #1e2d44);
+    margin: 0 0 6px;
+}
+
+.cp-step-head p {
+    font-size: 13.5px;
+    color: var(--body, #55657c);
+    margin: 0;
+    line-height: 1.65;
+}
+
+/* Navigation bar ---------------------------------------------------------- */
+.cp-wizard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line, #e5ecf4);
+    flex-wrap: wrap;
+}
+
+.cp-wizard-nav .cp-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cp-progress-text {
+    font-size: 12px;
+    color: #8794a8;
+    font-weight: 500;
+}
+
+/* Draft / resume banner --------------------------------------------------- */
+.cp-draft-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #f6f9fd;
+    border: 1px solid #dbe7f5;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    color: #4c5c74;
+}
+
+.cp-draft-bar code {
+    background: #fff;
+    border: 1px solid #dbe7f5;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    color: #15549a;
+    word-break: break-all;
+}
+
+/* Conditional document checklist ----------------------------------------- */
+.cp-checklist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 24px;
+}
+
+.cp-checklist-group {
+    border: 1px solid var(--line, #e5ecf4);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: #fcfdff;
+}
+
+.cp-checklist-group h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #34415c;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.cp-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: #55657c;
+    margin-bottom: 7px;
+    line-height: 1.5;
+}
+
+.cp-check-item:last-child { margin-bottom: 0; }
+.cp-check-item i { color: var(--blue, #15549a); margin-top: 2px; font-size: 12px; }
+.cp-check-item.is-optional i { color: #b6c1d1; }
+
+/* Review summary ---------------------------------------------------------- */
+.cp-review-block {
+    border: 1px solid var(--line, #e5ecf4);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+}
+
+.cp-review-block h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #34415c;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cp-review-block h4 button {
+    background: none;
+    border: 0;
+    color: var(--blue, #15549a);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.cp-review-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px dashed #eef2f8;
+}
+
+.cp-review-row:last-child { border-bottom: 0; }
+.cp-review-row span:first-child { color: #8794a8; flex: 0 0 auto; }
+.cp-review-row span:last-child { color: #34415c; font-weight: 500; text-align: right; }
+
+@media (max-width: 767px) {
+    .cp-stepper { padding-bottom: 12px; }
+    .cp-stepper-item { min-width: 84px; }
+    .cp-stepper-label { font-size: 10.5px; }
+    .cp-checklist { grid-template-columns: 1fr; }
+    .cp-wizard-nav { flex-direction: column-reverse; align-items: stretch; }
+    .cp-wizard-nav .cp-nav-right { flex-direction: column; width: 100%; }
+    .cp-wizard-nav .cp-btn { width: 100%; }
+    .cp-review-row { flex-direction: column; gap: 2px; }
+    .cp-review-row span:last-child { text-align: left; }
+}
