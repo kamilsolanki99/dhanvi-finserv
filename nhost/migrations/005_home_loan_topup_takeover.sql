@@ -256,7 +256,7 @@ DECLARE
     v_personal JSONB := coalesce(p_payload->'personal', '{}'::JSONB);
     v_employment JSONB := coalesce(p_payload->'employment', '{}'::JSONB);
     v_existing JSONB := coalesce(p_payload->'existing_loan', '{}'::JSONB);
-    v_topup JSONB := coalesce(p_payload->'topup', '{}'::JSONB);
+    v_topup_data JSONB := coalesce(p_payload->'topup', '{}'::JSONB);
     v_property JSONB := coalesce(p_payload->'property', '{}'::JSONB);
     v_address JSONB := coalesce(p_payload->'address', '{}'::JSONB);
     v_current JSONB;
@@ -299,8 +299,8 @@ DECLARE
     v_interest_type TEXT := nullif(btrim(coalesce(v_existing->>'interest_type', '')), '');
     v_emi NUMERIC := nullif(v_existing->>'current_emi', '')::NUMERIC;
 
-    v_topup NUMERIC := nullif(v_topup->>'amount', '')::NUMERIC;
-    v_purpose TEXT := btrim(coalesce(v_topup->>'purpose', ''));
+    v_topup NUMERIC := nullif(v_topup_data->>'amount', '')::NUMERIC;
+    v_purpose TEXT := btrim(coalesce(v_topup_data->>'purpose', ''));
 
     v_prop_type TEXT := nullif(btrim(coalesce(v_property->>'property_type', '')), '');
     v_prop_value NUMERIC := nullif(v_property->>'market_value', '')::NUMERIC;
