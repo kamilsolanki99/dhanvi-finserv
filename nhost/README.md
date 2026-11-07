@@ -107,10 +107,35 @@ systems behind `loan-against-property-apply.html` and `business-loan-apply.html`
   chain, property tax receipt, approved plans, GST returns, financial
   statements, Udyam certificate) can be stored.
 
-All four wizards reuse the existing `home_loan_drafts` table and the
+Then run
+[`migrations/007_working_capital_cc_od.sql`](migrations/007_working_capital_cc_od.sql).
+It adds the structured **Working Capital (CC/OD)** system behind
+`working-capital-apply.html`:
+
+- `working_capital_details` — one structured row per Working Capital lead:
+  applicant identity and addresses, business entity and constitution,
+  registrations (GSTIN, business PAN, Udyam), business vintage, registered and
+  operating addresses, financials (turnover, monthly sales, profit,
+  receivables, inventory, creditors, liabilities), banking relationship, the
+  existing CC/OD limit position and the requested facility (new, enhancement,
+  renewal or takeover) with security, collateral and tenure.
+- `working_capital_facilities` — the additional existing bank facilities
+  declared by the applicant (1:N with the lead), including bank, facility type,
+  masked account number, sanctioned limit, utilisation, outstanding, interest
+  rate and renewal date.
+- `submit_working_capital_application` — the secure function the wizard calls.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so stock, debtors and creditors statements can be
+  stored.
+
+Until both WC tables are tracked with `admin` select permission,
+`admin-applications.html` retries its dashboard query without the WC fields.
+Existing application types keep loading normally, and WC details appear
+automatically once tracking and the permission are complete.
+
+All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
-shared `home_loan_emis` and `loan_applicants` tables for other running loans and
-co-applicants / guarantors.
+shared `loan_applicants` table for co-applicants / guarantors.
 
 The other loan types are untouched: they keep using
 `submit_loan_application_v2` through `apply-loan.html`.
@@ -144,6 +169,8 @@ Under `public`:
 - `home_loan_takeover_details`
 - `lap_details`
 - `business_loan_details`
+- `working_capital_details`
+- `working_capital_facilities`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -171,6 +198,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_home_loan_takeover_application`
 - `submit_lap_application`
 - `submit_business_loan_application`
+- `submit_working_capital_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -216,6 +244,7 @@ Open **Data → [function] → Permissions**.
 | `submit_home_loan_takeover_application` | execute | execute | execute |
 | `submit_lap_application` | execute | execute | execute |
 | `submit_business_loan_application` | execute | execute | execute |
+| `submit_working_capital_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -247,13 +276,16 @@ Grant only what the admin panel uses:
 | `home_loan_takeover_details` | yes | no | yes | no |
 | `lap_details` | yes | no | yes | no |
 | `business_loan_details` | yes | no | yes | no |
+| `working_capital_details` | yes | no | yes | no |
+| `working_capital_facilities` | yes | no | no | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
 `delete` only on those tables. Deleting a `loan_leads` row cascades to
 `loan_applicants`, `loan_documents`, `loan_followups`, `home_loan_details`,
 `home_loan_topup_details`, `home_loan_takeover_details`, `lap_details`,
-`business_loan_details` and `home_loan_emis`;
+`business_loan_details`, `working_capital_details`,
+`working_capital_facilities` and `home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
 must not be deletable from the admin UI.
@@ -276,14 +308,17 @@ admin panel:
 | `home_loan_takeover_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `lap_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `business_loan_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `working_capital_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
-`lap_details`, `business_loan_details` and `home_loan_emis` are read-only for the
+`lap_details`, `business_loan_details`, `working_capital_details` and
+`home_loan_emis` are read-only for the
 admin panel except for the identity-verification fields above, which the
 **Applications** detail modal writes. The rest of the structured loan data is
 created by `submit_home_loan_application`, `submit_home_loan_topup_application`,
-`submit_home_loan_takeover_application`, `submit_lap_application` and
-`submit_business_loan_application` and must not be editable from the
+`submit_home_loan_takeover_application`, `submit_lap_application`,
+`submit_business_loan_application` and `submit_working_capital_application` and
+must not be editable from the
 browser. `home_loan_emis` has `select` only.
 
 Do not add `public` or `anonymous` permissions on any business table. Do not
@@ -452,8 +487,9 @@ functions, triggers, indexes, private bucket, `admin` role, sequence and
 `api_result` grant. Every expected object should show `OK`. The report includes
 `admin_notifications`, the notification triggers and their indexes, and the
 Home Loan tables, functions, triggers and indexes added by migration `004`,
-plus the Top-Up / Takeover tables and functions added by migration `005`, and
-the LAP / Business Loan tables and functions added by migration `006`.
+plus the Top-Up / Takeover tables and functions added by migration `005`, the
+LAP / Business Loan tables and functions added by migration `006`, and the
+Working Capital tables, functions and indexes added by migration `007`.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -515,6 +551,25 @@ Then test the Business Loan wizard (`business-loan-apply.html`):
    section must show the business entity, registrations, financials, banking
    history, loan requirement and identity-verification blocks.
 
+Then test the Working Capital (CC/OD) wizard (`working-capital-apply.html`):
+
+1. Complete the 8 steps. Verify that **Existing CC/OD details** appear only when
+   a facility other than **None** is selected, that the **Estimated collateral
+   value** field appears only for **Property Collateral**, and that the
+   indicative monthly interest updates as the proposed limit changes.
+2. Add at least one additional existing facility, one co-applicant and one
+   guarantor. Submit. A row must appear in `working_capital_details`, the
+   facilities must appear in `working_capital_facilities`, and applicants in
+   `loan_applicants`.
+3. Repeat the submission for all four request types (New CC/OD Facility,
+   Enhancement, Renewal, Takeover), including a case with **None** selected for
+   the existing facility.
+4. Open **Applications**. The **Working Capital (CC/OD) — Limit, Utilisation &
+   Financials** section must show the business, financials, banking, existing
+   limit position, additional facilities, requested facility and
+   identity-verification blocks. The document checklist must include stock,
+   debtors and creditors statements.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -569,6 +624,10 @@ Then test the general flow:
 | LAP / Business Loan sections do not appear in the admin modal | The lead is not a LAP / Business Loan application, or `lap_details` / `business_loan_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
 | `permission denied for table lap_details` (or `business_loan_details`) | The `admin` select permission (and update limited to the identity-verification columns) is missing. See section 4.3. The wizards never touch these tables directly — they use the `SECURITY DEFINER` functions. |
 | Applications list fails to load after adding migration `006` | The two new detail tables are not tracked in Hasura, or the `admin` select permission is missing. Untracked/missing fields fail the whole query. Track both tables and grant `select`. |
+| `field 'submit_working_capital_application' not found` | Migration `007` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| Working Capital section does not appear in the admin modal | The lead is not a Working Capital application, or `working_capital_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| `permission denied for table working_capital_details` (or `working_capital_facilities`) | The `admin` select permission (and update limited to the identity-verification columns on `working_capital_details`) is missing. See section 4.3. The wizard never touches these tables directly — it uses the `SECURITY DEFINER` function. |
+| Applications list fails to load after adding migration `007` | `working_capital_details` / `working_capital_facilities` is not tracked in Hasura, or the `admin` select permission is missing. Untracked/missing fields fail the whole query. Track both tables and grant `select`. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |

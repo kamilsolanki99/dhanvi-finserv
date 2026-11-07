@@ -527,6 +527,10 @@
                         <h6><i class="fa fa-briefcase" style="margin-right:6px;"></i>Business Loan — Business, Finance &amp; Banking</h6>
                         <div id="modalBusinessLoan"></div>
                     </div>
+                    <div class="detail-group" id="modalWorkingCapitalGroup" style="display:none;">
+                        <h6><i class="fa fa-line-chart" style="margin-right:6px;"></i>Working Capital (CC/OD) — Limit, Utilisation &amp; Financials</h6>
+                        <div id="modalWorkingCapital"></div>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -605,7 +609,7 @@
     <script>
         let applications = [];
 
-        const APPLICATIONS_QUERY =
+        const APPLICATIONS_QUERY_HEAD =
             'query AdminApplications {' +
             '  loan_leads(order_by: {created_at: desc}) {' +
             '    id reference_no created_at full_name mobile email loan_type loan_amount message' +
@@ -694,11 +698,43 @@
             '    current_address_line current_address_city current_address_state current_address_pincode' +
             '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
             '    estimated_emi' +
+            '  }';
+
+        const APPLICATIONS_QUERY_WORKING_CAPITAL =
+            '  working_capital_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender marital_status' +
+            '    pan_number aadhaar_masked applicant_role' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    business_name business_constitution industry nature_of_business establishment_date' +
+            '    business_vintage_years partner_director_count business_ownership' +
+            '    gstin business_pan udyam_number' +
+            '    registered_address_line registered_address_city registered_address_state registered_address_pincode' +
+            '    operating_same_as_registered' +
+            '    operating_address_line operating_address_city operating_address_state operating_address_pincode' +
+            '    annual_turnover monthly_sales annual_profit receivables inventory creditors existing_liabilities' +
+            '    primary_bank_name banking_years avg_monthly_bank_balance' +
+            '    existing_facility_type existing_bank_name existing_account_number_masked' +
+            '    existing_limit_amount current_utilisation existing_outstanding' +
+            '    facility_request_type proposed_limit business_purpose security_type security_details' +
+            '    collateral_value preferred_tenure_months estimated_monthly_interest' +
+            '    current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
             '  }' +
+            '  working_capital_facilities {' +
+            '    id loan_lead_id bank_name facility_type account_number_masked sanctioned_limit' +
+            '    current_utilisation outstanding_amount interest_rate renewal_date' +
+            '  }';
+
+        const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
             '  }' +
             '}';
+
+        const APPLICATIONS_QUERY =
+            APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL + APPLICATIONS_QUERY_TAIL;
+        const APPLICATIONS_QUERY_WITHOUT_WORKING_CAPITAL =
+            APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -722,6 +758,7 @@
             if (app.home_loan_takeover_details) { return { table: 'home_loan_takeover_details', data: app.home_loan_takeover_details }; }
             if (app.lap_details) { return { table: 'lap_details', data: app.lap_details }; }
             if (app.business_loan_details) { return { table: 'business_loan_details', data: app.business_loan_details }; }
+            if (app.working_capital_details) { return { table: 'working_capital_details', data: app.working_capital_details }; }
             return null;
         }
 
@@ -799,7 +836,22 @@
             hidePageAlert();
 
             try {
-                const data = await backend().adminGql(APPLICATIONS_QUERY);
+                let data;
+                let workingCapitalAvailable = true;
+                try {
+                    data = await backend().adminGql(APPLICATIONS_QUERY);
+                } catch (queryError) {
+                    const queryMessage = String((queryError && queryError.message) || queryError || '');
+                    // Until migration 007 is applied, Hasura does not know the WC
+                    // tables. Load every other application type instead of failing
+                    // the whole dashboard.
+                    if (/field 'working_capital_(details|facilities)' not found in type: 'query_root'/i.test(queryMessage)) {
+                        data = await backend().adminGql(APPLICATIONS_QUERY_WITHOUT_WORKING_CAPITAL);
+                        workingCapitalAvailable = false;
+                    } else {
+                        throw queryError;
+                    }
+                }
                 const leads = (data && data.loan_leads) || [];
                 const applicantsByLead = groupByLead(data && data.loan_applicants);
                 const documentsByLead = groupByLead(data && data.loan_documents);
@@ -808,6 +860,8 @@
                 const takeoverByLead = groupByLead(data && data.home_loan_takeover_details);
                 const lapByLead = groupByLead(data && data.lap_details);
                 const businessLoanByLead = groupByLead(data && data.business_loan_details);
+                const workingCapitalByLead = groupByLead(data && data.working_capital_details);
+                const workingCapitalFacilitiesByLead = groupByLead(data && data.working_capital_facilities);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -819,11 +873,16 @@
                     lead.home_loan_takeover_details = (takeoverByLead[lead.id] || [])[0] || null;
                     lead.lap_details = (lapByLead[lead.id] || [])[0] || null;
                     lead.business_loan_details = (businessLoanByLead[lead.id] || [])[0] || null;
+                    lead.working_capital_details = (workingCapitalByLead[lead.id] || [])[0] || null;
+                    lead.working_capital_facilities = workingCapitalFacilitiesByLead[lead.id] || [];
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
                 });
                 renderTable();
+                if (!workingCapitalAvailable) {
+                    showPageAlert('warning', 'Working Capital (CC/OD) details will appear after migration 007 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
             } catch (err) {
                 console.error('Error loading applications:', err);
                 tbody.html('<tr><td colspan="8" class="empty-state"><i class="fa fa-exclamation-circle"></i><strong>Could not load applications</strong>' + esc(err.message || 'Please refresh the page.') + '</td></tr>');
@@ -1317,6 +1376,110 @@
             return d;
         }
 
+        // Structured Working Capital (CC/OD) data: existing limit position,
+        // financials, banking, additional facilities and the requested facility.
+        function renderWorkingCapitalDetails(app) {
+            const d = app.working_capital_details;
+            const group = $('#modalWorkingCapitalGroup');
+            if (!d) {
+                group.hide();
+                $('#modalWorkingCapital').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+
+            let html = '';
+            html += subHeading('Applicant');
+            html += detailRow('Full name', name);
+            html += detailRow('Role', d.applicant_role);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Marital status', d.marital_status);
+            html += detailRow('Identity proof', proofs.join(' · '));
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            html += subHeading('Business entity & registrations');
+            html += detailRow('Business name', d.business_name);
+            html += detailRow('Constitution', d.business_constitution);
+            html += detailRow('Industry', d.industry);
+            html += detailRow('Nature of business', d.nature_of_business);
+            html += detailRow('Established on', prettyDate(d.establishment_date));
+            html += detailRow('Business vintage', (d.business_vintage_years === null || d.business_vintage_years === undefined) ? null : d.business_vintage_years + ' years');
+            html += detailRow('Partners / directors', d.partner_director_count);
+            html += detailRow('Business ownership', d.business_ownership);
+            html += detailRow('GSTIN', d.gstin);
+            html += detailRow('Business PAN', d.business_pan);
+            html += detailRow('Udyam number', d.udyam_number);
+            html += detailRow('Registered address', fullAddress(d.registered_address_line, d.registered_address_city, d.registered_address_state, d.registered_address_pincode));
+            html += detailRow('Operating address', d.operating_same_as_registered
+                ? 'Same as registered address'
+                : fullAddress(d.operating_address_line, d.operating_address_city, d.operating_address_state, d.operating_address_pincode));
+
+            html += subHeading('Financials & banking');
+            html += detailRow('Annual turnover', d.annual_turnover ? money(d.annual_turnover) : null);
+            html += detailRow('Average monthly sales', d.monthly_sales ? money(d.monthly_sales) : null);
+            html += detailRow('Annual net profit', d.annual_profit ? money(d.annual_profit) : null);
+            html += detailRow('Receivables / book debts', d.receivables ? money(d.receivables) : null);
+            html += detailRow('Inventory / stock', d.inventory ? money(d.inventory) : null);
+            html += detailRow('Creditors / payables', d.creditors ? money(d.creditors) : null);
+            html += detailRow('Existing liabilities', d.existing_liabilities ? money(d.existing_liabilities) : null);
+            html += detailRow('Primary bank', d.primary_bank_name);
+            html += detailRow('Banking relationship', (d.banking_years === null || d.banking_years === undefined) ? null : d.banking_years + ' years');
+            html += detailRow('Average bank balance', d.avg_monthly_bank_balance ? money(d.avg_monthly_bank_balance) : null);
+
+            html += subHeading('Existing CC/OD position');
+            html += detailRow('Facility type', d.existing_facility_type);
+            html += detailRow('Bank / NBFC', d.existing_bank_name);
+            html += detailRow('Account number', d.existing_account_number_masked);
+            html += detailRow('Sanctioned limit', d.existing_limit_amount ? money(d.existing_limit_amount) : null);
+            html += detailRow('Current utilisation', d.current_utilisation ? money(d.current_utilisation) : null);
+            html += detailRow('Current outstanding', d.existing_outstanding ? money(d.existing_outstanding) : null);
+
+            const facilities = Array.isArray(app.working_capital_facilities) ? app.working_capital_facilities : [];
+            html += subHeading('Other existing bank facilities');
+            if (!facilities.length) {
+                html += detailRow('Additional facilities', 'None declared');
+            } else {
+                facilities.forEach(function (facility, index) {
+                    const details = [
+                        facility.facility_type || '',
+                        (facility.account_number_masked ? 'A/c ' + facility.account_number_masked : ''),
+                        (facility.sanctioned_limit === null || facility.sanctioned_limit === undefined) ? '' : 'Limit ' + money(facility.sanctioned_limit),
+                        (facility.current_utilisation === null || facility.current_utilisation === undefined) ? '' : 'Utilised ' + money(facility.current_utilisation),
+                        (facility.outstanding_amount === null || facility.outstanding_amount === undefined) ? '' : 'Outstanding ' + money(facility.outstanding_amount),
+                        (facility.interest_rate === null || facility.interest_rate === undefined) ? '' : 'Rate ' + facility.interest_rate + '%',
+                        facility.renewal_date ? 'Renewal ' + prettyDate(facility.renewal_date) : ''
+                    ].filter(Boolean).join(' · ');
+                    html += '<div class="detail-row" style="align-items:flex-start;">' +
+                        '<span class="detail-label">Facility ' + (index + 1) + '</span>' +
+                        '<span class="detail-value">' + esc(facility.bank_name) +
+                        (details ? '<div class="admin-note" style="margin:2px 0 0;">' + esc(details) + '</div>' : '') +
+                        '</span></div>';
+                });
+            }
+
+            html += subHeading('Requested facility');
+            html += detailRow('Request type', d.facility_request_type);
+            html += detailRow('Proposed limit', d.proposed_limit ? money(d.proposed_limit) : null);
+            html += detailRow('Business purpose', d.business_purpose);
+            html += detailRow('Security type', d.security_type);
+            html += detailRow('Security details', d.security_details);
+            html += detailRow('Collateral value', d.collateral_value ? money(d.collateral_value) : null);
+            html += detailRow('Preferred tenure', d.preferred_tenure_months ? d.preferred_tenure_months + ' months' : null);
+            html += detailRow('Indicative monthly interest', d.estimated_monthly_interest ? money(d.estimated_monthly_interest) : null);
+
+            $('#modalWorkingCapital').html(html);
+            return d;
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -1430,6 +1593,7 @@
             renderTakeoverDetails(app);
             renderLapDetails(app);
             renderBusinessLoanDetails(app);
+            renderWorkingCapitalDetails(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);

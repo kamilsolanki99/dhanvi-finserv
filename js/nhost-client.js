@@ -300,6 +300,16 @@
                 p_draft_id: 'uuid',
                 p_draft_token: 'uuid'
             }
+        },
+        // Working Capital (CC/OD) application (migration 007). It also reuses
+        // the Home Loan draft functions for save / resume.
+        submit_working_capital_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
         }
     };
 

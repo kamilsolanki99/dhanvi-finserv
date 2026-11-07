@@ -5,14 +5,14 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 17 business tables (including admin_notifications and the seven
---     structured loan tables added by migrations 004, 005 and 006)
+--   * all 19 tracked tables (including admin_notifications and the nine
+--     structured loan tables added by migrations 004, 005, 006 and 007)
 --   * every column in those tables
---   * all 16 callable API functions plus the 4 helpers
---   * all 12 updated_at triggers, the 7 notification triggers and the
+--   * all 21 tracked functions (including the helpers)
+--   * all 14 updated_at triggers, the 7 notification triggers and the
 --     notification read-state trigger
 --   * all named indexes (including the notification, Home Loan, Top-Up /
---     Takeover, LAP and Business Loan indexes)
+--     Takeover, LAP, Business Loan and Working Capital indexes)
 --   * the private loan-documents bucket and its settings
 --   * the custom admin auth role
 --   * the reference sequence
@@ -38,7 +38,9 @@ WITH expected_tables(name) AS (
         ('home_loan_topup_details'),
         ('home_loan_takeover_details'),
         ('lap_details'),
-        ('business_loan_details')
+        ('business_loan_details'),
+        ('working_capital_details'),
+        ('working_capital_facilities')
 ),
 expected_functions(name, signature) AS (
     VALUES
@@ -60,6 +62,7 @@ expected_functions(name, signature) AS (
         ('submit_home_loan_takeover_application', 'public.submit_home_loan_takeover_application(jsonb,uuid,uuid)'),
         ('submit_lap_application', 'public.submit_lap_application(jsonb,uuid,uuid)'),
         ('submit_business_loan_application', 'public.submit_business_loan_application(jsonb,uuid,uuid)'),
+        ('submit_working_capital_application', 'public.submit_working_capital_application(jsonb,uuid,uuid)'),
         ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
         ('notify_admin_event', 'public.notify_admin_event()')
 ),
@@ -77,6 +80,8 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_home_loan_takeover_details_modtime', 'home_loan_takeover_details'),
         ('update_lap_details_modtime', 'lap_details'),
         ('update_business_loan_details_modtime', 'business_loan_details'),
+        ('update_working_capital_details_modtime', 'working_capital_details'),
+        ('update_working_capital_facilities_modtime', 'working_capital_facilities'),
         ('notify_admin_new_lead', 'loan_leads'),
         ('notify_admin_new_callback', 'callback_bookings'),
         ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
@@ -126,7 +131,14 @@ expected_indexes(name) AS (
         ('business_loan_details_lead_idx'),
         ('business_loan_details_identity_idx'),
         ('business_loan_details_constitution_idx'),
-        ('business_loan_details_gstin_idx')
+        ('business_loan_details_gstin_idx'),
+        ('working_capital_details_lead_idx'),
+        ('working_capital_details_identity_idx'),
+        ('working_capital_details_constitution_idx'),
+        ('working_capital_details_gstin_idx'),
+        ('working_capital_details_request_idx'),
+        ('working_capital_facilities_lead_idx'),
+        ('working_capital_facilities_bank_idx')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (
