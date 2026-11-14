@@ -554,6 +554,83 @@
     line-height: 1.6;
 }
 
+/* Informational callouts and conditional income cards --------------------- */
+.cp-info-box {
+    background: #f4f8fd;
+    border: 1px solid #dce8f5;
+    border-left: 4px solid var(--blue, #15549a);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 13px;
+    color: #4a586e;
+    line-height: 1.65;
+}
+
+.cp-info-box strong {
+    display: block;
+    color: #34415c;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.cp-info-box p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #4a586e;
+}
+
+.cp-info-box p + p { margin-top: 8px; }
+
+.cp-income-card {
+    border: 1px solid var(--line, #e5ecf4);
+    border-radius: 10px;
+    background: #fcfdff;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.cp-income-card:focus-within {
+    border-color: #b9d3ef;
+    box-shadow: 0 2px 10px rgba(21, 84, 154, .06);
+}
+
+.cp-income-card .cp-check { margin-bottom: 0; }
+
+.cp-income-card .cp-grid {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #e8eef6;
+}
+
+.cp-income-card .cp-grid.cp-hidden { display: none; }
+
+.cp-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #4a586e;
+    line-height: 1.6;
+}
+
+.cp-check input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    flex: 0 0 auto;
+    accent-color: var(--blue, #15549a);
+}
+
+.cp-check label {
+    margin: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+
 /* Document upload -------------------------------------------------------- */
 .cp-summary {
     display: flex;

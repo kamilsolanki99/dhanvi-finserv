@@ -133,6 +133,43 @@ Until both WC tables are tracked with `admin` select permission,
 Existing application types keep loading normally, and WC details appear
 automatically once tracking and the permission are complete.
 
+Then run
+[`migrations/008_itr_filing.sql`](migrations/008_itr_filing.sql).
+It adds the structured **ITR Filing** system behind `itr-apply.html`:
+
+- `itr_filing_details` — one structured row per ITR assistance lead: applicant
+  identity, PAN, masked Aadhaar reference, e-verification preference,
+  residential status and addresses, assessment / financial year, taxpayer
+  category, return type, ITR form preference, every income head (salary,
+  business or profession, house property, capital gains, other sources,
+  agricultural and foreign income), previous filing history, tax regime, TDS,
+  advance tax and self-assessment tax, deductions, exemptions, refund bank
+  details, indicative computation, and the administrator-controlled filing
+  status, acknowledgement and verification fields.
+- `itr_income_items` — the declared income heads recorded at submission
+  (1:N with the lead).
+- `itr_tax_payments` — declared TDS, advance tax and self-assessment tax
+  credits (1:N with the lead).
+- `submit_itr_application` — the secure function the wizard calls.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so Form 16, Form 26AS, AIS / TIS, investment proofs,
+  rent receipts, capital gains statements, previous ITR, ITR acknowledgement,
+  tax payment challans and foreign income documents can be stored.
+- It widens `loan_leads.loan_type` for service applications and allows a
+  zero-or-more `loan_amount`. Existing loan functions still enforce their own
+  minimum amounts.
+
+The public ITR wizard never sets `filing_status`, `acknowledgement_no`,
+`filed_at`, `filed_by`, `verified_at` or `verification_method`. A new
+application starts at **Application Received**, and only an administrator can
+move it to **Filed & Verified** after actual portal filing and acknowledgement
+verification.
+
+Until the ITR tables are tracked with `admin` select permission,
+`admin-applications.html` retries its dashboard query without the ITR fields.
+Existing application types keep loading normally, and ITR details appear
+automatically once tracking and the permission are complete.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -171,6 +208,9 @@ Under `public`:
 - `business_loan_details`
 - `working_capital_details`
 - `working_capital_facilities`
+- `itr_filing_details`
+- `itr_income_items`
+- `itr_tax_payments`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -199,6 +239,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_lap_application`
 - `submit_business_loan_application`
 - `submit_working_capital_application`
+- `submit_itr_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -245,6 +286,7 @@ Open **Data → [function] → Permissions**.
 | `submit_lap_application` | execute | execute | execute |
 | `submit_business_loan_application` | execute | execute | execute |
 | `submit_working_capital_application` | execute | execute | execute |
+| `submit_itr_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -278,6 +320,9 @@ Grant only what the admin panel uses:
 | `business_loan_details` | yes | no | yes | no |
 | `working_capital_details` | yes | no | yes | no |
 | `working_capital_facilities` | yes | no | no | no |
+| `itr_filing_details` | yes | no | yes | no |
+| `itr_income_items` | yes | no | no | no |
+| `itr_tax_payments` | yes | no | no | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -309,17 +354,20 @@ admin panel:
 | `lap_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `business_loan_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `working_capital_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
+| `itr_filing_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `filing_status`, `filing_status_notes`, `acknowledgement_no`, `filed_at`, `filed_by`, `verified_at`, `verification_method`, `filing_remarks` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
 `home_loan_emis` are read-only for the
 admin panel except for the identity-verification fields above, which the
-**Applications** detail modal writes. The rest of the structured loan data is
-created by `submit_home_loan_application`, `submit_home_loan_topup_application`,
-`submit_home_loan_takeover_application`, `submit_lap_application`,
-`submit_business_loan_application` and `submit_working_capital_application` and
-must not be editable from the
-browser. `home_loan_emis` has `select` only.
+**Applications** detail modal writes. `itr_filing_details` additionally allows
+the administrator-controlled filing status and acknowledgement fields. The rest
+of the structured data is created by `submit_home_loan_application`,
+`submit_home_loan_topup_application`, `submit_home_loan_takeover_application`,
+`submit_lap_application`, `submit_business_loan_application`,
+`submit_working_capital_application` and `submit_itr_application` and must not
+be editable from the browser. `home_loan_emis`, `itr_income_items` and
+`itr_tax_payments` have `select` only.
 
 Do not add `public` or `anonymous` permissions on any business table. Do not
 grant _any_ role a permission on `home_loan_drafts`.
@@ -488,8 +536,9 @@ functions, triggers, indexes, private bucket, `admin` role, sequence and
 `admin_notifications`, the notification triggers and their indexes, and the
 Home Loan tables, functions, triggers and indexes added by migration `004`,
 plus the Top-Up / Takeover tables and functions added by migration `005`, the
-LAP / Business Loan tables and functions added by migration `006`, and the
-Working Capital tables, functions and indexes added by migration `007`.
+LAP / Business Loan tables and functions added by migration `006`, the
+Working Capital tables, functions and indexes added by migration `007`, and the
+ITR Filing tables, functions and indexes added by migration `008`.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -570,6 +619,34 @@ Then test the Working Capital (CC/OD) wizard (`working-capital-apply.html`):
    identity-verification blocks. The document checklist must include stock,
    debtors and creditors statements.
 
+Then test the ITR Filing wizard (`itr-apply.html`):
+
+1. Complete the 8 steps. Verify that the income blocks appear only for the
+   selected income heads, that the assessment year follows the financial year,
+   that the previous-filing block appears only for **Yes**, and that the
+   indicative gross total income, deductions and taxable income update as
+   amounts change.
+2. Use **Save & continue later**, then open the resume link in a new private
+   window. The saved answers must load, including the conditional blocks.
+3. Select salary, business, house property, capital gains, other sources,
+   agricultural and foreign income in separate test runs. Submit and confirm
+   rows in `itr_filing_details`, the matching rows in `itr_income_items`, and
+   TDS / advance tax / self-assessment rows in `itr_tax_payments`.
+4. Confirm the application status is **Application Received** and the public
+   form never writes `filing_status`, `acknowledgement_no` or any verification
+   field.
+5. Open **Applications** in the admin panel. The **ITR Filing — Taxpayer,
+   Income & Computation** section must show the profile, income, deductions,
+   refund and computation blocks, and the **ITR Filing Status &
+   Acknowledgement** section must refuse **Filed & Verified** without an
+   acknowledgement number and filing date. After entering both, confirm the
+   status, filed date and verified date are stored and the customer-facing
+   status reflects only the verified filing.
+6. Confirm the upload page offers the ITR document types, including Form 16,
+   Form 26AS, AIS / TIS, investment proofs, rent receipts, capital gains
+   statements, previous ITR, ITR acknowledgement, tax payment challans and
+   foreign income documents.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -628,6 +705,11 @@ Then test the general flow:
 | Working Capital section does not appear in the admin modal | The lead is not a Working Capital application, or `working_capital_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
 | `permission denied for table working_capital_details` (or `working_capital_facilities`) | The `admin` select permission (and update limited to the identity-verification columns on `working_capital_details`) is missing. See section 4.3. The wizard never touches these tables directly — it uses the `SECURITY DEFINER` function. |
 | Applications list fails to load after adding migration `007` | `working_capital_details` / `working_capital_facilities` is not tracked in Hasura, or the `admin` select permission is missing. Untracked/missing fields fail the whole query. Track both tables and grant `select`. |
+| `field 'submit_itr_application' not found` | Migration `008` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| ITR Filing section does not appear in the admin modal | The lead is not an ITR Filing application, or `itr_filing_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| `permission denied for table itr_filing_details` (or `itr_income_items` / `itr_tax_payments`) | The `admin` select permission is missing, or the update permission on `itr_filing_details` is missing. Grant select on all three tables and update only on the identity and filing-status columns. See section 4.3. |
+| Applications list fails to load after adding migration `008` | `itr_filing_details`, `itr_income_items` or `itr_tax_payments` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without ITR fields, but track the tables and grant `select` to see the data. |
+| The ITR form shows **Filed & Verified** too early | Never set this status manually before the portal filing and acknowledgement are verified. The admin UI requires an acknowledgement number and filing date; confirm both against the Income Tax e-filing portal before saving. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |

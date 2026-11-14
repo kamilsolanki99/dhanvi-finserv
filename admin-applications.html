@@ -531,6 +531,69 @@
                         <h6><i class="fa fa-line-chart" style="margin-right:6px;"></i>Working Capital (CC/OD) — Limit, Utilisation &amp; Financials</h6>
                         <div id="modalWorkingCapital"></div>
                     </div>
+                    <div class="detail-group" id="modalItrGroup" style="display:none;">
+                        <h6><i class="fa fa-file-text-o" style="margin-right:6px;"></i>ITR Filing — Taxpayer, Income &amp; Computation</h6>
+                        <div id="modalItr"></div>
+                    </div>
+                    <div class="detail-group" id="modalItrFilingGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>ITR Filing Status &amp; Acknowledgement</h6>
+                        <div class="detail-row"><span class="detail-label">Current filing status</span><span class="detail-value" id="modalItrFilingBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filing status</label>
+                                    <select class="form-control" id="modalItrFilingStatus">
+                                        <option value="Application Received">Application Received</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Return Prepared">Return Prepared</option>
+                                        <option value="Client Approval Pending">Client Approval Pending</option>
+                                        <option value="Filed - Awaiting Verification">Filed - Awaiting Verification</option>
+                                        <option value="Filed &amp; Verified">Filed &amp; Verified</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Acknowledgement number</label>
+                                    <input type="text" class="form-control" id="modalItrAckNo" maxlength="60" placeholder="Required before Filed &amp; Verified">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Verification method</label>
+                                    <select class="form-control" id="modalItrVerificationMethod">
+                                        <option value="">Select method</option>
+                                        <option>Aadhaar OTP</option>
+                                        <option>Net banking / bank account EVC</option>
+                                        <option>Digital Signature Certificate (DSC)</option>
+                                        <option>Physical ITR-V</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filed on</label>
+                                    <input type="date" class="form-control" id="modalItrFiledAt">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Filing remarks (customer-visible)</label>
+                            <textarea class="form-control" id="modalItrFilingRemarks" rows="2" placeholder="Computation approved, return prepared, filing completed, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Internal filing notes</label>
+                            <textarea class="form-control" id="modalItrFilingNotes" rows="2" placeholder="Portal acknowledgement checked, e-verification pending, etc."></textarea>
+                        </div>
+                        <p class="admin-note">Only mark <strong>Filed &amp; Verified</strong> after the return has actually been submitted on the Income Tax e-filing portal and the acknowledgement has been verified. An acknowledgement number is required. Never mark a return as filed based on a pending portal attempt.</p>
+                        <button type="button" class="btn-save" id="saveItrFilingBtn">Update filing status</button>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -602,7 +665,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js?v=2"></script>
+    <script src="js/nhost-client.js?v=3"></script>
     <script src="js/admin-layout.js"></script>
     <script src="js/admin-delete.js?v=2"></script>
     <script src="js/admin-notifications.js?v=1"></script>
@@ -725,6 +788,36 @@
             '    current_utilisation outstanding_amount interest_rate renewal_date' +
             '  }';
 
+        const APPLICATIONS_QUERY_ITR =
+            '  itr_filing_details {' +
+            '    id loan_lead_id first_name middle_name last_name date_of_birth gender mobile email' +
+            '    pan_number aadhaar_masked aadhaar_verification_method' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    residential_status current_address_line current_address_city current_address_state current_address_pincode' +
+            '    same_as_current permanent_address_line permanent_address_city permanent_address_state permanent_address_pincode' +
+            '    assessment_year financial_year taxpayer_category return_type itr_form_preference' +
+            '    has_salary_income salary_income employer_count' +
+            '    has_business_income business_income business_name business_constitution' +
+            '    has_house_property house_property_income house_property_details' +
+            '    has_capital_gains capital_gains_income capital_gains_type' +
+            '    has_other_sources other_sources_income' +
+            '    has_agricultural_income agricultural_income' +
+            '    has_foreign_income foreign_income foreign_assets_details gross_total_income' +
+            '    previously_filed_itr last_filed_assessment_year last_acknowledgement_no pending_notices filing_history_notes' +
+            '    tax_regime tds_deducted tds_amount advance_tax_paid advance_tax_amount self_assessment_tax_paid' +
+            '    deduction_80c deduction_80d deduction_80e deduction_80g deduction_80tta_ttb other_deductions total_deductions' +
+            '    hra_exemption lta_exemption other_exemptions total_exemptions tax_saving_investments' +
+            '    refund_expected refund_amount bank_account_name bank_account_number_masked ifsc_code' +
+            '    taxable_income estimated_tax_liability computation_notes' +
+            '    filing_status filing_status_notes acknowledgement_no filed_at filed_by verified_at verification_method filing_remarks' +
+            '  }' +
+            '  itr_income_items {' +
+            '    id loan_lead_id income_head amount details' +
+            '  }' +
+            '  itr_tax_payments {' +
+            '    id loan_lead_id payment_type deductor_or_bank reference_no amount financial_year' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -732,9 +825,8 @@
             '}';
 
         const APPLICATIONS_QUERY =
-            APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL + APPLICATIONS_QUERY_TAIL;
-        const APPLICATIONS_QUERY_WITHOUT_WORKING_CAPITAL =
-            APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
+            APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -759,6 +851,7 @@
             if (app.lap_details) { return { table: 'lap_details', data: app.lap_details }; }
             if (app.business_loan_details) { return { table: 'business_loan_details', data: app.business_loan_details }; }
             if (app.working_capital_details) { return { table: 'working_capital_details', data: app.working_capital_details }; }
+            if (app.itr_filing_details) { return { table: 'itr_filing_details', data: app.itr_filing_details }; }
             return null;
         }
 
@@ -836,22 +929,41 @@
             hidePageAlert();
 
             try {
-                let data;
+                let data = null;
                 let workingCapitalAvailable = true;
-                try {
-                    data = await backend().adminGql(APPLICATIONS_QUERY);
-                } catch (queryError) {
-                    const queryMessage = String((queryError && queryError.message) || queryError || '');
-                    // Until migration 007 is applied, Hasura does not know the WC
-                    // tables. Load every other application type instead of failing
-                    // the whole dashboard.
-                    if (/field 'working_capital_(details|facilities)' not found in type: 'query_root'/i.test(queryMessage)) {
-                        data = await backend().adminGql(APPLICATIONS_QUERY_WITHOUT_WORKING_CAPITAL);
-                        workingCapitalAvailable = false;
-                    } else {
+                let itrAvailable = true;
+
+                // Optional service tables are loaded progressively. Until the
+                // migration is applied and Hasura tracks the tables, retry
+                // without the missing group instead of failing the whole
+                // dashboard.
+                for (let attempt = 0; attempt < 4; attempt += 1) {
+                    const query = APPLICATIONS_QUERY_HEAD +
+                        (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
+                        (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
+                        APPLICATIONS_QUERY_TAIL;
+                    try {
+                        data = await backend().adminGql(query);
+                        break;
+                    } catch (queryError) {
+                        const queryMessage = String((queryError && queryError.message) || queryError || '');
+                        const wcMissing = /field 'working_capital_(details|facilities)' not found in type: 'query_root'/i.test(queryMessage);
+                        const itrMissing = /field 'itr_(filing_details|income_items|tax_payments)' not found in type: 'query_root'/i.test(queryMessage);
+                        if (wcMissing && workingCapitalAvailable) {
+                            workingCapitalAvailable = false;
+                            continue;
+                        }
+                        if (itrMissing && itrAvailable) {
+                            itrAvailable = false;
+                            continue;
+                        }
                         throw queryError;
                     }
                 }
+                if (!data) {
+                    throw new Error('Applications could not be loaded. Please refresh the page.');
+                }
+
                 const leads = (data && data.loan_leads) || [];
                 const applicantsByLead = groupByLead(data && data.loan_applicants);
                 const documentsByLead = groupByLead(data && data.loan_documents);
@@ -862,6 +974,9 @@
                 const businessLoanByLead = groupByLead(data && data.business_loan_details);
                 const workingCapitalByLead = groupByLead(data && data.working_capital_details);
                 const workingCapitalFacilitiesByLead = groupByLead(data && data.working_capital_facilities);
+                const itrByLead = groupByLead(data && data.itr_filing_details);
+                const itrIncomeByLead = groupByLead(data && data.itr_income_items);
+                const itrTaxByLead = groupByLead(data && data.itr_tax_payments);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -875,6 +990,9 @@
                     lead.business_loan_details = (businessLoanByLead[lead.id] || [])[0] || null;
                     lead.working_capital_details = (workingCapitalByLead[lead.id] || [])[0] || null;
                     lead.working_capital_facilities = workingCapitalFacilitiesByLead[lead.id] || [];
+                    lead.itr_filing_details = (itrByLead[lead.id] || [])[0] || null;
+                    lead.itr_income_items = itrIncomeByLead[lead.id] || [];
+                    lead.itr_tax_payments = itrTaxByLead[lead.id] || [];
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -882,6 +1000,9 @@
                 renderTable();
                 if (!workingCapitalAvailable) {
                     showPageAlert('warning', 'Working Capital (CC/OD) details will appear after migration 007 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!itrAvailable) {
+                    showPageAlert('warning', 'ITR Filing details will appear after migration 008 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -1480,6 +1601,262 @@
             return d;
         }
 
+        // Structured ITR Filing data. The public wizard never writes filing
+        // status or acknowledgement fields; this section is the only place
+        // where an administrator can move the application to Filed & Verified.
+        function renderItrDetails(app) {
+            const d = app.itr_filing_details;
+            const group = $('#modalItrGroup');
+            if (!d) {
+                group.hide();
+                $('#modalItr').empty();
+                return null;
+            }
+            group.show();
+
+            const name = [d.first_name, d.middle_name, d.last_name].filter(Boolean).join(' ');
+            const proofs = [];
+            if (d.pan_number) { proofs.push('PAN ' + d.pan_number); }
+            if (d.aadhaar_masked) { proofs.push('Aadhaar ' + d.aadhaar_masked); }
+
+            let html = '';
+            html += subHeading('Applicant & identity');
+            html += detailRow('Full name', name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Mobile', d.mobile);
+            html += detailRow('Email', d.email);
+            html += detailRow('Identity proof', proofs.join(' · '));
+            html += detailRow('E-verification preference', d.aadhaar_verification_method);
+            html += detailRow('Residential status', d.residential_status);
+            html += detailRow('Current address', fullAddress(d.current_address_line, d.current_address_city, d.current_address_state, d.current_address_pincode));
+            html += detailRow('Permanent address', d.same_as_current
+                ? 'Same as current address'
+                : fullAddress(d.permanent_address_line, d.permanent_address_city, d.permanent_address_state, d.permanent_address_pincode));
+
+            html += subHeading('Return profile');
+            html += detailRow('Financial year', d.financial_year);
+            html += detailRow('Assessment year', d.assessment_year);
+            html += detailRow('Taxpayer category', d.taxpayer_category);
+            html += detailRow('Return type', d.return_type);
+            html += detailRow('ITR form preference', d.itr_form_preference);
+            html += detailRow('Tax regime preference', d.tax_regime);
+
+            html += subHeading('Declared income');
+            if (d.has_salary_income) {
+                html += detailRow('Salary / pension', money(d.salary_income) + (d.employer_count ? ' · ' + d.employer_count + ' employer/s' : ''));
+            }
+            if (d.has_business_income) {
+                html += detailRow('Business / profession', money(d.business_income));
+                html += detailRow('Business name', d.business_name);
+                html += detailRow('Constitution', d.business_constitution);
+            }
+            if (d.has_house_property) {
+                html += detailRow('House property', money(d.house_property_income));
+                html += detailRow('Property details', d.house_property_details);
+            }
+            if (d.has_capital_gains) {
+                html += detailRow('Capital gains', money(d.capital_gains_income));
+                html += detailRow('Capital gains type', d.capital_gains_type);
+            }
+            if (d.has_other_sources) {
+                html += detailRow('Other sources', money(d.other_sources_income));
+            }
+            if (d.has_agricultural_income) {
+                html += detailRow('Agricultural income (exempt)', money(d.agricultural_income));
+            }
+            if (d.has_foreign_income) {
+                html += detailRow('Foreign income', money(d.foreign_income));
+                html += detailRow('Foreign asset / income details', d.foreign_assets_details);
+            }
+            html += detailRow('Gross total income', money(d.gross_total_income));
+
+            const incomeItems = Array.isArray(app.itr_income_items) ? app.itr_income_items : [];
+            html += subHeading('Income breakdown recorded at submission');
+            if (!incomeItems.length) {
+                html += detailRow('Income heads', 'No itemised income rows recorded');
+            } else {
+                incomeItems.forEach(function (item) {
+                    const details = [item.details || '', money(item.amount)].filter(Boolean).join(' · ');
+                    html += '<div class="detail-row" style="align-items:flex-start;">' +
+                        '<span class="detail-label">' + esc(item.income_head) + '</span>' +
+                        '<span class="detail-value">' + esc(details) + '</span></div>';
+                });
+            }
+
+            html += subHeading('Taxes paid');
+            html += detailRow('TDS deducted', d.tds_deducted ? money(d.tds_amount) : 'No');
+            html += detailRow('Advance tax paid', d.advance_tax_paid ? money(d.advance_tax_amount) : 'No');
+            html += detailRow('Self-assessment tax', (d.self_assessment_tax_paid === null || d.self_assessment_tax_paid === undefined) ? null : money(d.self_assessment_tax_paid));
+
+            const taxPayments = Array.isArray(app.itr_tax_payments) ? app.itr_tax_payments : [];
+            if (taxPayments.length) {
+                taxPayments.forEach(function (payment) {
+                    const details = [
+                        payment.deductor_or_bank || '',
+                        payment.reference_no ? 'Ref ' + payment.reference_no : '',
+                        money(payment.amount),
+                        payment.financial_year || ''
+                    ].filter(Boolean).join(' · ');
+                    html += '<div class="detail-row" style="align-items:flex-start;">' +
+                        '<span class="detail-label">' + esc(payment.payment_type) + '</span>' +
+                        '<span class="detail-value">' + esc(details) + '</span></div>';
+                });
+            }
+
+            html += subHeading('Deductions & exemptions');
+            html += detailRow('Section 80C', d.deduction_80c ? money(d.deduction_80c) : null);
+            html += detailRow('Section 80D', d.deduction_80d ? money(d.deduction_80d) : null);
+            html += detailRow('Section 80E', d.deduction_80e ? money(d.deduction_80e) : null);
+            html += detailRow('Section 80G', d.deduction_80g ? money(d.deduction_80g) : null);
+            html += detailRow('Section 80TTA / 80TTB', d.deduction_80tta_ttb ? money(d.deduction_80tta_ttb) : null);
+            html += detailRow('Other deductions', d.other_deductions ? money(d.other_deductions) : null);
+            html += detailRow('Total deductions', d.total_deductions ? money(d.total_deductions) : null);
+            html += detailRow('HRA exemption', d.hra_exemption ? money(d.hra_exemption) : null);
+            html += detailRow('LTA exemption', d.lta_exemption ? money(d.lta_exemption) : null);
+            html += detailRow('Other exemptions', d.other_exemptions ? money(d.other_exemptions) : null);
+            html += detailRow('Total exemptions', d.total_exemptions ? money(d.total_exemptions) : null);
+            html += detailRow('Tax-saving investments', d.tax_saving_investments);
+
+            html += subHeading('Previous filing history');
+            html += detailRow('Filed an ITR before', d.previously_filed_itr ? 'Yes' : 'No');
+            if (d.previously_filed_itr) {
+                html += detailRow('Last filed assessment year', d.last_filed_assessment_year);
+                html += detailRow('Last acknowledgement number', d.last_acknowledgement_no);
+                html += detailRow('Pending notices / proceedings', d.pending_notices);
+                html += detailRow('Filing history notes', d.filing_history_notes);
+            }
+
+            html += subHeading('Refund & bank details');
+            html += detailRow('Refund expected', d.refund_expected ? 'Yes' : 'No / not sure');
+            html += detailRow('Expected refund amount', d.refund_amount ? money(d.refund_amount) : null);
+            html += detailRow('Bank account holder', d.bank_account_name);
+            html += detailRow('Bank account number', d.bank_account_number_masked);
+            html += detailRow('IFSC code', d.ifsc_code);
+
+            html += subHeading('Indicative computation');
+            html += detailRow('Taxable income', d.taxable_income ? money(d.taxable_income) : null);
+            html += detailRow('Estimated tax liability', d.estimated_tax_liability ? money(d.estimated_tax_liability) : null);
+            html += detailRow('Computation notes', d.computation_notes);
+
+            html += subHeading('Filing record');
+            html += detailRow('Filing status', d.filing_status);
+            html += detailRow('Acknowledgement number', d.acknowledgement_no);
+            html += detailRow('Filed on', d.filed_at ? prettyDate(d.filed_at) : null);
+            html += detailRow('Verified on', d.verified_at ? prettyDate(d.verified_at) : null);
+            html += detailRow('Verification method', d.verification_method);
+            html += detailRow('Filing remarks', d.filing_remarks);
+            html += detailRow('Internal filing notes', d.filing_status_notes);
+
+            $('#modalItr').html(html);
+            return d;
+        }
+
+        function renderItrFiling(app) {
+            const d = app.itr_filing_details;
+            const group = $('#modalItrFilingGroup');
+            if (!d) {
+                group.hide();
+                $('#modalItrFilingBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const status = d.filing_status || 'Application Received';
+            const statusClass = status === 'Filed & Verified'
+                ? 'badge-verified'
+                : (status === 'Cancelled' || status === 'On Hold' ? 'badge-rejected' : 'badge-pending');
+            let badge = '<span class="badge-status ' + statusClass + '">' + esc(status) + '</span>';
+            if (d.filed_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">filed ' + esc(prettyDate(d.filed_at)) + '</span>';
+            }
+            if (d.verified_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">verified ' + esc(prettyDate(d.verified_at)) + '</span>';
+            }
+            $('#modalItrFilingBadge').html(badge);
+            $('#modalItrFilingStatus').val(status);
+            $('#modalItrAckNo').val(d.acknowledgement_no || '');
+            $('#modalItrVerificationMethod').val(d.verification_method || '');
+            $('#modalItrFiledAt').val(d.filed_at ? String(d.filed_at).slice(0, 10) : '');
+            $('#modalItrFilingRemarks').val(d.filing_remarks || '');
+            $('#modalItrFilingNotes').val(d.filing_status_notes || '');
+            return d;
+        }
+
+        async function saveItrFiling() {
+            const id = $('#viewModal').data('itr-detail-id');
+            if (!id) { return; }
+
+            const status = $('#modalItrFilingStatus').val();
+            const ackNo = $('#modalItrAckNo').val().trim();
+            const method = $('#modalItrVerificationMethod').val();
+            const filedDate = $('#modalItrFiledAt').val();
+            const remarks = $('#modalItrFilingRemarks').val().trim();
+            const notes = $('#modalItrFilingNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+
+            if (status === 'Filed & Verified' && !ackNo) {
+                showModalAlert('warning', 'Enter the acknowledgement number before marking the return Filed & Verified.');
+                $('#modalItrAckNo').focus();
+                return;
+            }
+            if (status === 'Filed & Verified' && !filedDate) {
+                showModalAlert('warning', 'Enter the actual filing date before marking the return Filed & Verified.');
+                $('#modalItrFiledAt').focus();
+                return;
+            }
+
+            const filedAt = filedDate ? new Date(filedDate + 'T00:00:00').toISOString() : null;
+            const verifiedAt = status === 'Filed & Verified' ? new Date().toISOString() : null;
+            const btn = $('#saveItrFilingBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateItrFiling($id: uuid!, $status: String!, $ack: String, $filedAt: timestamptz, $filedBy: uuid, $verifiedAt: timestamptz, $method: String, $remarks: String, $notes: String) {' +
+                    '  update_itr_filing_details_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    filing_status: $status, acknowledgement_no: $ack, filed_at: $filedAt,' +
+                    '    filed_by: $filedBy, verified_at: $verifiedAt, verification_method: $method,' +
+                    '    filing_remarks: $remarks, filing_status_notes: $notes' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        ack: ackNo || null,
+                        filedAt: filedAt,
+                        filedBy: (status === 'Filed - Awaiting Verification' || status === 'Filed & Verified') && admin ? admin.id : null,
+                        verifiedAt: verifiedAt,
+                        method: method || null,
+                        remarks: remarks || null,
+                        notes: notes || null
+                    }
+                );
+
+                const app = applications.filter(function (item) {
+                    return item.itr_filing_details && item.itr_filing_details.id === id;
+                })[0];
+                if (app) {
+                    const detail = app.itr_filing_details;
+                    detail.filing_status = status;
+                    detail.acknowledgement_no = ackNo || null;
+                    detail.filed_at = filedAt;
+                    detail.verified_at = verifiedAt;
+                    detail.verification_method = method || null;
+                    detail.filing_remarks = remarks || null;
+                    detail.filing_status_notes = notes || null;
+                    renderItrDetails(app);
+                    renderItrFiling(app);
+                }
+                showModalAlert('success', 'ITR filing status updated.');
+            } catch (err) {
+                console.error('ITR filing update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the ITR filing status.');
+            } finally {
+                btn.prop('disabled', false).text('Update filing status');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -1594,12 +1971,15 @@
             renderLapDetails(app);
             renderBusinessLoanDetails(app);
             renderWorkingCapitalDetails(app);
+            renderItrDetails(app);
+            renderItrFiling(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
             $('#viewModal').data('app-id', app.id);
             $('#viewModal').data('identity-table', identitySrc ? identitySrc.table : null);
             $('#viewModal').data('identity-detail-id', identitySrc ? identitySrc.data.id : null);
+            $('#viewModal').data('itr-detail-id', app.itr_filing_details ? app.itr_filing_details.id : null);
             $('#viewModal').modal('show');
         }
 
@@ -1675,6 +2055,7 @@
             $('#statusFilter').on('change', filterTable);
             $('#saveApplicationBtn').on('click', saveModal);
             $('#saveIdentityBtn').on('click', saveIdentity);
+            $('#saveItrFilingBtn').on('click', saveItrFiling);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

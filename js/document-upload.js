@@ -28,7 +28,9 @@
         'Education Loan': ['PAN Card', 'Aadhaar Card', 'ITR', 'Bank Statement', 'Other'],
         'Vehicle Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Vehicle Documents', 'Other'],
         'Business Loan': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Business Proof', 'Udyam Certificate', 'Other'],
-        'Personal Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Other']
+        'Personal Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Other'],
+        'Working Capital (CC/OD)': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Business Proof', 'Udyam Certificate', 'Stock Statement', 'Debtors Statement', 'Creditors Statement', 'Property Documents', 'Other'],
+        'ITR Filing': ['PAN Card', 'Aadhaar Card', 'Form 16', 'Salary Slips', 'Form 26AS', 'AIS / TIS', 'Financial Statements', 'Business Proof', 'ITR', 'Rent Receipts', 'Property Documents', 'Capital Gains Statement', 'Bank Statement', 'Income Proof', 'Foreign Income Documents', 'Investment Proofs', 'Previous ITR', 'ITR Acknowledgement', 'Tax Payment Challan', 'Other']
     };
 
     var DEFAULT_DOCS = ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'ITR', 'Bank Statement', 'Property Documents', 'Business Proof', 'Vehicle Documents', 'Photograph', 'Other'];

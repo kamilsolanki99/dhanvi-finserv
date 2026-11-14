@@ -97,6 +97,9 @@
         if (/Failed to fetch|NetworkError|Load failed|fetch/i.test(message)) {
             return 'We could not reach the secure server. Please check your connection and try again.';
         }
+        if (/field '.*' not found in type: '(mutation_root|query_root)'/i.test(message)) {
+            return 'This service is temporarily unavailable. Please call +91 99250 02324 or try again later.';
+        }
         if (/JWT|apikey|permission denied|permission-error|not allowed|access-denied|permission-denied|x-hasura-role/i.test(message)) {
             return 'The secure service is temporarily unavailable. Please call +91 99250 02324 or try again later.';
         }
@@ -304,6 +307,16 @@
         // Working Capital (CC/OD) application (migration 007). It also reuses
         // the Home Loan draft functions for save / resume.
         submit_working_capital_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        // ITR Filing assistance (migration 008). Reuses the shared draft
+        // functions for save / resume.
+        submit_itr_application: {
             type: 'mutation',
             args: {
                 p_payload: 'jsonb',
