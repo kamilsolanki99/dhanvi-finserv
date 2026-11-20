@@ -323,6 +323,16 @@
                 p_draft_id: 'uuid',
                 p_draft_token: 'uuid'
             }
+        },
+        // GST Registration & Filing assistance (migration 009). Reuses the
+        // shared draft functions for save / resume.
+        submit_gst_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
         }
     };
 

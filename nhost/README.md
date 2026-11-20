@@ -170,6 +170,47 @@ Until the ITR tables are tracked with `admin` select permission,
 Existing application types keep loading normally, and ITR details appear
 automatically once tracking and the permission are complete.
 
+Then run
+[`migrations/009_gst_registration.sql`](migrations/009_gst_registration.sql).
+It adds the structured **GST Registration & Filing** system behind
+`gst-apply.html`:
+
+- `gst_registration_details` — one structured row per GST assistance lead:
+  applicant and authorised signatory, PAN, masked Aadhaar reference,
+  Aadhaar-authentication preference, principal place of business, business
+  name and constitution, nature of supply, activity and NIC code, commencement
+  date, turnover, employee count, existing GSTIN and other registrations, the
+  selected service (new registration, return filing, amendment, cancellation
+  or compliance assistance), registration type, filing frequency, return
+  period and financial year, previous filing status, amendment / cancellation
+  details, declared sales, purchases, input tax credit, tax liability and
+  payments, signatory and bank details, and the administrator-controlled
+  filing, ARN and payment fields.
+- `gst_return_filings` — each declared return period with its return type,
+  status, ARN, filing date, tax payable, tax paid, late fee, interest and
+  remarks (1:N with the lead).
+- `submit_gst_application` — the secure function the wizard calls.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so GST certificates, invoices, purchase bills, rent
+  agreements / NOCs, certificates of incorporation, partnership deeds, board
+  resolutions, authorisation letters, address proofs and bank proofs can be
+  stored.
+- It re-asserts the widened `loan_leads.loan_type` list and the zero-or-more
+  `loan_amount` rule. Existing loan functions still enforce their own minimum
+  amounts.
+
+The public GST wizard never sets `filing_status`, `acknowledgement_no`,
+`filed_at`, `filed_by`, `verified_at`, `verification_method`, `payment_status`,
+`payment_reference`, `payment_amount`, `payment_date` or `payment_notes`. A new
+application starts at **Application Received**, and only an administrator can
+move it to **Filed & Verified** after the actual GST portal action and ARN or
+approval verification.
+
+Until the GST tables are tracked with `admin` select permission,
+`admin-applications.html` retries its dashboard query without the GST fields.
+Existing application types keep loading normally, and GST details appear
+automatically once tracking and the permission are complete.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -211,6 +252,8 @@ Under `public`:
 - `itr_filing_details`
 - `itr_income_items`
 - `itr_tax_payments`
+- `gst_registration_details`
+- `gst_return_filings`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -240,6 +283,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_business_loan_application`
 - `submit_working_capital_application`
 - `submit_itr_application`
+- `submit_gst_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -287,6 +331,7 @@ Open **Data → [function] → Permissions**.
 | `submit_business_loan_application` | execute | execute | execute |
 | `submit_working_capital_application` | execute | execute | execute |
 | `submit_itr_application` | execute | execute | execute |
+| `submit_gst_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -323,6 +368,8 @@ Grant only what the admin panel uses:
 | `itr_filing_details` | yes | no | yes | no |
 | `itr_income_items` | yes | no | no | no |
 | `itr_tax_payments` | yes | no | no | no |
+| `gst_registration_details` | yes | no | yes | no |
+| `gst_return_filings` | yes | no | yes | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -330,7 +377,9 @@ documents, follow-ups, callbacks, support requests and complaints. Grant
 `loan_applicants`, `loan_documents`, `loan_followups`, `home_loan_details`,
 `home_loan_topup_details`, `home_loan_takeover_details`, `lap_details`,
 `business_loan_details`, `working_capital_details`,
-`working_capital_facilities` and `home_loan_emis`;
+`working_capital_facilities`, `itr_filing_details`, `itr_income_items`,
+`itr_tax_payments`, `gst_registration_details`, `gst_return_filings` and
+`home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
 must not be deletable from the admin UI.
@@ -355,19 +404,23 @@ admin panel:
 | `business_loan_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `working_capital_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes` |
 | `itr_filing_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `filing_status`, `filing_status_notes`, `acknowledgement_no`, `filed_at`, `filed_by`, `verified_at`, `verification_method`, `filing_remarks` |
+| `gst_registration_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `filing_status`, `filing_status_notes`, `acknowledgement_no`, `filed_at`, `filed_by`, `verified_at`, `verification_method`, `filing_remarks`, `payment_status`, `payment_reference`, `payment_amount`, `payment_date`, `payment_notes` |
+| `gst_return_filings` | `filing_status`, `arn`, `filed_at`, `tax_paid`, `remarks` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
 `home_loan_emis` are read-only for the
 admin panel except for the identity-verification fields above, which the
-**Applications** detail modal writes. `itr_filing_details` additionally allows
-the administrator-controlled filing status and acknowledgement fields. The rest
-of the structured data is created by `submit_home_loan_application`,
+**Applications** detail modal writes. `itr_filing_details` and
+`gst_registration_details` additionally allow the administrator-controlled
+filing, acknowledgement and (for GST) payment fields. `gst_return_filings`
+allows the per-period filing status, ARN, filing date, tax paid and remarks. The
+rest of the structured data is created by `submit_home_loan_application`,
 `submit_home_loan_topup_application`, `submit_home_loan_takeover_application`,
 `submit_lap_application`, `submit_business_loan_application`,
-`submit_working_capital_application` and `submit_itr_application` and must not
-be editable from the browser. `home_loan_emis`, `itr_income_items` and
-`itr_tax_payments` have `select` only.
+`submit_working_capital_application`, `submit_itr_application` and
+`submit_gst_application` and must not be editable from the browser.
+`home_loan_emis`, `itr_income_items` and `itr_tax_payments` have `select` only.
 
 Do not add `public` or `anonymous` permissions on any business table. Do not
 grant _any_ role a permission on `home_loan_drafts`.
@@ -537,8 +590,10 @@ functions, triggers, indexes, private bucket, `admin` role, sequence and
 Home Loan tables, functions, triggers and indexes added by migration `004`,
 plus the Top-Up / Takeover tables and functions added by migration `005`, the
 LAP / Business Loan tables and functions added by migration `006`, the
-Working Capital tables, functions and indexes added by migration `007`, and the
-ITR Filing tables, functions and indexes added by migration `008`.
+Working Capital tables, functions and indexes added by migration `007`, the
+ITR Filing tables, functions and indexes added by migration `008`, and the GST
+Registration & Filing tables, function and indexes added by migration `009`.
+The expected totals are **24 tables, 23 functions, 25 triggers and 67 indexes**.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -647,6 +702,36 @@ Then test the ITR Filing wizard (`itr-apply.html`):
    statements, previous ITR, ITR acknowledgement, tax payment challans and
    foreign income documents.
 
+Then test the GST Registration & Filing wizard (`gst-apply.html`):
+
+1. Complete the 7 steps. Verify that the return, amendment, cancellation and
+   compliance blocks appear only for the selected service, that the existing
+   GSTIN is required for every service except a new registration, that the
+   financial year follows the return period, and that the indicative net tax
+   position updates as the liability, tax paid and late fee change.
+2. Use **Save & continue later**, then open the resume link in a new private
+   window. The saved answers must load, including the conditional service
+   blocks. Aadhaar and bank account numbers are intentionally not stored in
+   drafts and must be re-entered.
+3. Submit a new registration with each constitution (Proprietorship,
+   Partnership, LLP, Private Limited), then a return filing, amendment,
+   cancellation and compliance request in separate runs. Confirm rows in
+   `gst_registration_details` and, for a return filing, `gst_return_filings`.
+4. Confirm the application status is **Application Received** and the public
+   form never writes `filing_status`, `acknowledgement_no`, `payment_status` or
+   any verification field.
+5. Open **Applications** in the admin panel. The **GST Registration & Filing —
+   Applicant, Business & Tax Position** section must show the GSTIN, service
+   type, return period, document checklist and tax position. The **GST Filing,
+   ARN & Payment** section must refuse **Filed & Verified** without an ARN and
+   filing date. The **GST Return Periods & Filing Record** section must refuse
+   **Filed & Verified** for an individual return without its ARN and filing
+   date.
+6. Confirm the upload page offers the GST document types, including GST
+   certificates, invoices, purchase bills, rent agreements / NOCs, certificates
+   of incorporation, partnership deeds, board resolutions, authorisation
+   letters, address proofs and bank proofs.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -710,6 +795,11 @@ Then test the general flow:
 | `permission denied for table itr_filing_details` (or `itr_income_items` / `itr_tax_payments`) | The `admin` select permission is missing, or the update permission on `itr_filing_details` is missing. Grant select on all three tables and update only on the identity and filing-status columns. See section 4.3. |
 | Applications list fails to load after adding migration `008` | `itr_filing_details`, `itr_income_items` or `itr_tax_payments` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without ITR fields, but track the tables and grant `select` to see the data. |
 | The ITR form shows **Filed & Verified** too early | Never set this status manually before the portal filing and acknowledgement are verified. The admin UI requires an acknowledgement number and filing date; confirm both against the Income Tax e-filing portal before saving. |
+| `field 'submit_gst_application' not found` | Migration `009` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| GST section does not appear in the admin modal | The lead is not a GST Registration & Filing application, or `gst_registration_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| Applications list fails to load after adding migration `009` | `gst_registration_details` or `gst_return_filings` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without GST fields, but track the tables and grant `select` to see the data. |
+| The GST form shows **Filed & Verified** too early | Never set this status manually before the actual GST portal action and ARN / approval verification. The admin UI requires an ARN and filing date; confirm both against the GST portal before saving. |
+| The GST return row shows **Filed & Verified** too early | Confirm the return was actually filed for that period, then enter the ARN and the actual filing date. Never mark a return complete from a pending portal attempt. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |

@@ -594,6 +594,115 @@
                         <p class="admin-note">Only mark <strong>Filed &amp; Verified</strong> after the return has actually been submitted on the Income Tax e-filing portal and the acknowledgement has been verified. An acknowledgement number is required. Never mark a return as filed based on a pending portal attempt.</p>
                         <button type="button" class="btn-save" id="saveItrFilingBtn">Update filing status</button>
                     </div>
+                    <div class="detail-group" id="modalGstGroup" style="display:none;">
+                        <h6><i class="fa fa-percent" style="margin-right:6px;"></i>GST Registration &amp; Filing — Applicant, Business &amp; Tax Position</h6>
+                        <div id="modalGst"></div>
+                    </div>
+                    <div class="detail-group" id="modalGstFilingGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>GST Filing, ARN &amp; Payment</h6>
+                        <div class="detail-row"><span class="detail-label">Current filing status</span><span class="detail-value" id="modalGstFilingBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filing status</label>
+                                    <select class="form-control" id="modalGstFilingStatus">
+                                        <option value="Application Received">Application Received</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Return Prepared">Return Prepared</option>
+                                        <option value="Client Approval Pending">Client Approval Pending</option>
+                                        <option value="Filed - Awaiting Verification">Filed - Awaiting Verification</option>
+                                        <option value="Filed &amp; Verified">Filed &amp; Verified</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>ARN / acknowledgement number</label>
+                                    <input type="text" class="form-control" id="modalGstAckNo" maxlength="60" placeholder="Required before Filed &amp; Verified">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Verification method</label>
+                                    <select class="form-control" id="modalGstVerificationMethod">
+                                        <option value="">Select method</option>
+                                        <option>GST portal ARN</option>
+                                        <option>Registration approval</option>
+                                        <option>Amendment approval</option>
+                                        <option>Cancellation approval</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filed / approved on</label>
+                                    <input type="date" class="form-control" id="modalGstFiledAt">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Filing remarks (customer-visible)</label>
+                            <textarea class="form-control" id="modalGstFilingRemarks" rows="2" placeholder="Registration approved, return prepared, ARN verified, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Internal filing notes</label>
+                            <textarea class="form-control" id="modalGstFilingNotes" rows="2" placeholder="Portal acknowledgement checked, DSC used, pending tax, etc."></textarea>
+                        </div>
+                        <h6 style="margin-top:18px;">Payment tracking</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment status</label>
+                                    <select class="form-control" id="modalGstPaymentStatus">
+                                        <option>Not Applicable</option>
+                                        <option>Pending</option>
+                                        <option>Paid</option>
+                                        <option>Partially Paid</option>
+                                        <option>Refund Due</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment reference</label>
+                                    <input type="text" class="form-control" id="modalGstPaymentReference" maxlength="80" placeholder="Challan / UTR / reference">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment amount (₹)</label>
+                                    <input type="number" class="form-control" id="modalGstPaymentAmount" min="0" step="1" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment date</label>
+                                    <input type="date" class="form-control" id="modalGstPaymentDate">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Payment notes</label>
+                                    <input type="text" class="form-control" id="modalGstPaymentNotes" maxlength="255" placeholder="Optional">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="admin-note">Only mark <strong>Filed &amp; Verified</strong> after the actual action on the GST portal and verification of the ARN, approval or acknowledgement. An ARN and the filing date are required. Never mark a registration, amendment, cancellation or return as complete based on a pending portal attempt.</p>
+                        <button type="button" class="btn-save" id="saveGstFilingBtn">Update GST filing &amp; payment</button>
+                    </div>
+                    <div class="detail-group" id="modalGstReturnsGroup" style="display:none;">
+                        <h6><i class="fa fa-list-alt" style="margin-right:6px;"></i>GST Return Periods &amp; Filing Record</h6>
+                        <div id="modalGstReturns"></div>
+                        <p class="admin-note">Each return period is tracked separately. A return can be marked <strong>Filed &amp; Verified</strong> only with a valid ARN and actual filing date from the GST portal.</p>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -818,6 +927,29 @@
             '    id loan_lead_id payment_type deductor_or_bank reference_no amount financial_year' +
             '  }';
 
+        const APPLICATIONS_QUERY_GST =
+            '  gst_registration_details {' +
+            '    id loan_lead_id applicant_name designation mobile email pan_number aadhaar_masked aadhaar_verification_method' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    address_line address_city address_district address_state address_pincode' +
+            '    business_name trade_name constitution business_nature business_activity nic_code commencement_date' +
+            '    annual_turnover employee_count gstin existing_registrations' +
+            '    service_type registration_type filing_frequency return_period financial_year return_type_preference' +
+            '    previous_filing_status last_return_filed_on pending_returns amendment_type amendment_details' +
+            '    cancellation_reason cancellation_effective_date compliance_areas' +
+            '    sales_taxable sales_exempt sales_zero_rated purchases itc_claimed tax_liability tax_paid late_fee_interest' +
+            '    net_tax_payable invoice_count purchase_invoice_count' +
+            '    signatory_name signatory_designation signatory_pan signatory_din signatory_mobile signatory_email signatory_address' +
+            '    partner_count director_count' +
+            '    bank_name bank_account_number_masked bank_ifsc bank_branch bank_account_type' +
+            '    filing_status filing_status_notes acknowledgement_no filed_at filed_by verified_at verification_method filing_remarks' +
+            '    payment_status payment_reference payment_amount payment_date payment_notes' +
+            '  }' +
+            '  gst_return_filings {' +
+            '    id loan_lead_id return_type return_period financial_year filing_status arn filed_at' +
+            '    tax_payable tax_paid late_fee interest remarks' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -826,7 +958,7 @@
 
         const APPLICATIONS_QUERY =
             APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
-            APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -852,6 +984,7 @@
             if (app.business_loan_details) { return { table: 'business_loan_details', data: app.business_loan_details }; }
             if (app.working_capital_details) { return { table: 'working_capital_details', data: app.working_capital_details }; }
             if (app.itr_filing_details) { return { table: 'itr_filing_details', data: app.itr_filing_details }; }
+            if (app.gst_registration_details) { return { table: 'gst_registration_details', data: app.gst_registration_details }; }
             return null;
         }
 
@@ -932,15 +1065,17 @@
                 let data = null;
                 let workingCapitalAvailable = true;
                 let itrAvailable = true;
+                let gstAvailable = true;
 
                 // Optional service tables are loaded progressively. Until the
                 // migration is applied and Hasura tracks the tables, retry
                 // without the missing group instead of failing the whole
                 // dashboard.
-                for (let attempt = 0; attempt < 4; attempt += 1) {
+                for (let attempt = 0; attempt < 5; attempt += 1) {
                     const query = APPLICATIONS_QUERY_HEAD +
                         (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
                         (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
+                        (gstAvailable ? APPLICATIONS_QUERY_GST : '') +
                         APPLICATIONS_QUERY_TAIL;
                     try {
                         data = await backend().adminGql(query);
@@ -949,12 +1084,17 @@
                         const queryMessage = String((queryError && queryError.message) || queryError || '');
                         const wcMissing = /field 'working_capital_(details|facilities)' not found in type: 'query_root'/i.test(queryMessage);
                         const itrMissing = /field 'itr_(filing_details|income_items|tax_payments)' not found in type: 'query_root'/i.test(queryMessage);
+                        const gstMissing = /field 'gst_(registration_details|return_filings)' not found in type: 'query_root'/i.test(queryMessage);
                         if (wcMissing && workingCapitalAvailable) {
                             workingCapitalAvailable = false;
                             continue;
                         }
                         if (itrMissing && itrAvailable) {
                             itrAvailable = false;
+                            continue;
+                        }
+                        if (gstMissing && gstAvailable) {
+                            gstAvailable = false;
                             continue;
                         }
                         throw queryError;
@@ -977,6 +1117,8 @@
                 const itrByLead = groupByLead(data && data.itr_filing_details);
                 const itrIncomeByLead = groupByLead(data && data.itr_income_items);
                 const itrTaxByLead = groupByLead(data && data.itr_tax_payments);
+                const gstByLead = groupByLead(data && data.gst_registration_details);
+                const gstReturnsByLead = groupByLead(data && data.gst_return_filings);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -993,6 +1135,8 @@
                     lead.itr_filing_details = (itrByLead[lead.id] || [])[0] || null;
                     lead.itr_income_items = itrIncomeByLead[lead.id] || [];
                     lead.itr_tax_payments = itrTaxByLead[lead.id] || [];
+                    lead.gst_registration_details = (gstByLead[lead.id] || [])[0] || null;
+                    lead.gst_return_filings = gstReturnsByLead[lead.id] || [];
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -1003,6 +1147,9 @@
                 }
                 if (!itrAvailable) {
                     showPageAlert('warning', 'ITR Filing details will appear after migration 008 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!gstAvailable) {
+                    showPageAlert('warning', 'GST Registration & Filing details will appear after migration 009 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -1857,6 +2004,399 @@
             }
         }
 
+        // Structured GST Registration & Filing data. The public wizard never
+        // writes filing, ARN or payment fields; this section is the only place
+        // where an administrator can move the application to Filed & Verified.
+        function gstChecklist(app) {
+            const d = app.gst_registration_details || {};
+            const service = d.service_type || '';
+            const constitution = d.constitution || '';
+            const registered = !!d.gstin;
+            const expected = ['PAN Card', 'Aadhaar Card', 'Photograph', 'Address Proof', 'Business Proof', 'Bank Proof'];
+            if (service === 'New GST Registration') { expected.push('Rent Agreement / NOC'); }
+            if (constitution === 'Private Limited Company' || constitution === 'Public Limited Company') {
+                expected.push('Certificate of Incorporation', 'Board Resolution');
+            }
+            if (constitution === 'Partnership' || constitution === 'LLP') {
+                expected.push('Partnership Deed', 'Authorisation Letter');
+            }
+            if (registered || service === 'GST Return Filing' || service === 'GST Amendment' ||
+                service === 'GST Cancellation' || service === 'GST Compliance Assistance') {
+                expected.push('GST Certificate');
+            }
+            if (service === 'GST Return Filing' || service === 'GST Compliance Assistance') {
+                expected.push('Invoices', 'Purchase Bills', 'GST Returns', 'Bank Statement');
+            }
+            if (service === 'GST Compliance Assistance') { expected.push('Financial Statements'); }
+            if (service === 'GST Amendment' || service === 'GST Cancellation') { expected.push('Other'); }
+
+            const received = {};
+            (app.loan_documents || []).forEach(function (doc) {
+                if (doc.document_type) { received[doc.document_type] = true; }
+            });
+            const unique = expected.filter(function (item, index) {
+                return expected.indexOf(item) === index;
+            });
+            return {
+                received: unique.filter(function (item) { return received[item]; }),
+                pending: unique.filter(function (item) { return !received[item]; })
+            };
+        }
+
+        function renderGstDetails(app) {
+            const d = app.gst_registration_details;
+            const group = $('#modalGstGroup');
+            if (!d) {
+                group.hide();
+                $('#modalGst').empty();
+                return null;
+            }
+            group.show();
+
+            let html = '';
+            html += subHeading('Applicant & place of business');
+            html += detailRow('Applicant / signatory', d.applicant_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Mobile', d.mobile);
+            html += detailRow('Email', d.email);
+            html += detailRow('PAN', d.pan_number);
+            html += detailRow('Aadhaar (masked)', d.aadhaar_masked);
+            html += detailRow('Aadhaar authentication', d.aadhaar_verification_method);
+            html += detailRow('Principal place of business', fullAddress(d.address_line, d.address_city, d.address_state, d.address_pincode));
+            html += detailRow('District', d.address_district);
+
+            html += subHeading('Business profile');
+            html += detailRow('Legal business name', d.business_name);
+            html += detailRow('Trade name', d.trade_name);
+            html += detailRow('Constitution', d.constitution);
+            html += detailRow('Nature of supply', d.business_nature);
+            html += detailRow('Main activity', d.business_activity);
+            html += detailRow('NIC / activity code', d.nic_code);
+            html += detailRow('Date of commencement', d.commencement_date ? prettyDate(d.commencement_date) : null);
+            html += detailRow('Annual turnover', d.annual_turnover !== null && d.annual_turnover !== undefined ? money(d.annual_turnover) : null);
+            html += detailRow('Employees', d.employee_count);
+            html += detailRow('GSTIN', d.gstin);
+            html += detailRow('Other registrations', d.existing_registrations);
+
+            html += subHeading('Service requirement');
+            html += detailRow('Service type', d.service_type);
+            html += detailRow('Registration type', d.registration_type);
+            html += detailRow('Filing frequency', d.filing_frequency);
+            html += detailRow('Return period', d.return_period);
+            html += detailRow('Financial year', d.financial_year);
+            html += detailRow('Return type preference', d.return_type_preference);
+            html += detailRow('Previous filing status', d.previous_filing_status);
+            html += detailRow('Last return filed on', d.last_return_filed_on ? prettyDate(d.last_return_filed_on) : null);
+            html += detailRow('Pending returns', d.pending_returns);
+            html += detailRow('Amendment type', d.amendment_type);
+            html += detailRow('Amendment details', d.amendment_details);
+            html += detailRow('Cancellation reason', d.cancellation_reason);
+            html += detailRow('Cancellation effective date', d.cancellation_effective_date ? prettyDate(d.cancellation_effective_date) : null);
+            html += detailRow('Compliance assistance', d.compliance_areas);
+
+            html += subHeading('Sales, purchases & tax position');
+            html += detailRow('Taxable sales', d.sales_taxable !== null && d.sales_taxable !== undefined ? money(d.sales_taxable) : null);
+            html += detailRow('Exempt sales', d.sales_exempt !== null && d.sales_exempt !== undefined ? money(d.sales_exempt) : null);
+            html += detailRow('Zero-rated / export sales', d.sales_zero_rated !== null && d.sales_zero_rated !== undefined ? money(d.sales_zero_rated) : null);
+            html += detailRow('Purchases / inward supplies', d.purchases !== null && d.purchases !== undefined ? money(d.purchases) : null);
+            html += detailRow('Input tax credit claimed', d.itc_claimed !== null && d.itc_claimed !== undefined ? money(d.itc_claimed) : null);
+            html += detailRow('Output tax liability', d.tax_liability !== null && d.tax_liability !== undefined ? money(d.tax_liability) : null);
+            html += detailRow('Tax already paid', d.tax_paid !== null && d.tax_paid !== undefined ? money(d.tax_paid) : null);
+            html += detailRow('Late fee & interest', d.late_fee_interest !== null && d.late_fee_interest !== undefined ? money(d.late_fee_interest) : null);
+            html += detailRow('Net tax payable', d.net_tax_payable !== null && d.net_tax_payable !== undefined ? money(d.net_tax_payable) : null);
+            html += detailRow('Sales invoices', d.invoice_count);
+            html += detailRow('Purchase bills', d.purchase_invoice_count);
+
+            html += subHeading('Authorised signatory & bank');
+            html += detailRow('Signatory name', d.signatory_name);
+            html += detailRow('Designation', d.signatory_designation);
+            html += detailRow('Signatory PAN', d.signatory_pan);
+            html += detailRow('DIN', d.signatory_din);
+            html += detailRow('Signatory mobile', d.signatory_mobile);
+            html += detailRow('Signatory email', d.signatory_email);
+            html += detailRow('Signatory address', d.signatory_address);
+            html += detailRow('Partners', d.partner_count);
+            html += detailRow('Directors', d.director_count);
+            html += detailRow('Bank', d.bank_name);
+            html += detailRow('Account (masked)', d.bank_account_number_masked);
+            html += detailRow('IFSC', d.bank_ifsc);
+            html += detailRow('Branch', d.bank_branch);
+            html += detailRow('Account type', d.bank_account_type);
+
+            const checklist = gstChecklist(app);
+            html += subHeading('Document checklist');
+            html += detailRow('Documents received', checklist.received.length ? checklist.received.join(' · ') : 'None recorded yet');
+            html += detailRow('Documents pending', checklist.pending.length ? checklist.pending.join(' · ') : 'None pending');
+
+            html += subHeading('Filing record');
+            html += detailRow('Filing status', d.filing_status);
+            html += detailRow('ARN / acknowledgement', d.acknowledgement_no);
+            html += detailRow('Filed / approved on', d.filed_at ? prettyDate(d.filed_at) : null);
+            html += detailRow('Verified on', d.verified_at ? prettyDate(d.verified_at) : null);
+            html += detailRow('Verification method', d.verification_method);
+            html += detailRow('Filing remarks', d.filing_remarks);
+            html += detailRow('Internal filing notes', d.filing_status_notes);
+
+            html += subHeading('Payment record');
+            html += detailRow('Payment status', d.payment_status);
+            html += detailRow('Payment reference', d.payment_reference);
+            html += detailRow('Payment amount', d.payment_amount !== null && d.payment_amount !== undefined ? money(d.payment_amount) : null);
+            html += detailRow('Payment date', d.payment_date ? prettyDate(d.payment_date) : null);
+            html += detailRow('Payment notes', d.payment_notes);
+
+            $('#modalGst').html(html);
+            return d;
+        }
+
+        function renderGstFiling(app) {
+            const d = app.gst_registration_details;
+            const group = $('#modalGstFilingGroup');
+            if (!d) {
+                group.hide();
+                $('#modalGstFilingBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const status = d.filing_status || 'Application Received';
+            const statusClass = status === 'Filed & Verified'
+                ? 'badge-verified'
+                : (status === 'Cancelled' || status === 'On Hold' ? 'badge-rejected' : 'badge-pending');
+            let badge = '<span class="badge-status ' + statusClass + '">' + esc(status) + '</span>';
+            if (d.filed_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">filed ' + esc(prettyDate(d.filed_at)) + '</span>';
+            }
+            if (d.verified_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">verified ' + esc(prettyDate(d.verified_at)) + '</span>';
+            }
+            $('#modalGstFilingBadge').html(badge);
+            $('#modalGstFilingStatus').val(status);
+            $('#modalGstAckNo').val(d.acknowledgement_no || '');
+            $('#modalGstVerificationMethod').val(d.verification_method || '');
+            $('#modalGstFiledAt').val(d.filed_at ? String(d.filed_at).slice(0, 10) : '');
+            $('#modalGstFilingRemarks').val(d.filing_remarks || '');
+            $('#modalGstFilingNotes').val(d.filing_status_notes || '');
+            $('#modalGstPaymentStatus').val(d.payment_status || 'Not Applicable');
+            $('#modalGstPaymentReference').val(d.payment_reference || '');
+            $('#modalGstPaymentAmount').val(d.payment_amount !== null && d.payment_amount !== undefined ? d.payment_amount : '');
+            $('#modalGstPaymentDate').val(d.payment_date ? String(d.payment_date).slice(0, 10) : '');
+            $('#modalGstPaymentNotes').val(d.payment_notes || '');
+            return d;
+        }
+
+        function renderGstReturns(app) {
+            const list = Array.isArray(app.gst_return_filings) ? app.gst_return_filings : [];
+            const group = $('#modalGstReturnsGroup');
+            if (!list.length) {
+                group.hide();
+                $('#modalGstReturns').empty();
+                return;
+            }
+            group.show();
+
+            const html = list.map(function (row) {
+                return '<div class="gst-return-row" data-return-id="' + esc(row.id) + '" style="border:1px solid #e3e8ef;border-radius:8px;padding:14px;margin-bottom:14px;">' +
+                    '<div class="detail-row"><span class="detail-label">Return</span><span class="detail-value">' +
+                        esc(row.return_type) + ' · ' + esc(row.return_period) + (row.financial_year ? ' · FY ' + esc(row.financial_year) : '') +
+                    '</span></div>' +
+                    '<div class="detail-row"><span class="detail-label">Current status</span><span class="detail-value">' + esc(row.filing_status) + '</span></div>' +
+                    '<div class="detail-row"><span class="detail-label">Tax payable / paid</span><span class="detail-value">' +
+                        esc(money(row.tax_payable)) + ' / ' + esc(money(row.tax_paid)) +
+                        (row.late_fee !== null && row.late_fee !== undefined ? ' · late fee ' + esc(money(row.late_fee)) : '') +
+                        (row.interest !== null && row.interest !== undefined ? ' · interest ' + esc(money(row.interest)) : '') +
+                    '</span></div>' +
+                    '<div class="row" style="margin-top:10px;">' +
+                        '<div class="col-md-4"><div class="form-group"><label>Filing status</label>' +
+                            '<select class="form-control gst-return-status">' +
+                                ['Pending', 'Prepared', 'Client Approval Pending', 'Filed - Awaiting Verification', 'Filed & Verified', 'Late Filed', 'Not Applicable'].map(function (option) {
+                                    return '<option' + (option === row.filing_status ? ' selected' : '') + '>' + esc(option) + '</option>';
+                                }).join('') +
+                            '</select></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>ARN</label>' +
+                            '<input type="text" class="form-control gst-return-arn" maxlength="60" value="' + esc(row.arn || '') + '" placeholder="Required for Filed &amp; Verified"></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>Filed on</label>' +
+                            '<input type="date" class="form-control gst-return-filed-at" value="' + esc(row.filed_at ? String(row.filed_at).slice(0, 10) : '') + '"></div></div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-4"><div class="form-group"><label>Tax paid (₹)</label>' +
+                            '<input type="number" min="0" step="1" class="form-control gst-return-tax-paid" value="' + esc(row.tax_paid !== null && row.tax_paid !== undefined ? row.tax_paid : '') + '"></div></div>' +
+                        '<div class="col-md-8"><div class="form-group"><label>Remarks</label>' +
+                            '<input type="text" class="form-control gst-return-remarks" maxlength="255" value="' + esc(row.remarks || '') + '"></div></div>' +
+                    '</div>' +
+                    '<button type="button" class="btn-save btn-save-gst-return">Save return</button>' +
+                '</div>';
+            }).join('');
+
+            $('#modalGstReturns').html(html);
+        }
+
+        async function saveGstFiling() {
+            const id = $('#viewModal').data('gst-detail-id');
+            if (!id) { return; }
+
+            const status = $('#modalGstFilingStatus').val();
+            const ackNo = $('#modalGstAckNo').val().trim();
+            const method = $('#modalGstVerificationMethod').val();
+            const filedDate = $('#modalGstFiledAt').val();
+            const remarks = $('#modalGstFilingRemarks').val().trim();
+            const notes = $('#modalGstFilingNotes').val().trim();
+            const paymentStatus = $('#modalGstPaymentStatus').val();
+            const paymentReference = $('#modalGstPaymentReference').val().trim();
+            const paymentAmountRaw = $('#modalGstPaymentAmount').val();
+            const paymentDate = $('#modalGstPaymentDate').val();
+            const paymentNotes = $('#modalGstPaymentNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+
+            if (status === 'Filed & Verified' && !ackNo) {
+                showModalAlert('warning', 'Enter the ARN or acknowledgement number before marking the filing Filed & Verified.');
+                $('#modalGstAckNo').focus();
+                return;
+            }
+            if (status === 'Filed & Verified' && !filedDate) {
+                showModalAlert('warning', 'Enter the actual filing or approval date before marking the filing Filed & Verified.');
+                $('#modalGstFiledAt').focus();
+                return;
+            }
+            const paymentAmount = paymentAmountRaw === '' ? null : Number(paymentAmountRaw);
+            if (paymentAmount !== null && (isNaN(paymentAmount) || paymentAmount < 0)) {
+                showModalAlert('warning', 'Payment amount must be zero or more.');
+                $('#modalGstPaymentAmount').focus();
+                return;
+            }
+
+            const filedAt = filedDate ? new Date(filedDate + 'T00:00:00').toISOString() : null;
+            const verifiedAt = status === 'Filed & Verified' ? new Date().toISOString() : null;
+            const btn = $('#saveGstFilingBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateGstFiling($id: uuid!, $status: String!, $ack: String, $filedAt: timestamptz, $filedBy: uuid, $verifiedAt: timestamptz, $method: String, $remarks: String, $notes: String, $paymentStatus: String!, $paymentRef: String, $paymentAmount: numeric, $paymentDate: date, $paymentNotes: String) {' +
+                    '  update_gst_registration_details_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    filing_status: $status, acknowledgement_no: $ack, filed_at: $filedAt,' +
+                    '    filed_by: $filedBy, verified_at: $verifiedAt, verification_method: $method,' +
+                    '    filing_remarks: $remarks, filing_status_notes: $notes,' +
+                    '    payment_status: $paymentStatus, payment_reference: $paymentRef,' +
+                    '    payment_amount: $paymentAmount, payment_date: $paymentDate, payment_notes: $paymentNotes' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        ack: ackNo || null,
+                        filedAt: filedAt,
+                        filedBy: (status === 'Filed - Awaiting Verification' || status === 'Filed & Verified') && admin ? admin.id : null,
+                        verifiedAt: verifiedAt,
+                        method: method || null,
+                        remarks: remarks || null,
+                        notes: notes || null,
+                        paymentStatus: paymentStatus,
+                        paymentRef: paymentReference || null,
+                        paymentAmount: paymentAmount,
+                        paymentDate: paymentDate || null,
+                        paymentNotes: paymentNotes || null
+                    }
+                );
+
+                const app = applications.filter(function (item) {
+                    return item.gst_registration_details && item.gst_registration_details.id === id;
+                })[0];
+                if (app) {
+                    const detail = app.gst_registration_details;
+                    detail.filing_status = status;
+                    detail.acknowledgement_no = ackNo || null;
+                    detail.filed_at = filedAt;
+                    detail.verified_at = verifiedAt;
+                    detail.verification_method = method || null;
+                    detail.filing_remarks = remarks || null;
+                    detail.filing_status_notes = notes || null;
+                    detail.payment_status = paymentStatus;
+                    detail.payment_reference = paymentReference || null;
+                    detail.payment_amount = paymentAmount;
+                    detail.payment_date = paymentDate || null;
+                    detail.payment_notes = paymentNotes || null;
+                    renderGstDetails(app);
+                    renderGstFiling(app);
+                }
+                showModalAlert('success', 'GST filing and payment details updated.');
+            } catch (err) {
+                console.error('GST filing update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the GST filing details.');
+            } finally {
+                btn.prop('disabled', false).text('Update GST filing & payment');
+            }
+        }
+
+        async function saveGstReturn(event) {
+            const row = $(event.currentTarget).closest('.gst-return-row');
+            const id = row.data('return-id');
+            if (!id) { return; }
+
+            const status = row.find('.gst-return-status').val();
+            const arn = row.find('.gst-return-arn').val().trim();
+            const filedDate = row.find('.gst-return-filed-at').val();
+            const taxPaidRaw = row.find('.gst-return-tax-paid').val();
+            const remarks = row.find('.gst-return-remarks').val().trim();
+
+            if (status === 'Filed & Verified' && !arn) {
+                showModalAlert('warning', 'Enter the ARN before marking this return Filed & Verified.');
+                row.find('.gst-return-arn').focus();
+                return;
+            }
+            if (status === 'Filed & Verified' && !filedDate) {
+                showModalAlert('warning', 'Enter the actual filing date before marking this return Filed & Verified.');
+                row.find('.gst-return-filed-at').focus();
+                return;
+            }
+            const taxPaid = taxPaidRaw === '' ? null : Number(taxPaidRaw);
+            if (taxPaid !== null && (isNaN(taxPaid) || taxPaid < 0)) {
+                showModalAlert('warning', 'Tax paid must be zero or more.');
+                row.find('.gst-return-tax-paid').focus();
+                return;
+            }
+
+            const btn = row.find('.btn-save-gst-return');
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateGstReturn($id: uuid!, $status: String!, $arn: String, $filedAt: date, $taxPaid: numeric, $remarks: String) {' +
+                    '  update_gst_return_filings_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    filing_status: $status, arn: $arn, filed_at: $filedAt, tax_paid: $taxPaid, remarks: $remarks' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        arn: arn || null,
+                        filedAt: filedDate || null,
+                        taxPaid: taxPaid,
+                        remarks: remarks || null
+                    }
+                );
+
+                const app = applications.filter(function (item) {
+                    return (item.gst_return_filings || []).some(function (filing) { return filing.id === id; });
+                })[0];
+                if (app) {
+                    app.gst_return_filings.forEach(function (filing) {
+                        if (filing.id !== id) { return; }
+                        filing.filing_status = status;
+                        filing.arn = arn || null;
+                        filing.filed_at = filedDate || null;
+                        filing.tax_paid = taxPaid;
+                        filing.remarks = remarks || null;
+                    });
+                    renderGstReturns(app);
+                }
+                showModalAlert('success', 'GST return filing record updated.');
+            } catch (err) {
+                console.error('GST return update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the GST return record.');
+            } finally {
+                btn.prop('disabled', false).text('Save return');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -1973,6 +2513,9 @@
             renderWorkingCapitalDetails(app);
             renderItrDetails(app);
             renderItrFiling(app);
+            renderGstDetails(app);
+            renderGstFiling(app);
+            renderGstReturns(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
@@ -1980,6 +2523,7 @@
             $('#viewModal').data('identity-table', identitySrc ? identitySrc.table : null);
             $('#viewModal').data('identity-detail-id', identitySrc ? identitySrc.data.id : null);
             $('#viewModal').data('itr-detail-id', app.itr_filing_details ? app.itr_filing_details.id : null);
+            $('#viewModal').data('gst-detail-id', app.gst_registration_details ? app.gst_registration_details.id : null);
             $('#viewModal').modal('show');
         }
 
@@ -2056,6 +2600,8 @@
             $('#saveApplicationBtn').on('click', saveModal);
             $('#saveIdentityBtn').on('click', saveIdentity);
             $('#saveItrFilingBtn').on('click', saveItrFiling);
+            $('#saveGstFilingBtn').on('click', saveGstFiling);
+            $('#modalGstReturns').on('click', '.btn-save-gst-return', saveGstReturn);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

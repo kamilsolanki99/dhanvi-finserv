@@ -30,7 +30,8 @@
         'Business Loan': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Business Proof', 'Udyam Certificate', 'Other'],
         'Personal Loan': ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'Bank Statement', 'ITR', 'Other'],
         'Working Capital (CC/OD)': ['PAN Card', 'Aadhaar Card', 'Income Proof', 'ITR', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Business Proof', 'Udyam Certificate', 'Stock Statement', 'Debtors Statement', 'Creditors Statement', 'Property Documents', 'Other'],
-        'ITR Filing': ['PAN Card', 'Aadhaar Card', 'Form 16', 'Salary Slips', 'Form 26AS', 'AIS / TIS', 'Financial Statements', 'Business Proof', 'ITR', 'Rent Receipts', 'Property Documents', 'Capital Gains Statement', 'Bank Statement', 'Income Proof', 'Foreign Income Documents', 'Investment Proofs', 'Previous ITR', 'ITR Acknowledgement', 'Tax Payment Challan', 'Other']
+        'ITR Filing': ['PAN Card', 'Aadhaar Card', 'Form 16', 'Salary Slips', 'Form 26AS', 'AIS / TIS', 'Financial Statements', 'Business Proof', 'ITR', 'Rent Receipts', 'Property Documents', 'Capital Gains Statement', 'Bank Statement', 'Income Proof', 'Foreign Income Documents', 'Investment Proofs', 'Previous ITR', 'ITR Acknowledgement', 'Tax Payment Challan', 'Other'],
+        'GST Registration & Filing': ['PAN Card', 'Aadhaar Card', 'Photograph', 'Address Proof', 'Business Proof', 'Bank Proof', 'Rent Agreement / NOC', 'Certificate of Incorporation', 'Partnership Deed', 'Board Resolution', 'Authorisation Letter', 'GST Certificate', 'Invoices', 'Purchase Bills', 'GST Returns', 'Financial Statements', 'Bank Statement', 'Other']
     };
 
     var DEFAULT_DOCS = ['PAN Card', 'Aadhaar Card', 'Salary Slips', 'ITR', 'Bank Statement', 'Property Documents', 'Business Proof', 'Vehicle Documents', 'Photograph', 'Other'];
