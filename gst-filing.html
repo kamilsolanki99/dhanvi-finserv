@@ -436,7 +436,7 @@
                                     <div class="panel-heading" role="tab" id="headingComp1">
                                         <h4 class="panel-title"> <a class="" role="button" data-toggle="collapse" data-parent="#accordionCompliance" href="#collapseComp1" aria-expanded="true" aria-controls="collapseComp1">Who is required to register for GST?</a> </h4>
                                     </div>
-                                    <div id="collapseComp1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingComp1">
+                                    <div id="collapseComp1" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="headingComp1">
                                         <div class="panel-body">
                                             <p>Registration is generally required when aggregate turnover crosses the threshold - commonly ₹40 lakh for goods and ₹20 lakh for services, with lower limits in special-category states. It is also required for inter-state taxable supplies, e-commerce operators and sellers, and certain notified categories, irrespective of turnover. The application captures your turnover, supply type and state so we can confirm the correct position.</p>
                                         </div>
@@ -635,5 +635,12 @@
     <script src="js/wa-forms.js"></script>
     <script src="js/modern.js"></script>
     <script src="js/interactions.js"></script>
+    <script>
+        jQuery(function ($) {
+            $('#accordionCompliance').on('show.bs.collapse', function (event) {
+                $(this).find('.panel-collapse.collapse.show').not(event.target).collapse('hide');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -404,7 +404,7 @@
                                     <div class="panel-heading" role="tab" id="headingItrOne">
                                         <h4 class="panel-title"> <a role="button" data-toggle="collapse" data-parent="#accordionItr" href="#collapseItrOne" aria-expanded="true" aria-controls="collapseItrOne">Who can use this ITR filing service?</a> </h4>
                                     </div>
-                                    <div id="collapseItrOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingItrOne">
+                                    <div id="collapseItrOne" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="headingItrOne">
                                         <div class="panel-body">
                                             <p>We assist salaried individuals, self-employed professionals, freelancers, business owners, partners, company directors, HUF taxpayers and NRIs. The application covers salary, business or profession, house property, capital gains, other sources, agricultural income and foreign income. We confirm the applicable ITR form after reviewing your profile.</p>
                                         </div>
@@ -603,6 +603,13 @@
     <script src="js/wa-forms.js"></script>
     <script src="js/modern.js"></script>
     <script src="js/interactions.js"></script>
+    <script>
+        jQuery(function ($) {
+            $('#accordionItr').on('show.bs.collapse', function (event) {
+                $(this).find('.panel-collapse.collapse.show').not(event.target).collapse('hide');
+            });
+        });
+    </script>
 </body>
 
 
