@@ -5,15 +5,15 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 24 tracked tables (including admin_notifications and the fourteen
---     structured service / loan tables added by migrations 004 to 009)
+--   * all 27 tracked tables (including admin_notifications and the seventeen
+--     structured service / loan tables added by migrations 004 to 010)
 --   * every column in those tables
---   * all 23 tracked functions (including the helpers)
---   * all 17 updated_at triggers, the 7 notification triggers and the
+--   * all 24 tracked functions (including the helpers)
+--   * all 20 updated_at triggers, the 7 notification triggers and the
 --     notification read-state trigger
 --   * all named indexes (including the notification, Home Loan, Top-Up /
---     Takeover, LAP, Business Loan, Working Capital, ITR Filing and GST
---     Registration & Filing indexes)
+--     Takeover, LAP, Business Loan, Working Capital, ITR Filing, GST
+--     Registration & Filing and MSME / Udyam indexes)
 --   * the private loan-documents bucket and its settings
 --   * the custom admin auth role
 --   * the reference sequence
@@ -46,7 +46,10 @@ WITH expected_tables(name) AS (
         ('itr_income_items'),
         ('itr_tax_payments'),
         ('gst_registration_details'),
-        ('gst_return_filings')
+        ('gst_return_filings'),
+        ('msme_registration_details'),
+        ('msme_promoters'),
+        ('msme_registrations')
 ),
 expected_functions(name, signature) AS (
     VALUES
@@ -71,6 +74,7 @@ expected_functions(name, signature) AS (
         ('submit_working_capital_application', 'public.submit_working_capital_application(jsonb,uuid,uuid)'),
         ('submit_itr_application', 'public.submit_itr_application(jsonb,uuid,uuid)'),
         ('submit_gst_application', 'public.submit_gst_application(jsonb,uuid,uuid)'),
+        ('submit_msme_application', 'public.submit_msme_application(jsonb,uuid,uuid)'),
         ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
         ('notify_admin_event', 'public.notify_admin_event()')
 ),
@@ -93,6 +97,9 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_itr_filing_details_modtime', 'itr_filing_details'),
         ('update_gst_registration_details_modtime', 'gst_registration_details'),
         ('update_gst_return_filings_modtime', 'gst_return_filings'),
+        ('update_msme_registration_details_modtime', 'msme_registration_details'),
+        ('update_msme_promoters_modtime', 'msme_promoters'),
+        ('update_msme_registrations_modtime', 'msme_registrations'),
         ('notify_admin_new_lead', 'loan_leads'),
         ('notify_admin_new_callback', 'callback_bookings'),
         ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
@@ -170,7 +177,20 @@ expected_indexes(name) AS (
         ('gst_registration_details_state_idx'),
         ('gst_return_filings_lead_idx'),
         ('gst_return_filings_period_idx'),
-        ('gst_return_filings_status_idx')
+        ('gst_return_filings_status_idx'),
+        ('msme_registration_details_lead_idx'),
+        ('msme_registration_details_identity_idx'),
+        ('msme_registration_details_pan_idx'),
+        ('msme_registration_details_service_idx'),
+        ('msme_registration_details_status_idx'),
+        ('msme_registration_details_udyam_idx'),
+        ('msme_registration_details_state_idx'),
+        ('msme_promoters_lead_idx'),
+        ('msme_promoters_name_idx'),
+        ('msme_promoters_pan_idx'),
+        ('msme_registrations_lead_idx'),
+        ('msme_registrations_type_idx'),
+        ('msme_registrations_status_idx')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (

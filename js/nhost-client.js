@@ -333,6 +333,16 @@
                 p_draft_id: 'uuid',
                 p_draft_token: 'uuid'
             }
+        },
+        // MSME / Udyam & Gumasta assistance (migration 010). Reuses the shared
+        // draft functions for save / resume.
+        submit_msme_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
         }
     };
 

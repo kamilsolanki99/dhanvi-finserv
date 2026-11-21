@@ -703,6 +703,88 @@
                         <div id="modalGstReturns"></div>
                         <p class="admin-note">Each return period is tracked separately. A return can be marked <strong>Filed &amp; Verified</strong> only with a valid ARN and actual filing date from the GST portal.</p>
                     </div>
+                    <div class="detail-group" id="modalMsmeGroup" style="display:none;">
+                        <h6><i class="fa fa-industry" style="margin-right:6px;"></i>MSME / Udyam — Applicant, Business, Promoters &amp; Documents</h6>
+                        <div id="modalMsme"></div>
+                    </div>
+                    <div class="detail-group" id="modalMsmeStatusGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>MSME Submission, Certificate &amp; Verification</h6>
+                        <div class="detail-row"><span class="detail-label">Current submission status</span><span class="detail-value" id="modalMsmeStatusBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Submission status</label>
+                                    <select class="form-control" id="modalMsmeStatus">
+                                        <option value="Application Received">Application Received</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Submitted to Portal">Submitted to Portal</option>
+                                        <option value="Awaiting Government Approval">Awaiting Government Approval</option>
+                                        <option value="Approved &amp; Verified">Approved &amp; Verified</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Certificate / acknowledgement number</label>
+                                    <input type="text" class="form-control" id="modalMsmeCertificateNo" maxlength="80" placeholder="Required before Approved &amp; Verified">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Portal reference</label>
+                                    <input type="text" class="form-control" id="modalMsmePortalReference" maxlength="80" placeholder="Application / acknowledgement reference">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Submitted to portal on</label>
+                                    <input type="date" class="form-control" id="modalMsmeSubmittedAt">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Approved / issued on</label>
+                                    <input type="date" class="form-control" id="modalMsmeApprovedAt">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Verification method</label>
+                                    <select class="form-control" id="modalMsmeVerificationMethod">
+                                        <option value="">Select method</option>
+                                        <option>Udyam portal certificate</option>
+                                        <option>Shop &amp; Establishment portal certificate</option>
+                                        <option>Registrar portal approval</option>
+                                        <option>Government acknowledgement</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Registration remarks (customer-visible)</label>
+                            <textarea class="form-control" id="modalMsmeRemarks" rows="2" placeholder="Documents verified, submitted to portal, certificate received, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Internal submission notes</label>
+                            <textarea class="form-control" id="modalMsmeNotes" rows="2" placeholder="Portal query, re-upload pending, certificate number checked, etc."></textarea>
+                        </div>
+                        <p class="admin-note">Only mark <strong>Approved &amp; Verified</strong> after the actual action on the Udyam, Shop &amp; Establishment or registrar portal and verification of the certificate or acknowledgement. A certificate / acknowledgement number and approval date are required. Never mark a registration complete based on a pending or failed portal attempt.</p>
+                        <button type="button" class="btn-save" id="saveMsmeStatusBtn">Update MSME submission status</button>
+                    </div>
+                    <div class="detail-group" id="modalMsmeRegistrationsGroup" style="display:none;">
+                        <h6><i class="fa fa-list-alt" style="margin-right:6px;"></i>MSME Registration Rows &amp; Certificate Record</h6>
+                        <div id="modalMsmeRegistrations"></div>
+                        <p class="admin-note">Each requested registration is tracked separately. A row can be marked <strong>Approved &amp; Verified</strong> only with a certificate / acknowledgement number and the actual approval date from the government portal.</p>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -950,6 +1032,28 @@
             '    tax_payable tax_paid late_fee interest remarks' +
             '  }';
 
+        const APPLICATIONS_QUERY_MSME =
+            '  msme_registration_details {' +
+            '    id loan_lead_id applicant_name designation mobile email pan_number aadhaar_masked aadhaar_verification_method' +
+            '    identity_verification_status identity_verified_by identity_verified_at identity_notes' +
+            '    address_line address_city address_district address_state address_pincode' +
+            '    business_name trade_name constitution enterprise_category business_activity nic_code nic_description commencement_date' +
+            '    employee_count plant_machinery_investment annual_turnover gstin existing_registrations' +
+            '    business_address_same_as_applicant business_address_line business_address_city business_address_district business_address_state business_address_pincode' +
+            '    service_type existing_udyam_number udyam_update_reason udyam_update_details' +
+            '    existing_shop_number gumasta_establishment_type gumasta_premises_ownership gumasta_premises_landlord_name gumasta_premises_landlord_mobile' +
+            '    business_registration_type business_registration_state business_registration_details' +
+            '    submission_status submission_status_notes submitted_at submitted_by approved_at verified_at verification_method' +
+            '    certificate_number portal_reference registration_remarks' +
+            '  }' +
+            '  msme_promoters {' +
+            '    id loan_lead_id sort_order full_name designation pan_number aadhaar_masked din mobile email shareholding_percent is_primary' +
+            '  }' +
+            '  msme_registrations {' +
+            '    id loan_lead_id registration_type application_number status submitted_at approved_at' +
+            '    certificate_number valid_until portal_reference remarks' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -958,7 +1062,8 @@
 
         const APPLICATIONS_QUERY =
             APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
-            APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST +
+            APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -985,6 +1090,7 @@
             if (app.working_capital_details) { return { table: 'working_capital_details', data: app.working_capital_details }; }
             if (app.itr_filing_details) { return { table: 'itr_filing_details', data: app.itr_filing_details }; }
             if (app.gst_registration_details) { return { table: 'gst_registration_details', data: app.gst_registration_details }; }
+            if (app.msme_registration_details) { return { table: 'msme_registration_details', data: app.msme_registration_details }; }
             return null;
         }
 
@@ -1066,16 +1172,18 @@
                 let workingCapitalAvailable = true;
                 let itrAvailable = true;
                 let gstAvailable = true;
+                let msmeAvailable = true;
 
                 // Optional service tables are loaded progressively. Until the
                 // migration is applied and Hasura tracks the tables, retry
                 // without the missing group instead of failing the whole
                 // dashboard.
-                for (let attempt = 0; attempt < 5; attempt += 1) {
+                for (let attempt = 0; attempt < 6; attempt += 1) {
                     const query = APPLICATIONS_QUERY_HEAD +
                         (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
                         (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
                         (gstAvailable ? APPLICATIONS_QUERY_GST : '') +
+                        (msmeAvailable ? APPLICATIONS_QUERY_MSME : '') +
                         APPLICATIONS_QUERY_TAIL;
                     try {
                         data = await backend().adminGql(query);
@@ -1085,6 +1193,7 @@
                         const wcMissing = /field 'working_capital_(details|facilities)' not found in type: 'query_root'/i.test(queryMessage);
                         const itrMissing = /field 'itr_(filing_details|income_items|tax_payments)' not found in type: 'query_root'/i.test(queryMessage);
                         const gstMissing = /field 'gst_(registration_details|return_filings)' not found in type: 'query_root'/i.test(queryMessage);
+                        const msmeMissing = /field 'msme_(registration_details|promoters|registrations)' not found in type: 'query_root'/i.test(queryMessage);
                         if (wcMissing && workingCapitalAvailable) {
                             workingCapitalAvailable = false;
                             continue;
@@ -1095,6 +1204,10 @@
                         }
                         if (gstMissing && gstAvailable) {
                             gstAvailable = false;
+                            continue;
+                        }
+                        if (msmeMissing && msmeAvailable) {
+                            msmeAvailable = false;
                             continue;
                         }
                         throw queryError;
@@ -1119,6 +1232,9 @@
                 const itrTaxByLead = groupByLead(data && data.itr_tax_payments);
                 const gstByLead = groupByLead(data && data.gst_registration_details);
                 const gstReturnsByLead = groupByLead(data && data.gst_return_filings);
+                const msmeByLead = groupByLead(data && data.msme_registration_details);
+                const msmePromotersByLead = groupByLead(data && data.msme_promoters);
+                const msmeRegistrationsByLead = groupByLead(data && data.msme_registrations);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -1137,6 +1253,11 @@
                     lead.itr_tax_payments = itrTaxByLead[lead.id] || [];
                     lead.gst_registration_details = (gstByLead[lead.id] || [])[0] || null;
                     lead.gst_return_filings = gstReturnsByLead[lead.id] || [];
+                    lead.msme_registration_details = (msmeByLead[lead.id] || [])[0] || null;
+                    lead.msme_promoters = (msmePromotersByLead[lead.id] || []).sort(function (a, b) {
+                        return (a.sort_order || 0) - (b.sort_order || 0);
+                    });
+                    lead.msme_registrations = msmeRegistrationsByLead[lead.id] || [];
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -1150,6 +1271,9 @@
                 }
                 if (!gstAvailable) {
                     showPageAlert('warning', 'GST Registration & Filing details will appear after migration 009 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!msmeAvailable) {
+                    showPageAlert('warning', 'MSME / Udyam details will appear after migration 010 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -2397,6 +2521,431 @@
             }
         }
 
+        // Structured MSME / Udyam data. The public wizard never writes the
+        // submission, certificate or verification fields; this section is the
+        // only place where an administrator can move the file to Approved &
+        // Verified after the actual government portal action.
+        function msmeStatusOptions(selected) {
+            return [
+                'Application Received', 'Documents Pending', 'Under Review',
+                'Submitted to Portal', 'Awaiting Government Approval',
+                'Approved & Verified', 'Rejected', 'On Hold', 'Cancelled'
+            ].map(function (status) {
+                return '<option value="' + esc(status) + '"' + (status === selected ? ' selected' : '') + '>' + esc(status) + '</option>';
+            }).join('');
+        }
+
+        function msmeStatusClass(status) {
+            if (status === 'Approved & Verified') { return 'badge-verified'; }
+            if (status === 'Rejected' || status === 'Cancelled') { return 'badge-rejected'; }
+            if (status === 'On Hold') { return 'badge-docs-pending'; }
+            if (status === 'Submitted to Portal' || status === 'Awaiting Government Approval') { return 'badge-progress'; }
+            return 'badge-pending';
+        }
+
+        function msmeCategory(investment, turnover) {
+            if (investment === null || investment === undefined || turnover === null || turnover === undefined) {
+                return 'Not enough information';
+            }
+            const crore = 10000000;
+            if (investment <= 2.5 * crore && turnover <= 10 * crore) { return 'Micro (indicative)'; }
+            if (investment <= 25 * crore && turnover <= 100 * crore) { return 'Small (indicative)'; }
+            if (investment <= 125 * crore && turnover <= 500 * crore) { return 'Medium (indicative)'; }
+            return 'Above the Medium thresholds';
+        }
+
+        function msmeChecklist(app) {
+            const d = app.msme_registration_details || {};
+            const service = d.service_type || '';
+            const constitution = d.constitution || '';
+            const ownership = d.gumasta_premises_ownership || '';
+            const includesGumasta = service === 'Gumasta / Shop & Establishment' || service === 'Udyam & Gumasta Package';
+            const expected = ['PAN Card', 'Aadhaar Card', 'Photograph', 'Address Proof', 'Business Proof'];
+
+            if (constitution === 'Private Limited Company' || constitution === 'Public Limited Company' ||
+                constitution === 'One Person Company') {
+                expected.push('Certificate of Incorporation', 'Board Resolution');
+            }
+            if (constitution === 'Partnership' || constitution === 'LLP') {
+                expected.push('Partnership Deed', 'Authorisation Letter');
+            }
+            if (service === 'Udyam Update / Amendment') { expected.push('Udyam Certificate'); }
+            if (includesGumasta) {
+                if (d.existing_shop_number) { expected.push('Shop & Establishment Certificate'); }
+                if (ownership === 'Rented' || ownership === 'Leased') {
+                    expected.push('Rent Agreement / NOC', 'Electricity Bill');
+                } else if (ownership === 'Owned') {
+                    expected.push('Property Tax Receipt', 'Electricity Bill');
+                } else {
+                    expected.push('Address Proof');
+                }
+            }
+            if (service === 'Business Registration Assistance') { expected.push('Supporting Document'); }
+            if (d.gstin) { expected.push('GST Certificate'); }
+            if (service === 'New Udyam Registration') { expected.push('Supporting Document'); }
+
+            const received = {};
+            (app.loan_documents || []).forEach(function (doc) {
+                if (doc.document_type) { received[doc.document_type] = true; }
+            });
+            const unique = expected.filter(function (item, index) {
+                return expected.indexOf(item) === index;
+            });
+            return {
+                received: unique.filter(function (item) { return received[item]; }),
+                pending: unique.filter(function (item) { return !received[item]; })
+            };
+        }
+
+        function renderMsmeDetails(app) {
+            const d = app.msme_registration_details;
+            const group = $('#modalMsmeGroup');
+            if (!d) {
+                group.hide();
+                $('#modalMsme').empty();
+                return null;
+            }
+            group.show();
+
+            const applicantAddress = [d.address_line, d.address_city, d.address_district, d.address_state, d.address_pincode]
+                .filter(Boolean).join(', ');
+            const businessAddress = d.business_address_same_as_applicant
+                ? 'Same as applicant address'
+                : [d.business_address_line, d.business_address_city, d.business_address_district,
+                   d.business_address_state, d.business_address_pincode].filter(Boolean).join(', ');
+            const service = d.service_type || '';
+            const promoters = Array.isArray(app.msme_promoters) ? app.msme_promoters : [];
+            const checklist = msmeChecklist(app);
+
+            let html = '';
+            html += subHeading('Applicant & authorised person');
+            html += detailRow('Applicant', d.applicant_name);
+            html += detailRow('Designation', d.designation);
+            html += detailRow('Mobile', d.mobile);
+            html += detailRow('Email', d.email);
+            html += detailRow('PAN', d.pan_number);
+            html += detailRow('Aadhaar', d.aadhaar_masked);
+            html += detailRow('Aadhaar verification', d.aadhaar_verification_method);
+            html += detailRow('Address', applicantAddress);
+
+            html += subHeading('Business profile');
+            html += detailRow('Legal business name', d.business_name);
+            html += detailRow('Trade name', d.trade_name);
+            html += detailRow('Constitution', d.constitution);
+            html += detailRow('Enterprise category (declared)', d.enterprise_category);
+            html += detailRow('Main activity', d.business_activity);
+            html += detailRow('NIC code', [d.nic_code, d.nic_description].filter(Boolean).join(' — '));
+            html += detailRow('Date of commencement', prettyDate(d.commencement_date));
+            html += detailRow('Business / establishment address', businessAddress);
+            html += detailRow('Existing registrations', d.existing_registrations);
+
+            html += subHeading('Enterprise classification');
+            html += detailRow('Plant & machinery investment', money(d.plant_machinery_investment));
+            html += detailRow('Annual turnover', money(d.annual_turnover));
+            html += detailRow('Employees', d.employee_count);
+            html += detailRow('GSTIN', d.gstin);
+            html += detailRow('Indicative category', msmeCategory(d.plant_machinery_investment, d.annual_turnover));
+            html += '<p class="admin-note">The final Micro, Small or Medium category is determined by the Udyam portal from verified records. Do not use the indicative category as a government classification.</p>';
+
+            html += subHeading('Service requirement');
+            html += detailRow('Service type', d.service_type);
+            if (service === 'Udyam Update / Amendment') {
+                html += detailRow('Existing Udyam number', d.existing_udyam_number);
+                html += detailRow('Update reason', d.udyam_update_reason);
+                html += detailRow('Update details', d.udyam_update_details);
+            }
+            if (service === 'Gumasta / Shop & Establishment' || service === 'Udyam & Gumasta Package') {
+                html += detailRow('Existing Shop & Establishment number', d.existing_shop_number);
+                html += detailRow('Establishment type', d.gumasta_establishment_type);
+                html += detailRow('Premises ownership', d.gumasta_premises_ownership);
+                html += detailRow('Landlord / owner', d.gumasta_premises_landlord_name);
+                html += detailRow('Landlord mobile', d.gumasta_premises_landlord_mobile);
+            }
+            if (service === 'Business Registration Assistance') {
+                html += detailRow('Registration type', d.business_registration_type);
+                html += detailRow('State', d.business_registration_state);
+                html += detailRow('Assistance required', d.business_registration_details);
+            }
+
+            html += subHeading('Proprietor / partner / director details');
+            if (!promoters.length) {
+                html += detailRow('Promoters', 'None recorded');
+            } else {
+                promoters.forEach(function (promoter, index) {
+                    const meta = [
+                        promoter.designation,
+                        promoter.pan_number ? 'PAN ' + promoter.pan_number : '',
+                        promoter.aadhaar_masked ? 'Aadhaar ' + promoter.aadhaar_masked : '',
+                        promoter.din ? 'DIN ' + promoter.din : '',
+                        promoter.mobile,
+                        promoter.email,
+                        (promoter.shareholding_percent === null || promoter.shareholding_percent === undefined)
+                            ? '' : promoter.shareholding_percent + '%'
+                    ].filter(Boolean).join(' · ');
+                    html += detailRow(
+                        'Promoter ' + (index + 1) + (promoter.is_primary ? ' (primary)' : ''),
+                        promoter.full_name + (meta ? ' — ' + meta : '')
+                    );
+                });
+            }
+
+            html += subHeading('Document checklist');
+            html += detailRow('Received', checklist.received.join(', ') || 'None');
+            html += detailRow('Pending', checklist.pending.join(', ') || 'None');
+
+            $('#modalMsme').html(html);
+            return d;
+        }
+
+        function renderMsmeStatus(app) {
+            const d = app.msme_registration_details;
+            const group = $('#modalMsmeStatusGroup');
+            if (!d) {
+                group.hide();
+                $('#modalMsmeStatusBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const status = d.submission_status || 'Application Received';
+            let badge = '<span class="badge-status ' + msmeStatusClass(status) + '">' + esc(status) + '</span>';
+            if (d.submitted_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">submitted ' + esc(prettyDate(d.submitted_at)) + '</span>';
+            }
+            if (d.approved_at) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">approved ' + esc(prettyDate(d.approved_at)) + '</span>';
+            }
+            if (d.certificate_number) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">' + esc(d.certificate_number) + '</span>';
+            }
+            $('#modalMsmeStatusBadge').html(badge);
+            $('#modalMsmeStatus').val(status);
+            $('#modalMsmeCertificateNo').val(d.certificate_number || '');
+            $('#modalMsmePortalReference').val(d.portal_reference || '');
+            $('#modalMsmeSubmittedAt').val(d.submitted_at ? String(d.submitted_at).slice(0, 10) : '');
+            $('#modalMsmeApprovedAt').val(d.approved_at ? String(d.approved_at).slice(0, 10) : '');
+            $('#modalMsmeVerificationMethod').val(d.verification_method || '');
+            $('#modalMsmeRemarks').val(d.registration_remarks || '');
+            $('#modalMsmeNotes').val(d.submission_status_notes || '');
+            return d;
+        }
+
+        function renderMsmeRegistrations(app) {
+            const list = Array.isArray(app.msme_registrations) ? app.msme_registrations : [];
+            const group = $('#modalMsmeRegistrationsGroup');
+            if (!list.length) {
+                group.hide();
+                $('#modalMsmeRegistrations').empty();
+                return;
+            }
+            group.show();
+
+            const html = list.map(function (row) {
+                const status = row.status || 'Application Received';
+                return '<div class="msme-registration-row" data-registration-id="' + esc(row.id) + '" style="border:1px solid #e3e8ef;border-radius:8px;padding:14px;margin-bottom:14px;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">' +
+                        '<strong>' + esc(row.registration_type) + '</strong>' +
+                        '<span class="badge-status ' + msmeStatusClass(status) + '">' + esc(status) + '</span>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-4"><div class="form-group"><label>Application number</label>' +
+                            '<input type="text" class="form-control msme-registration-application" maxlength="80" value="' + esc(row.application_number || '') + '"></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>Status</label>' +
+                            '<select class="form-control msme-registration-status">' + msmeStatusOptions(status) + '</select></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>Certificate / acknowledgement</label>' +
+                            '<input type="text" class="form-control msme-registration-certificate" maxlength="80" value="' + esc(row.certificate_number || '') + '" placeholder="Required for Approved &amp; Verified"></div></div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-4"><div class="form-group"><label>Submitted on</label>' +
+                            '<input type="date" class="form-control msme-registration-submitted" value="' + esc(row.submitted_at ? String(row.submitted_at).slice(0, 10) : '') + '"></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>Approved on</label>' +
+                            '<input type="date" class="form-control msme-registration-approved" value="' + esc(row.approved_at ? String(row.approved_at).slice(0, 10) : '') + '"></div></div>' +
+                        '<div class="col-md-4"><div class="form-group"><label>Valid until</label>' +
+                            '<input type="date" class="form-control msme-registration-valid" value="' + esc(row.valid_until ? String(row.valid_until).slice(0, 10) : '') + '"></div></div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-6"><div class="form-group"><label>Portal reference</label>' +
+                            '<input type="text" class="form-control msme-registration-portal" maxlength="80" value="' + esc(row.portal_reference || '') + '"></div></div>' +
+                        '<div class="col-md-6"><div class="form-group"><label>Remarks</label>' +
+                            '<input type="text" class="form-control msme-registration-remarks" maxlength="255" value="' + esc(row.remarks || '') + '"></div></div>' +
+                    '</div>' +
+                    '<button type="button" class="btn-save btn-save-msme-registration">Save registration</button>' +
+                '</div>';
+            }).join('');
+
+            $('#modalMsmeRegistrations').html(html);
+        }
+
+        async function saveMsmeStatus() {
+            const id = $('#viewModal').data('msme-detail-id');
+            if (!id) { return; }
+
+            const status = $('#modalMsmeStatus').val();
+            const certificate = $('#modalMsmeCertificateNo').val().trim();
+            const portalReference = $('#modalMsmePortalReference').val().trim();
+            const submittedDate = $('#modalMsmeSubmittedAt').val();
+            const approvedDate = $('#modalMsmeApprovedAt').val();
+            const method = $('#modalMsmeVerificationMethod').val();
+            const remarks = $('#modalMsmeRemarks').val().trim();
+            const notes = $('#modalMsmeNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+
+            if (status === 'Approved & Verified' && !certificate) {
+                showModalAlert('warning', 'Enter the certificate or acknowledgement number before marking the registration Approved & Verified.');
+                $('#modalMsmeCertificateNo').focus();
+                return;
+            }
+            if (status === 'Approved & Verified' && !approvedDate) {
+                showModalAlert('warning', 'Enter the actual approval / certificate date before marking the registration Approved & Verified.');
+                $('#modalMsmeApprovedAt').focus();
+                return;
+            }
+            if ((status === 'Submitted to Portal' || status === 'Awaiting Government Approval' || status === 'Approved & Verified') && !submittedDate) {
+                showModalAlert('warning', 'Enter the date the application was actually submitted to the government portal.');
+                $('#modalMsmeSubmittedAt').focus();
+                return;
+            }
+
+            const verifiedAt = status === 'Approved & Verified' ? new Date().toISOString() : null;
+            const submittedBy = (status === 'Submitted to Portal' || status === 'Awaiting Government Approval' ||
+                status === 'Approved & Verified') && admin ? admin.id : null;
+            const btn = $('#saveMsmeStatusBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateMsmeStatus($id: uuid!, $status: String!, $cert: String, $portalRef: String, $submittedAt: date, $approvedAt: date, $submittedBy: uuid, $verifiedAt: timestamptz, $method: String, $remarks: String, $notes: String) {' +
+                    '  update_msme_registration_details_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    submission_status: $status, certificate_number: $cert, portal_reference: $portalRef,' +
+                    '    submitted_at: $submittedAt, approved_at: $approvedAt, submitted_by: $submittedBy,' +
+                    '    verified_at: $verifiedAt, verification_method: $method,' +
+                    '    registration_remarks: $remarks, submission_status_notes: $notes' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        cert: certificate || null,
+                        portalRef: portalReference || null,
+                        submittedAt: submittedDate || null,
+                        approvedAt: approvedDate || null,
+                        submittedBy: submittedBy,
+                        verifiedAt: verifiedAt,
+                        method: method || null,
+                        remarks: remarks || null,
+                        notes: notes || null
+                    }
+                );
+
+                const app = applications.filter(function (item) {
+                    return item.msme_registration_details && item.msme_registration_details.id === id;
+                })[0];
+                if (app) {
+                    const detail = app.msme_registration_details;
+                    detail.submission_status = status;
+                    detail.certificate_number = certificate || null;
+                    detail.portal_reference = portalReference || null;
+                    detail.submitted_at = submittedDate || null;
+                    detail.approved_at = approvedDate || null;
+                    detail.submitted_by = submittedBy;
+                    detail.verified_at = verifiedAt;
+                    detail.verification_method = method || null;
+                    detail.registration_remarks = remarks || null;
+                    detail.submission_status_notes = notes || null;
+                    renderMsmeDetails(app);
+                    renderMsmeStatus(app);
+                }
+                showModalAlert('success', 'MSME submission and certificate status updated.');
+            } catch (err) {
+                console.error('MSME status update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the MSME status.');
+            } finally {
+                btn.prop('disabled', false).text('Update MSME submission status');
+            }
+        }
+
+        async function saveMsmeRegistrationRow(event) {
+            const row = $(event.currentTarget).closest('.msme-registration-row');
+            const id = row.data('registration-id');
+            if (!id) { return; }
+
+            const status = row.find('.msme-registration-status').val();
+            const applicationNo = row.find('.msme-registration-application').val().trim();
+            const certificate = row.find('.msme-registration-certificate').val().trim();
+            const submittedDate = row.find('.msme-registration-submitted').val();
+            const approvedDate = row.find('.msme-registration-approved').val();
+            const validUntil = row.find('.msme-registration-valid').val();
+            const portalReference = row.find('.msme-registration-portal').val().trim();
+            const remarks = row.find('.msme-registration-remarks').val().trim();
+
+            if (status === 'Approved & Verified' && !certificate) {
+                showModalAlert('warning', 'Enter the certificate or acknowledgement number for this registration before marking it Approved & Verified.');
+                row.find('.msme-registration-certificate').focus();
+                return;
+            }
+            if (status === 'Approved & Verified' && !approvedDate) {
+                showModalAlert('warning', 'Enter the actual approval / certificate date for this registration.');
+                row.find('.msme-registration-approved').focus();
+                return;
+            }
+            if ((status === 'Submitted to Portal' || status === 'Awaiting Government Approval' || status === 'Approved & Verified') && !submittedDate) {
+                showModalAlert('warning', 'Enter the date this registration was submitted to the government portal.');
+                row.find('.msme-registration-submitted').focus();
+                return;
+            }
+
+            const btn = row.find('.btn-save-msme-registration');
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateMsmeRegistrationRow($id: uuid!, $status: String!, $applicationNo: String, $cert: String, $submittedAt: date, $approvedAt: date, $validUntil: date, $portalRef: String, $remarks: String) {' +
+                    '  update_msme_registrations_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    status: $status, application_number: $applicationNo, certificate_number: $cert,' +
+                    '    submitted_at: $submittedAt, approved_at: $approvedAt, valid_until: $validUntil,' +
+                    '    portal_reference: $portalRef, remarks: $remarks' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        applicationNo: applicationNo || null,
+                        cert: certificate || null,
+                        submittedAt: submittedDate || null,
+                        approvedAt: approvedDate || null,
+                        validUntil: validUntil || null,
+                        portalRef: portalReference || null,
+                        remarks: remarks || null
+                    }
+                );
+
+                const app = applications.filter(function (item) {
+                    return (item.msme_registrations || []).some(function (registration) {
+                        return registration.id === id;
+                    });
+                })[0];
+                if (app) {
+                    app.msme_registrations.forEach(function (registration) {
+                        if (registration.id !== id) { return; }
+                        registration.status = status;
+                        registration.application_number = applicationNo || null;
+                        registration.certificate_number = certificate || null;
+                        registration.submitted_at = submittedDate || null;
+                        registration.approved_at = approvedDate || null;
+                        registration.valid_until = validUntil || null;
+                        registration.portal_reference = portalReference || null;
+                        registration.remarks = remarks || null;
+                    });
+                    renderMsmeRegistrations(app);
+                }
+                showModalAlert('success', 'MSME registration row updated.');
+            } catch (err) {
+                console.error('MSME registration row update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the MSME registration row.');
+            } finally {
+                btn.prop('disabled', false).text('Save registration');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -2516,6 +3065,9 @@
             renderGstDetails(app);
             renderGstFiling(app);
             renderGstReturns(app);
+            renderMsmeDetails(app);
+            renderMsmeStatus(app);
+            renderMsmeRegistrations(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
@@ -2524,6 +3076,7 @@
             $('#viewModal').data('identity-detail-id', identitySrc ? identitySrc.data.id : null);
             $('#viewModal').data('itr-detail-id', app.itr_filing_details ? app.itr_filing_details.id : null);
             $('#viewModal').data('gst-detail-id', app.gst_registration_details ? app.gst_registration_details.id : null);
+            $('#viewModal').data('msme-detail-id', app.msme_registration_details ? app.msme_registration_details.id : null);
             $('#viewModal').modal('show');
         }
 
@@ -2602,6 +3155,8 @@
             $('#saveItrFilingBtn').on('click', saveItrFiling);
             $('#saveGstFilingBtn').on('click', saveGstFiling);
             $('#modalGstReturns').on('click', '.btn-save-gst-return', saveGstReturn);
+            $('#saveMsmeStatusBtn').on('click', saveMsmeStatus);
+            $('#modalMsmeRegistrations').on('click', '.btn-save-msme-registration', saveMsmeRegistrationRow);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

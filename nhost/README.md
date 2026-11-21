@@ -211,6 +211,54 @@ Until the GST tables are tracked with `admin` select permission,
 Existing application types keep loading normally, and GST details appear
 automatically once tracking and the permission are complete.
 
+Then run
+[`migrations/010_msme_udyam_registration.sql`](migrations/010_msme_udyam_registration.sql).
+It adds the structured **MSME / Udyam / Gumasta** system behind
+`msme-apply.html`:
+
+- `msme_registration_details` — one structured row per MSME assistance lead:
+  applicant and authorised person, PAN, masked Aadhaar reference and
+  Aadhaar-authentication method, applicant address, business name and trade
+  name, constitution, declared enterprise category, activity and NIC code,
+  commencement date, employee count, plant & machinery investment, turnover,
+  GSTIN and existing registrations, business / establishment address, the
+  selected service (new Udyam, Udyam update, Gumasta / Shop & Establishment,
+  business registration assistance or a combined package), existing Udyam and
+  Shop & Establishment numbers, update / amendment details, premises ownership
+  and landlord details, other registration details, and the
+  administrator-controlled identity, submission, certificate and verification
+  fields.
+- `msme_promoters` — proprietor / partner / director / trustee rows recorded at
+  submission, with designation, PAN, masked Aadhaar reference, DIN, contact
+  details and shareholding (1:N with the lead).
+- `msme_registrations` — each requested registration tracked separately with
+  its application number, status, submission and approval dates, certificate
+  number, validity, portal reference and remarks (1:N with the lead).
+- `submit_msme_application` — the secure function the wizard calls.
+- It also re-registers `register_document` and widens the allowed
+  `document_type` values so PAN cards, Aadhaar cards, photographs, address
+  proofs, business proofs, certificates of incorporation, partnership deeds,
+  board resolutions, authorisation letters, rent agreements / NOCs, property
+  tax receipts, electricity bills, Udyam certificates, Shop & Establishment
+  certificates and supporting documents can be stored.
+- It re-asserts the widened `loan_leads.loan_type` list and the zero-or-more
+  `loan_amount` rule. Existing loan functions still enforce their own minimum
+  amounts.
+
+The public MSME wizard never sets `identity_verification_status`,
+`submission_status`, `submitted_at`, `submitted_by`, `approved_at`,
+`verified_at`, `verification_method`, `certificate_number`,
+`portal_reference`, `registration_remarks` or the per-registration status,
+certificate and approval fields. A new application starts at **Application
+Received**, and only an administrator can move it to **Approved & Verified**
+after the actual action on the Udyam, Shop & Establishment or registrar portal
+and verification of the certificate or acknowledgement.
+
+Until the MSME tables are tracked with `admin` select permission,
+`admin-applications.html` retries its dashboard query without the MSME fields.
+Existing application types keep loading normally, and MSME details appear
+automatically once tracking and the permission are complete.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -254,6 +302,9 @@ Under `public`:
 - `itr_tax_payments`
 - `gst_registration_details`
 - `gst_return_filings`
+- `msme_registration_details`
+- `msme_promoters`
+- `msme_registrations`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -284,6 +335,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_working_capital_application`
 - `submit_itr_application`
 - `submit_gst_application`
+- `submit_msme_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -332,6 +384,7 @@ Open **Data → [function] → Permissions**.
 | `submit_working_capital_application` | execute | execute | execute |
 | `submit_itr_application` | execute | execute | execute |
 | `submit_gst_application` | execute | execute | execute |
+| `submit_msme_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -370,6 +423,9 @@ Grant only what the admin panel uses:
 | `itr_tax_payments` | yes | no | no | no |
 | `gst_registration_details` | yes | no | yes | no |
 | `gst_return_filings` | yes | no | yes | no |
+| `msme_registration_details` | yes | no | yes | no |
+| `msme_promoters` | yes | no | no | no |
+| `msme_registrations` | yes | no | yes | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -378,7 +434,8 @@ documents, follow-ups, callbacks, support requests and complaints. Grant
 `home_loan_topup_details`, `home_loan_takeover_details`, `lap_details`,
 `business_loan_details`, `working_capital_details`,
 `working_capital_facilities`, `itr_filing_details`, `itr_income_items`,
-`itr_tax_payments`, `gst_registration_details`, `gst_return_filings` and
+`itr_tax_payments`, `gst_registration_details`, `gst_return_filings`,
+`msme_registration_details`, `msme_promoters`, `msme_registrations` and
 `home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
@@ -406,21 +463,28 @@ admin panel:
 | `itr_filing_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `filing_status`, `filing_status_notes`, `acknowledgement_no`, `filed_at`, `filed_by`, `verified_at`, `verification_method`, `filing_remarks` |
 | `gst_registration_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `filing_status`, `filing_status_notes`, `acknowledgement_no`, `filed_at`, `filed_by`, `verified_at`, `verification_method`, `filing_remarks`, `payment_status`, `payment_reference`, `payment_amount`, `payment_date`, `payment_notes` |
 | `gst_return_filings` | `filing_status`, `arn`, `filed_at`, `tax_paid`, `remarks` |
+| `msme_registration_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `submission_status`, `submission_status_notes`, `submitted_at`, `submitted_by`, `approved_at`, `verified_at`, `verification_method`, `certificate_number`, `portal_reference`, `registration_remarks` |
+| `msme_registrations` | `status`, `application_number`, `submitted_at`, `approved_at`, `certificate_number`, `valid_until`, `portal_reference`, `remarks` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
 `home_loan_emis` are read-only for the
 admin panel except for the identity-verification fields above, which the
-**Applications** detail modal writes. `itr_filing_details` and
-`gst_registration_details` additionally allow the administrator-controlled
-filing, acknowledgement and (for GST) payment fields. `gst_return_filings`
-allows the per-period filing status, ARN, filing date, tax paid and remarks. The
+**Applications** detail modal writes. `itr_filing_details`,
+`gst_registration_details` and `msme_registration_details` additionally allow
+the administrator-controlled filing / submission, acknowledgement, certificate
+and (for GST) payment fields. `gst_return_filings` allows the per-period filing
+status, ARN, filing date, tax paid and remarks. `msme_registrations` allows the
+per-registration status, application number, submission and approval dates,
+certificate number, validity, portal reference and remarks. The
 rest of the structured data is created by `submit_home_loan_application`,
 `submit_home_loan_topup_application`, `submit_home_loan_takeover_application`,
 `submit_lap_application`, `submit_business_loan_application`,
-`submit_working_capital_application`, `submit_itr_application` and
-`submit_gst_application` and must not be editable from the browser.
-`home_loan_emis`, `itr_income_items` and `itr_tax_payments` have `select` only.
+`submit_working_capital_application`, `submit_itr_application`,
+`submit_gst_application` and `submit_msme_application` and must not be editable
+from the browser.
+`home_loan_emis`, `itr_income_items`, `itr_tax_payments` and `msme_promoters`
+have `select` only.
 
 Do not add `public` or `anonymous` permissions on any business table. Do not
 grant _any_ role a permission on `home_loan_drafts`.
@@ -591,9 +655,11 @@ Home Loan tables, functions, triggers and indexes added by migration `004`,
 plus the Top-Up / Takeover tables and functions added by migration `005`, the
 LAP / Business Loan tables and functions added by migration `006`, the
 Working Capital tables, functions and indexes added by migration `007`, the
-ITR Filing tables, functions and indexes added by migration `008`, and the GST
-Registration & Filing tables, function and indexes added by migration `009`.
-The expected totals are **24 tables, 23 functions, 25 triggers and 67 indexes**.
+ITR Filing tables, functions and indexes added by migration `008`, the GST
+Registration & Filing tables, function and indexes added by migration `009`,
+and the MSME / Udyam / Gumasta tables, function and indexes added by migration
+`010`.
+The expected totals are **27 tables, 24 functions, 28 triggers and 80 indexes**.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -800,6 +866,11 @@ Then test the general flow:
 | Applications list fails to load after adding migration `009` | `gst_registration_details` or `gst_return_filings` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without GST fields, but track the tables and grant `select` to see the data. |
 | The GST form shows **Filed & Verified** too early | Never set this status manually before the actual GST portal action and ARN / approval verification. The admin UI requires an ARN and filing date; confirm both against the GST portal before saving. |
 | The GST return row shows **Filed & Verified** too early | Confirm the return was actually filed for that period, then enter the ARN and the actual filing date. Never mark a return complete from a pending portal attempt. |
+| `field 'submit_msme_application' not found` | Migration `010` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| MSME / Udyam section does not appear in the admin modal | The lead is not an MSME application, or `msme_registration_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| Applications list fails to load after adding migration `010` | `msme_registration_details`, `msme_promoters` or `msme_registrations` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without MSME fields, but track the tables and grant `select` to see the data. |
+| The MSME application shows **Approved & Verified** too early | Never set this status manually before the actual Udyam, Shop & Establishment or registrar portal action and certificate / acknowledgement verification. The admin UI requires a certificate number and approval date; confirm both against the government portal before saving. |
+| An MSME registration row shows **Approved & Verified** too early | Each registration row needs its own certificate / acknowledgement number and actual approval date. Never mark a row complete from a pending or failed portal attempt. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |
