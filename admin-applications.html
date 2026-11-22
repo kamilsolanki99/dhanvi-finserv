@@ -785,6 +785,149 @@
                         <div id="modalMsmeRegistrations"></div>
                         <p class="admin-note">Each requested registration is tracked separately. A row can be marked <strong>Approved &amp; Verified</strong> only with a certificate / acknowledgement number and the actual approval date from the government portal.</p>
                     </div>
+                    <div class="detail-group" id="modalInsuranceGroup" style="display:none;">
+                        <h6><i class="fa fa-shield" style="margin-right:6px;"></i>Loan Protection Insurance — Applicant, Loan, Coverage &amp; Underwriting</h6>
+                        <div id="modalInsurance"></div>
+                    </div>
+                    <div class="detail-group" id="modalInsuranceStatusGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>Insurance Proposal, Quotation &amp; Policy Record</h6>
+                        <div class="detail-row"><span class="detail-label">Proposal status</span><span class="detail-value" id="modalInsuranceProposalBadge">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Policy status</span><span class="detail-value" id="modalInsurancePolicyBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Proposal status</label>
+                                    <select class="form-control" id="modalInsuranceProposalStatus">
+                                        <option value="Enquiry Received">Enquiry Received</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Underwriting Review">Underwriting Review</option>
+                                        <option value="Submitted to Insurer">Submitted to Insurer</option>
+                                        <option value="Quotation Received">Quotation Received</option>
+                                        <option value="Proposal Accepted">Proposal Accepted</option>
+                                        <option value="Policy Issued">Policy Issued</option>
+                                        <option value="Declined">Declined</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Policy status</label>
+                                    <select class="form-control" id="modalInsurancePolicyStatus">
+                                        <option value="Not Issued">Not Issued</option>
+                                        <option value="Proposal Submitted">Proposal Submitted</option>
+                                        <option value="Underwriting">Underwriting</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Policy Issued">Policy Issued</option>
+                                        <option value="Declined">Declined</option>
+                                        <option value="Lapsed">Lapsed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Authorised insurer</label>
+                                    <input type="text" class="form-control" id="modalInsuranceInsurer" maxlength="160" placeholder="Required before Policy Issued">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Proposal number</label>
+                                    <input type="text" class="form-control" id="modalInsuranceProposalNumber" maxlength="80" placeholder="Insurer proposal / application number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Proposal date</label>
+                                    <input type="date" class="form-control" id="modalInsuranceProposalDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quotation reference</label>
+                                    <input type="text" class="form-control" id="modalInsuranceQuotationRef" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quotation amount (₹)</label>
+                                    <input type="number" class="form-control" id="modalInsuranceQuotationAmount" min="0" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quotation date</label>
+                                    <input type="date" class="form-control" id="modalInsuranceQuotationDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quotation valid until</label>
+                                    <input type="date" class="form-control" id="modalInsuranceQuotationValid">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Premium amount (₹)</label>
+                                    <input type="number" class="form-control" id="modalInsurancePremiumAmount" min="0" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Policy number</label>
+                                    <input type="text" class="form-control" id="modalInsurancePolicyNumber" maxlength="80" placeholder="Required before Policy Issued">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Policy start date</label>
+                                    <input type="date" class="form-control" id="modalInsurancePolicyStart">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Policy end date</label>
+                                    <input type="date" class="form-control" id="modalInsurancePolicyEnd">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Premium payment mode</label>
+                                    <select class="form-control" id="modalInsurancePaymentMode">
+                                        <option value="">Select mode</option>
+                                        <option>Monthly</option>
+                                        <option>Quarterly</option>
+                                        <option>Half-Yearly</option>
+                                        <option>Annual</option>
+                                        <option>Single Premium</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Policy remarks (customer-visible)</label>
+                            <textarea class="form-control" id="modalInsurancePolicyRemarks" rows="2" placeholder="Quotation shared, proposal submitted, policy document verified, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Internal status notes</label>
+                            <textarea class="form-control" id="modalInsuranceNotes" rows="2" placeholder="Medical pending, insurer query, premium paid, policy number checked, etc."></textarea>
+                        </div>
+                        <p class="admin-note">Only record a quotation, proposal or policy after the authorised insurer confirms it and the policy document is verified. Recording a new policy requires the insurer name, policy number and policy start date, with both statuses set to <strong>Policy Issued</strong>. After issuance, keep the proposal at Policy Issued and the policy may move to <strong>Lapsed</strong> or <strong>Cancelled</strong> while preserving the issued policy details. A quotation is not a policy and no cover begins until the policy is issued and the premium is paid. Never record approval, coverage or claim settlement on the insurer's behalf.</p>
+                        <button type="button" class="btn-save" id="saveInsuranceStatusBtn">Update insurance proposal &amp; policy status</button>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -1054,6 +1197,22 @@
             '    certificate_number valid_until portal_reference remarks' +
             '  }';
 
+        const APPLICATIONS_QUERY_INSURANCE =
+            '  loan_insurance_details {' +
+            '    id loan_lead_id applicant_name date_of_birth gender mobile email occupation annual_income pan_number' +
+            '    address_line address_city address_district address_state address_pincode' +
+            '    loan_type lender_name loan_account_reference outstanding_amount emi_amount remaining_tenure_months' +
+            '    coverage_requirement desired_cover_amount policy_tenure_years premium_budget payment_frequency' +
+            '    existing_insurance existing_insurer existing_cover_amount existing_policy_expiry insurer_preference' +
+            '    nominee_name nominee_relation nominee_date_of_birth nominee_mobile' +
+            '    co_borrower co_borrower_name co_borrower_relation co_borrower_mobile co_borrower_email co_borrower_date_of_birth' +
+            '    height_cm weight_kg tobacco_use medical_conditions medications hospitalization_last_3_years' +
+            '    occupation_risk income_proof_type medical_test_consent underwriting_notes' +
+            '    proposal_status insurer_name proposal_number proposal_date quotation_reference quotation_amount quotation_date quotation_valid_until' +
+            '    policy_status policy_number policy_start_date policy_end_date premium_amount payment_mode' +
+            '    policy_remarks status_notes verified_by verified_at' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -1063,7 +1222,7 @@
         const APPLICATIONS_QUERY =
             APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
             APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST +
-            APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_INSURANCE + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -1173,17 +1332,19 @@
                 let itrAvailable = true;
                 let gstAvailable = true;
                 let msmeAvailable = true;
+                let insuranceAvailable = true;
 
                 // Optional service tables are loaded progressively. Until the
                 // migration is applied and Hasura tracks the tables, retry
                 // without the missing group instead of failing the whole
                 // dashboard.
-                for (let attempt = 0; attempt < 6; attempt += 1) {
+                for (let attempt = 0; attempt < 8; attempt += 1) {
                     const query = APPLICATIONS_QUERY_HEAD +
                         (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
                         (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
                         (gstAvailable ? APPLICATIONS_QUERY_GST : '') +
                         (msmeAvailable ? APPLICATIONS_QUERY_MSME : '') +
+                        (insuranceAvailable ? APPLICATIONS_QUERY_INSURANCE : '') +
                         APPLICATIONS_QUERY_TAIL;
                     try {
                         data = await backend().adminGql(query);
@@ -1194,6 +1355,7 @@
                         const itrMissing = /field 'itr_(filing_details|income_items|tax_payments)' not found in type: 'query_root'/i.test(queryMessage);
                         const gstMissing = /field 'gst_(registration_details|return_filings)' not found in type: 'query_root'/i.test(queryMessage);
                         const msmeMissing = /field 'msme_(registration_details|promoters|registrations)' not found in type: 'query_root'/i.test(queryMessage);
+                        const insuranceMissing = /field 'loan_insurance_details' not found in type: 'query_root'/i.test(queryMessage);
                         if (wcMissing && workingCapitalAvailable) {
                             workingCapitalAvailable = false;
                             continue;
@@ -1208,6 +1370,10 @@
                         }
                         if (msmeMissing && msmeAvailable) {
                             msmeAvailable = false;
+                            continue;
+                        }
+                        if (insuranceMissing && insuranceAvailable) {
+                            insuranceAvailable = false;
                             continue;
                         }
                         throw queryError;
@@ -1235,6 +1401,7 @@
                 const msmeByLead = groupByLead(data && data.msme_registration_details);
                 const msmePromotersByLead = groupByLead(data && data.msme_promoters);
                 const msmeRegistrationsByLead = groupByLead(data && data.msme_registrations);
+                const insuranceByLead = groupByLead(data && data.loan_insurance_details);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -1258,6 +1425,7 @@
                         return (a.sort_order || 0) - (b.sort_order || 0);
                     });
                     lead.msme_registrations = msmeRegistrationsByLead[lead.id] || [];
+                    lead.loan_insurance_details = (insuranceByLead[lead.id] || [])[0] || null;
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -1274,6 +1442,9 @@
                 }
                 if (!msmeAvailable) {
                     showPageAlert('warning', 'MSME / Udyam details will appear after migration 010 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!insuranceAvailable) {
+                    showPageAlert('warning', 'Loan Protection Insurance details will appear after migration 011 is applied and the new table is tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -2946,6 +3117,316 @@
             }
         }
 
+        // Loan Protection Insurance. The public wizard only creates the
+        // enquiry; the insurer, quotation, proposal and policy record are
+        // written here by an administrator after the authorised insurer
+        // confirms them and the policy document is verified.
+        function insuranceProposalClass(status) {
+            if (status === 'Policy Issued') { return 'badge-verified'; }
+            if (status === 'Declined' || status === 'Cancelled') { return 'badge-rejected'; }
+            if (status === 'Quotation Received' || status === 'Proposal Accepted' || status === 'Submitted to Insurer') { return 'badge-progress'; }
+            return 'badge-pending';
+        }
+
+        function insurancePolicyClass(status) {
+            if (status === 'Policy Issued' || status === 'Approved') { return 'badge-verified'; }
+            if (status === 'Declined' || status === 'Lapsed' || status === 'Cancelled') { return 'badge-rejected'; }
+            return 'badge-pending';
+        }
+
+        function renderInsuranceDetails(app) {
+            const d = app.loan_insurance_details;
+            const group = $('#modalInsuranceGroup');
+            if (!d) {
+                group.hide();
+                $('#modalInsurance').empty();
+                return null;
+            }
+            group.show();
+
+            const address = [d.address_line, d.address_city, d.address_district, d.address_state, d.address_pincode]
+                .filter(Boolean).join(', ');
+            const insuranceDocs = (app.loan_documents || []).filter(function (doc) {
+                return ['Insurance Proposal Form', 'Medical Report', 'Existing Policy', 'Insurer Quotation'].indexOf(doc.document_type) > -1;
+            });
+
+            let html = '';
+            html += subHeading('Applicant profile');
+            html += detailRow('Applicant', d.applicant_name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Mobile', d.mobile);
+            html += detailRow('Email', d.email);
+            html += detailRow('Occupation', d.occupation);
+            html += detailRow('Annual income', money(d.annual_income));
+            html += detailRow('PAN', d.pan_number);
+            html += detailRow('Address', address);
+
+            html += subHeading('Loan details');
+            html += detailRow('Loan type', d.loan_type);
+            html += detailRow('Lender', d.lender_name);
+            html += detailRow('Loan account reference', d.loan_account_reference);
+            html += detailRow('Outstanding amount', money(d.outstanding_amount));
+            html += detailRow('EMI', money(d.emi_amount));
+            html += detailRow('Remaining tenure', (d.remaining_tenure_months === null || d.remaining_tenure_months === undefined)
+                ? null : d.remaining_tenure_months + ' months');
+
+            html += subHeading('Insurance enquiry');
+            html += detailRow('Coverage requirement', d.coverage_requirement);
+            html += detailRow('Desired cover', money(d.desired_cover_amount));
+            html += detailRow('Policy tenure', d.policy_tenure_years ? d.policy_tenure_years + ' years' : null);
+            html += detailRow('Premium budget', (d.premium_budget === null || d.premium_budget === undefined) ? null : money(d.premium_budget));
+            html += detailRow('Payment frequency', d.payment_frequency);
+            html += detailRow('Existing insurance', d.existing_insurance ? 'Yes' : 'No');
+            if (d.existing_insurance) {
+                html += detailRow('Existing insurer', d.existing_insurer);
+                html += detailRow('Existing cover', (d.existing_cover_amount === null || d.existing_cover_amount === undefined)
+                    ? null : money(d.existing_cover_amount));
+                html += detailRow('Existing policy expiry', prettyDate(d.existing_policy_expiry));
+            }
+            html += detailRow('Insurer preference', d.insurer_preference);
+            html += detailRow('Documents on file', insuranceDocs.length
+                ? insuranceDocs.map(function (doc) {
+                    return doc.document_type + (doc.file_name ? ' (' + doc.file_name + ')' : '');
+                }).join(', ')
+                : 'None uploaded yet');
+
+            html += subHeading('Nominee');
+            html += detailRow('Nominee', d.nominee_name);
+            html += detailRow('Relationship', d.nominee_relation);
+            html += detailRow('Date of birth', prettyDate(d.nominee_date_of_birth));
+            html += detailRow('Mobile', d.nominee_mobile);
+
+            html += subHeading('Co-borrower');
+            if (!d.co_borrower) {
+                html += detailRow('Co-borrower', 'Not added');
+            } else {
+                html += detailRow('Name', d.co_borrower_name);
+                html += detailRow('Relationship', d.co_borrower_relation);
+                html += detailRow('Mobile', d.co_borrower_mobile);
+                html += detailRow('Email', d.co_borrower_email);
+                html += detailRow('Date of birth', prettyDate(d.co_borrower_date_of_birth));
+            }
+
+            html += subHeading('Underwriting information');
+            html += detailRow('Height', d.height_cm ? d.height_cm + ' cm' : null);
+            html += detailRow('Weight', d.weight_kg ? d.weight_kg + ' kg' : null);
+            html += detailRow('Tobacco use', d.tobacco_use);
+            html += detailRow('Medical conditions', d.medical_conditions);
+            html += detailRow('Medications', d.medications);
+            html += detailRow('Hospitalisation (last 3 years)', d.hospitalization_last_3_years);
+            html += detailRow('Occupation risk', d.occupation_risk);
+            html += detailRow('Income proof', d.income_proof_type);
+            html += detailRow('Medical test consent', d.medical_test_consent ? 'Given' : 'Not given');
+            html += detailRow('Underwriting notes', d.underwriting_notes);
+            html += '<p class="admin-note">Health information is sensitive. Share it only with the authorised insurer and its underwriting team for this proposal. Do not copy it into ordinary email, WhatsApp or public notes.</p>';
+
+            $('#modalInsurance').html(html);
+            return d;
+        }
+
+        function renderInsuranceStatus(app) {
+            const d = app.loan_insurance_details;
+            const group = $('#modalInsuranceStatusGroup');
+            if (!d) {
+                group.hide();
+                $('#modalInsuranceProposalBadge').empty();
+                $('#modalInsurancePolicyBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const proposal = d.proposal_status || 'Enquiry Received';
+            const policy = d.policy_status || 'Not Issued';
+            let proposalBadge = '<span class="badge-status ' + insuranceProposalClass(proposal) + '">' + esc(proposal) + '</span>';
+            if (d.insurer_name) {
+                proposalBadge += ' <span class="admin-note" style="display:inline;margin:0;">' + esc(d.insurer_name) + '</span>';
+            }
+            let policyBadge = '<span class="badge-status ' + insurancePolicyClass(policy) + '">' + esc(policy) + '</span>';
+            if (d.policy_number) {
+                policyBadge += ' <span class="admin-note" style="display:inline;margin:0;">' + esc(d.policy_number) + '</span>';
+            }
+            if (d.policy_start_date) {
+                policyBadge += ' <span class="admin-note" style="display:inline;margin:0;">from ' + esc(prettyDate(d.policy_start_date)) + '</span>';
+            }
+            $('#modalInsuranceProposalBadge').html(proposalBadge);
+            $('#modalInsurancePolicyBadge').html(policyBadge);
+
+            $('#modalInsuranceProposalStatus').val(proposal);
+            $('#modalInsurancePolicyStatus').val(policy);
+            $('#modalInsuranceInsurer').val(d.insurer_name || '');
+            $('#modalInsuranceProposalNumber').val(d.proposal_number || '');
+            $('#modalInsuranceProposalDate').val(d.proposal_date ? String(d.proposal_date).slice(0, 10) : '');
+            $('#modalInsuranceQuotationRef').val(d.quotation_reference || '');
+            $('#modalInsuranceQuotationAmount').val((d.quotation_amount === null || d.quotation_amount === undefined) ? '' : d.quotation_amount);
+            $('#modalInsuranceQuotationDate').val(d.quotation_date ? String(d.quotation_date).slice(0, 10) : '');
+            $('#modalInsuranceQuotationValid').val(d.quotation_valid_until ? String(d.quotation_valid_until).slice(0, 10) : '');
+            $('#modalInsurancePremiumAmount').val((d.premium_amount === null || d.premium_amount === undefined) ? '' : d.premium_amount);
+            $('#modalInsurancePolicyNumber').val(d.policy_number || '');
+            $('#modalInsurancePolicyStart').val(d.policy_start_date ? String(d.policy_start_date).slice(0, 10) : '');
+            $('#modalInsurancePolicyEnd').val(d.policy_end_date ? String(d.policy_end_date).slice(0, 10) : '');
+            $('#modalInsurancePaymentMode').val(d.payment_mode || '');
+            $('#modalInsurancePolicyRemarks').val(d.policy_remarks || '');
+            $('#modalInsuranceNotes').val(d.status_notes || '');
+            return d;
+        }
+
+        async function saveInsuranceStatus() {
+            const id = $('#viewModal').data('insurance-detail-id');
+            if (!id) { return; }
+
+            const proposalStatus = $('#modalInsuranceProposalStatus').val();
+            const policyStatus = $('#modalInsurancePolicyStatus').val();
+            const insurer = $('#modalInsuranceInsurer').val().trim();
+            const proposalNumber = $('#modalInsuranceProposalNumber').val().trim();
+            const proposalDate = $('#modalInsuranceProposalDate').val();
+            const quotationReference = $('#modalInsuranceQuotationRef').val().trim();
+            const quotationAmountRaw = $('#modalInsuranceQuotationAmount').val();
+            const quotationDate = $('#modalInsuranceQuotationDate').val();
+            const quotationValid = $('#modalInsuranceQuotationValid').val();
+            const premiumRaw = $('#modalInsurancePremiumAmount').val();
+            const policyNumber = $('#modalInsurancePolicyNumber').val().trim();
+            const policyStart = $('#modalInsurancePolicyStart').val();
+            const policyEnd = $('#modalInsurancePolicyEnd').val();
+            const paymentMode = $('#modalInsurancePaymentMode').val();
+            const remarks = $('#modalInsurancePolicyRemarks').val().trim();
+            const notes = $('#modalInsuranceNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+            const policyIssued = policyStatus === 'Policy Issued';
+            const policyWasIssued = policyStatus === 'Policy Issued' || policyStatus === 'Lapsed' || policyStatus === 'Cancelled';
+            const proposalIssued = proposalStatus === 'Policy Issued';
+
+            if (proposalIssued && !policyWasIssued) {
+                showModalAlert('warning', 'A proposal marked Policy Issued must have a policy status of Policy Issued, Lapsed or Cancelled. Choose the matching policy status.');
+                $('#modalInsurancePolicyStatus').focus();
+                return;
+            }
+            if (policyWasIssued && !proposalIssued) {
+                showModalAlert('warning', 'Set the proposal status to Policy Issued as well. A policy cannot be recorded while the proposal is still at another stage.');
+                $('#modalInsuranceProposalStatus').focus();
+                return;
+            }
+            if (policyWasIssued && !insurer) {
+                showModalAlert('warning', 'Enter the authorised insurer name before recording a policy status of Policy Issued, Lapsed or Cancelled.');
+                $('#modalInsuranceInsurer').focus();
+                return;
+            }
+            if (policyWasIssued && !policyNumber) {
+                showModalAlert('warning', 'Enter the policy number from the insurer-issued policy document before recording a policy status of Policy Issued, Lapsed or Cancelled.');
+                $('#modalInsurancePolicyNumber').focus();
+                return;
+            }
+            if (policyWasIssued && !policyStart) {
+                showModalAlert('warning', 'Enter the policy start date from the insurer-issued policy document before recording a policy status of Policy Issued, Lapsed or Cancelled.');
+                $('#modalInsurancePolicyStart').focus();
+                return;
+            }
+            if (policyStart && policyEnd && policyEnd < policyStart) {
+                showModalAlert('warning', 'The policy end date cannot be before the policy start date.');
+                $('#modalInsurancePolicyEnd').focus();
+                return;
+            }
+            if (quotationDate && quotationValid && quotationValid < quotationDate) {
+                showModalAlert('warning', 'The quotation valid-until date cannot be before the quotation date.');
+                $('#modalInsuranceQuotationValid').focus();
+                return;
+            }
+
+            const quotationAmount = quotationAmountRaw === '' ? null : Number(quotationAmountRaw);
+            if (quotationAmount !== null && (!isFinite(quotationAmount) || quotationAmount < 0)) {
+                showModalAlert('warning', 'Enter a valid non-negative quotation amount.');
+                $('#modalInsuranceQuotationAmount').focus();
+                return;
+            }
+            const premiumAmount = premiumRaw === '' ? null : Number(premiumRaw);
+            if (premiumAmount !== null && (!isFinite(premiumAmount) || premiumAmount < 0)) {
+                showModalAlert('warning', 'Enter a valid non-negative premium amount.');
+                $('#modalInsurancePremiumAmount').focus();
+                return;
+            }
+
+            const app = applications.filter(function (item) {
+                return item.loan_insurance_details && item.loan_insurance_details.id === id;
+            })[0];
+            const existing = app ? app.loan_insurance_details : null;
+            const verifiedAt = policyIssued
+                ? ((existing && existing.verified_at) || new Date().toISOString())
+                : ((existing && existing.verified_at) || null);
+            const verifiedBy = policyIssued
+                ? ((existing && existing.verified_by) || (admin ? admin.id : null))
+                : ((existing && existing.verified_by) || null);
+            const btn = $('#saveInsuranceStatusBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateInsuranceStatus($id: uuid!, $proposalStatus: String!, $policyStatus: String!, $insurer: String, $proposalNumber: String, $proposalDate: date, $quotationRef: String, $quotationAmount: numeric, $quotationDate: date, $quotationValid: date, $policyNumber: String, $policyStart: date, $policyEnd: date, $premiumAmount: numeric, $paymentMode: String, $remarks: String, $notes: String, $verifiedBy: uuid, $verifiedAt: timestamptz) {' +
+                    '  update_loan_insurance_details_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    proposal_status: $proposalStatus, policy_status: $policyStatus, insurer_name: $insurer,' +
+                    '    proposal_number: $proposalNumber, proposal_date: $proposalDate,' +
+                    '    quotation_reference: $quotationRef, quotation_amount: $quotationAmount,' +
+                    '    quotation_date: $quotationDate, quotation_valid_until: $quotationValid,' +
+                    '    policy_number: $policyNumber, policy_start_date: $policyStart, policy_end_date: $policyEnd,' +
+                    '    premium_amount: $premiumAmount, payment_mode: $paymentMode,' +
+                    '    policy_remarks: $remarks, status_notes: $notes,' +
+                    '    verified_by: $verifiedBy, verified_at: $verifiedAt' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        proposalStatus: proposalStatus,
+                        policyStatus: policyStatus,
+                        insurer: insurer || null,
+                        proposalNumber: proposalNumber || null,
+                        proposalDate: proposalDate || null,
+                        quotationRef: quotationReference || null,
+                        quotationAmount: quotationAmount,
+                        quotationDate: quotationDate || null,
+                        quotationValid: quotationValid || null,
+                        policyNumber: policyNumber || null,
+                        policyStart: policyStart || null,
+                        policyEnd: policyEnd || null,
+                        premiumAmount: premiumAmount,
+                        paymentMode: paymentMode || null,
+                        remarks: remarks || null,
+                        notes: notes || null,
+                        verifiedBy: verifiedBy,
+                        verifiedAt: verifiedAt
+                    }
+                );
+
+                if (app) {
+                    const detail = app.loan_insurance_details;
+                    detail.proposal_status = proposalStatus;
+                    detail.policy_status = policyStatus;
+                    detail.insurer_name = insurer || null;
+                    detail.proposal_number = proposalNumber || null;
+                    detail.proposal_date = proposalDate || null;
+                    detail.quotation_reference = quotationReference || null;
+                    detail.quotation_amount = quotationAmount;
+                    detail.quotation_date = quotationDate || null;
+                    detail.quotation_valid_until = quotationValid || null;
+                    detail.policy_number = policyNumber || null;
+                    detail.policy_start_date = policyStart || null;
+                    detail.policy_end_date = policyEnd || null;
+                    detail.premium_amount = premiumAmount;
+                    detail.payment_mode = paymentMode || null;
+                    detail.policy_remarks = remarks || null;
+                    detail.status_notes = notes || null;
+                    detail.verified_by = verifiedBy;
+                    detail.verified_at = verifiedAt;
+                    renderInsuranceDetails(app);
+                    renderInsuranceStatus(app);
+                }
+                showModalAlert('success', 'Insurance proposal, quotation and policy status updated.');
+            } catch (err) {
+                console.error('Insurance status update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the insurance status.');
+            } finally {
+                btn.prop('disabled', false).text('Update insurance proposal & policy status');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -3068,6 +3549,8 @@
             renderMsmeDetails(app);
             renderMsmeStatus(app);
             renderMsmeRegistrations(app);
+            renderInsuranceDetails(app);
+            renderInsuranceStatus(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
@@ -3077,6 +3560,7 @@
             $('#viewModal').data('itr-detail-id', app.itr_filing_details ? app.itr_filing_details.id : null);
             $('#viewModal').data('gst-detail-id', app.gst_registration_details ? app.gst_registration_details.id : null);
             $('#viewModal').data('msme-detail-id', app.msme_registration_details ? app.msme_registration_details.id : null);
+            $('#viewModal').data('insurance-detail-id', app.loan_insurance_details ? app.loan_insurance_details.id : null);
             $('#viewModal').modal('show');
         }
 
@@ -3157,6 +3641,7 @@
             $('#modalGstReturns').on('click', '.btn-save-gst-return', saveGstReturn);
             $('#saveMsmeStatusBtn').on('click', saveMsmeStatus);
             $('#modalMsmeRegistrations').on('click', '.btn-save-msme-registration', saveMsmeRegistrationRow);
+            $('#saveInsuranceStatusBtn').on('click', saveInsuranceStatus);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

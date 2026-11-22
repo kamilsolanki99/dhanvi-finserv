@@ -259,6 +259,37 @@ Until the MSME tables are tracked with `admin` select permission,
 Existing application types keep loading normally, and MSME details appear
 automatically once tracking and the permission are complete.
 
+Then run
+[`migrations/011_loan_protection_insurance.sql`](migrations/011_loan_protection_insurance.sql).
+It adds the **Loan Protection Insurance** enquiry system behind
+`loan-insurance-apply.html`:
+
+- `loan_insurance_details` — one structured row per insurance assistance lead:
+  applicant and KYC profile, address, loan and lender details, outstanding
+  balance, EMI and remaining tenure, coverage requirement, desired cover,
+  policy tenure and premium budget, existing insurance, nominee and co-borrower
+  details, underwriting information and medical-test consent, plus the
+  administrator-controlled insurer, proposal, quotation and policy fields.
+- `submit_loan_insurance_application` — the secure function the wizard calls.
+- It widens the allowed `document_type` values so the insurer's proposal form,
+  medical reports, existing policy and insurer quotation can be stored, and
+  re-asserts the `loan_leads` loan-type and amount rules.
+
+The public insurance wizard never sets `proposal_status`, `insurer_name`,
+`proposal_number`, `proposal_date`, `quotation_reference`, `quotation_amount`,
+`quotation_date`, `quotation_valid_until`, `policy_status`, `policy_number`,
+`policy_start_date`, `policy_end_date`, `premium_amount`, `payment_mode`,
+`policy_remarks`, `status_notes`, `verified_by` or `verified_at`. A new enquiry
+starts at **Enquiry Received** / **Not Issued**. Only an administrator can
+record a quotation, proposal or policy after the authorised insurer confirms it
+and the policy document is verified. A quotation is not cover, and no cover
+begins until the policy is issued and the premium is paid.
+
+Until `loan_insurance_details` is tracked with `admin` select permission,
+`admin-applications.html` retries its dashboard query without the insurance
+fields. Existing application types keep loading normally, and insurance details
+appear automatically once tracking and the permission are complete.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -305,6 +336,7 @@ Under `public`:
 - `msme_registration_details`
 - `msme_promoters`
 - `msme_registrations`
+- `loan_insurance_details`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -336,6 +368,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_itr_application`
 - `submit_gst_application`
 - `submit_msme_application`
+- `submit_loan_insurance_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -385,6 +418,7 @@ Open **Data → [function] → Permissions**.
 | `submit_itr_application` | execute | execute | execute |
 | `submit_gst_application` | execute | execute | execute |
 | `submit_msme_application` | execute | execute | execute |
+| `submit_loan_insurance_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -426,6 +460,7 @@ Grant only what the admin panel uses:
 | `msme_registration_details` | yes | no | yes | no |
 | `msme_promoters` | yes | no | no | no |
 | `msme_registrations` | yes | no | yes | no |
+| `loan_insurance_details` | yes | no | yes | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -435,8 +470,8 @@ documents, follow-ups, callbacks, support requests and complaints. Grant
 `business_loan_details`, `working_capital_details`,
 `working_capital_facilities`, `itr_filing_details`, `itr_income_items`,
 `itr_tax_payments`, `gst_registration_details`, `gst_return_filings`,
-`msme_registration_details`, `msme_promoters`, `msme_registrations` and
-`home_loan_emis`;
+`msme_registration_details`, `msme_promoters`, `msme_registrations`,
+`loan_insurance_details` and `home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
 must not be deletable from the admin UI.
@@ -465,6 +500,7 @@ admin panel:
 | `gst_return_filings` | `filing_status`, `arn`, `filed_at`, `tax_paid`, `remarks` |
 | `msme_registration_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `submission_status`, `submission_status_notes`, `submitted_at`, `submitted_by`, `approved_at`, `verified_at`, `verification_method`, `certificate_number`, `portal_reference`, `registration_remarks` |
 | `msme_registrations` | `status`, `application_number`, `submitted_at`, `approved_at`, `certificate_number`, `valid_until`, `portal_reference`, `remarks` |
+| `loan_insurance_details` | `proposal_status`, `insurer_name`, `proposal_number`, `proposal_date`, `quotation_reference`, `quotation_amount`, `quotation_date`, `quotation_valid_until`, `policy_status`, `policy_number`, `policy_start_date`, `policy_end_date`, `premium_amount`, `payment_mode`, `policy_remarks`, `status_notes`, `verified_by`, `verified_at` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
@@ -476,12 +512,15 @@ the administrator-controlled filing / submission, acknowledgement, certificate
 and (for GST) payment fields. `gst_return_filings` allows the per-period filing
 status, ARN, filing date, tax paid and remarks. `msme_registrations` allows the
 per-registration status, application number, submission and approval dates,
-certificate number, validity, portal reference and remarks. The
-rest of the structured data is created by `submit_home_loan_application`,
+certificate number, validity, portal reference and remarks.
+`loan_insurance_details` allows the administrator-controlled insurer, proposal,
+quotation and policy fields listed above; the public wizard never writes them.
+The rest of the structured data is created by `submit_home_loan_application`,
 `submit_home_loan_topup_application`, `submit_home_loan_takeover_application`,
 `submit_lap_application`, `submit_business_loan_application`,
 `submit_working_capital_application`, `submit_itr_application`,
-`submit_gst_application` and `submit_msme_application` and must not be editable
+`submit_gst_application`, `submit_msme_application` and
+`submit_loan_insurance_application` and must not be editable
 from the browser.
 `home_loan_emis`, `itr_income_items`, `itr_tax_payments` and `msme_promoters`
 have `select` only.
@@ -657,9 +696,10 @@ LAP / Business Loan tables and functions added by migration `006`, the
 Working Capital tables, functions and indexes added by migration `007`, the
 ITR Filing tables, functions and indexes added by migration `008`, the GST
 Registration & Filing tables, function and indexes added by migration `009`,
-and the MSME / Udyam / Gumasta tables, function and indexes added by migration
-`010`.
-The expected totals are **27 tables, 24 functions, 28 triggers and 80 indexes**.
+the MSME / Udyam / Gumasta tables, function and indexes added by migration
+`010`, and the Loan Protection Insurance table, function and indexes added by
+migration `011`.
+The expected totals are **28 tables, 25 functions, 29 triggers and 86 indexes**.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -798,6 +838,34 @@ Then test the GST Registration & Filing wizard (`gst-apply.html`):
    of incorporation, partnership deeds, board resolutions, authorisation
    letters, address proofs and bank proofs.
 
+Then test the Loan Protection Insurance wizard (`loan-insurance-apply.html`):
+
+1. Complete the 6 steps. Verify that the existing-insurance and co-borrower
+   blocks appear only when selected, that the underwriting consent is required,
+   and that the review lists the applicant, loan, coverage, nominee,
+   co-borrower, underwriting and declaration sections.
+2. Use **Save & continue later**, then open the resume link in a new private
+   window. The saved answers must load, except the full loan account reference,
+   which is intentionally not stored in drafts and must be re-entered.
+3. Submit the enquiry and confirm the lead status is **Application Received**
+   with proposal status **Enquiry Received** and policy status **Not Issued**.
+   The public form must never write the insurer, quotation, proposal or policy
+   fields.
+4. Open **Applications** in the admin panel. The **Loan Protection Insurance —
+   Applicant, Loan, Coverage & Underwriting** section must show the customer
+   profile, loan details, coverage requirement, nominee, co-borrower and
+   medical information. The **Insurance Proposal, Quotation & Policy Record**
+   section must refuse a new **Policy Issued** record without the insurer name,
+   policy number and policy start date, and must reject mismatched proposal and
+   policy statuses.
+5. Record a quotation and proposal first, then issue the policy with the
+   verified policy number and dates. Confirm the customer-facing status reflects
+   the administrator record. Move the policy to **Lapsed** or **Cancelled** and
+   confirm the issued policy details and verification are preserved.
+6. Confirm the upload page offers the insurance document types, including the
+   insurer proposal form, medical reports, existing policy and insurer
+   quotation.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -871,6 +939,11 @@ Then test the general flow:
 | Applications list fails to load after adding migration `010` | `msme_registration_details`, `msme_promoters` or `msme_registrations` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without MSME fields, but track the tables and grant `select` to see the data. |
 | The MSME application shows **Approved & Verified** too early | Never set this status manually before the actual Udyam, Shop & Establishment or registrar portal action and certificate / acknowledgement verification. The admin UI requires a certificate number and approval date; confirm both against the government portal before saving. |
 | An MSME registration row shows **Approved & Verified** too early | Each registration row needs its own certificate / acknowledgement number and actual approval date. Never mark a row complete from a pending or failed portal attempt. |
+| `field 'submit_loan_insurance_application' not found` | Migration `011` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| Loan Protection Insurance section does not appear in the admin modal | The lead is not an insurance application, or `loan_insurance_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| Applications list fails to load after adding migration `011` | `loan_insurance_details` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without insurance fields, but track the table and grant `select` to see the data. |
+| The insurance enquiry shows **Policy Issued** too early | Never record a quotation, proposal or policy before the authorised insurer confirms it and the policy document is verified. For a new policy the admin UI requires the insurer name, policy number and policy start date, and both the proposal and policy statuses must be set to Policy Issued. A quotation is not cover. |
+| The insurance policy cannot be marked **Lapsed** or **Cancelled** | Keep the proposal status at Policy Issued, choose Lapsed or Cancelled as the policy status, and keep the insurer name, policy number and start date from the issued policy. These post-issuance statuses preserve the verified policy record. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |
