@@ -353,6 +353,16 @@
                 p_draft_id: 'uuid',
                 p_draft_token: 'uuid'
             }
+        },
+        // Credit Health / CIBIL advisory (migration 012). Reuses the shared
+        // draft functions for save / resume.
+        submit_credit_health_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
         }
     };
 

@@ -5,16 +5,16 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 28 tracked tables (including admin_notifications and the eighteen
---     structured service / loan tables added by migrations 004 to 011)
+--   * all 31 tracked tables (including admin_notifications and the twenty-one
+--     structured service / loan tables added by migrations 004 to 012)
 --   * every column in those tables
---   * all 25 tracked functions (including the helpers)
---   * all 21 updated_at triggers, the 7 notification triggers and the
+--   * all 26 tracked functions (including the helpers)
+--   * all 24 updated_at triggers, the 7 notification triggers and the
 --     notification read-state trigger
 --   * all named indexes (including the notification, Home Loan, Top-Up /
 --     Takeover, LAP, Business Loan, Working Capital, ITR Filing, GST
---     Registration & Filing, MSME / Udyam and Loan Protection Insurance
---     indexes)
+--     Registration & Filing, MSME / Udyam, Loan Protection Insurance and
+--     Credit Health / CIBIL indexes)
 --   * the private loan-documents bucket and its settings
 --   * the custom admin auth role
 --   * the reference sequence
@@ -51,7 +51,10 @@ WITH expected_tables(name) AS (
         ('msme_registration_details'),
         ('msme_promoters'),
         ('msme_registrations'),
-        ('loan_insurance_details')
+        ('loan_insurance_details'),
+        ('credit_health_details'),
+        ('credit_accounts'),
+        ('credit_enquiries')
 ),
 expected_functions(name, signature) AS (
     VALUES
@@ -78,6 +81,7 @@ expected_functions(name, signature) AS (
         ('submit_gst_application', 'public.submit_gst_application(jsonb,uuid,uuid)'),
         ('submit_msme_application', 'public.submit_msme_application(jsonb,uuid,uuid)'),
         ('submit_loan_insurance_application', 'public.submit_loan_insurance_application(jsonb,uuid,uuid)'),
+        ('submit_credit_health_application', 'public.submit_credit_health_application(jsonb,uuid,uuid)'),
         ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
         ('notify_admin_event', 'public.notify_admin_event()')
 ),
@@ -104,6 +108,9 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_msme_promoters_modtime', 'msme_promoters'),
         ('update_msme_registrations_modtime', 'msme_registrations'),
         ('update_loan_insurance_details_modtime', 'loan_insurance_details'),
+        ('update_credit_health_details_modtime', 'credit_health_details'),
+        ('update_credit_accounts_modtime', 'credit_accounts'),
+        ('update_credit_enquiries_modtime', 'credit_enquiries'),
         ('notify_admin_new_lead', 'loan_leads'),
         ('notify_admin_new_callback', 'callback_bookings'),
         ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
@@ -200,7 +207,20 @@ expected_indexes(name) AS (
         ('loan_insurance_details_policy_idx'),
         ('loan_insurance_details_insurer_idx'),
         ('loan_insurance_details_loan_type_idx'),
-        ('loan_insurance_details_state_idx')
+        ('loan_insurance_details_state_idx'),
+        ('credit_health_details_lead_idx'),
+        ('credit_health_details_status_idx'),
+        ('credit_health_details_service_idx'),
+        ('credit_health_details_bureau_idx'),
+        ('credit_health_details_score_idx'),
+        ('credit_health_details_followup_idx'),
+        ('credit_health_details_state_idx'),
+        ('credit_accounts_lead_idx'),
+        ('credit_accounts_type_idx'),
+        ('credit_accounts_status_idx'),
+        ('credit_enquiries_lead_idx'),
+        ('credit_enquiries_date_idx'),
+        ('credit_enquiries_bureau_idx')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (

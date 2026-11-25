@@ -1113,6 +1113,66 @@
 .cp-review-row span:first-child { color: #5b6b82; flex: 0 0 auto; }
 .cp-review-row span:last-child { color: #34415c; font-weight: 500; text-align: right; }
 
+/* Repeatable credit accounts / enquiries --------------------------------- */
+.credit-repeat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.credit-repeat-empty {
+    border: 1px dashed #cfdceb;
+    border-radius: 10px;
+    background: #fbfdff;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: #66768d;
+}
+
+.credit-repeat-empty i { color: #8fa6c2; margin-right: 6px; }
+
+.credit-repeat-row {
+    border: 1px solid var(--line, #e5ecf4);
+    border-radius: 12px;
+    background: #fcfdff;
+    padding: 16px 18px 6px;
+}
+
+.credit-repeat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eef2f8;
+}
+
+.credit-repeat-head strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #34415c;
+}
+
+.credit-repeat-head strong i { color: var(--blue, #15549a); margin-right: 6px; }
+
+.credit-repeat-remove {
+    background: none;
+    border: 0;
+    color: #b04a4a;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 0;
+}
+
+.credit-repeat-remove:hover,
+.credit-repeat-remove:focus { color: #8d2f2f; text-decoration: underline; }
+
+.credit-repeat-row .cp-field { margin-bottom: 14px; }
+.credit-repeat-row textarea.form-control { min-height: 62px; }
+
 @media (max-width: 767px) {
     .cp-stepper { padding-bottom: 12px; }
     .cp-stepper-item { min-width: 84px; }

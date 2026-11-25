@@ -290,6 +290,47 @@ Until `loan_insurance_details` is tracked with `admin` select permission,
 fields. Existing application types keep loading normally, and insurance details
 appear automatically once tracking and the permission are complete.
 
+Then run
+[`migrations/012_credit_health_cibil.sql`](migrations/012_credit_health_cibil.sql).
+It adds the **Credit Health / CIBIL Advisory** system behind
+`credit-health-apply.html`:
+
+- `credit_health_details` — one structured row per advisory lead: applicant
+  profile, PAN and address, occupation and income, advisory requirement and
+  bureau preference, current score and target loan, existing credit profile,
+  overdue and settlement history, existing report reference, bureau consent and
+  declarations, plus the administrator-controlled bureau, report, score,
+  analysis and follow-up fields.
+- `credit_accounts` — repeatable loan and credit-card rows with account type,
+  lender, last four characters of the account reference, status, outstanding,
+  EMI, overdue, days past due and settlement amounts.
+- `credit_enquiries` — repeatable bureau enquiry rows with institution, date,
+  purpose, status and remarks.
+- `submit_credit_health_application` — the secure function the wizard calls.
+- It widens the allowed `document_type` values so a credit report, credit-card
+  statement, bureau correspondence, No Dues Certificate and settlement letter
+  can be stored, and re-asserts the `loan_leads` loan-type and amount rules.
+
+The public Credit Health wizard never sets `report_status`, `bureau_name`,
+`bureau_reference`, `bureau_request_sent_at`, `report_received_date`,
+`credit_score`, `score_date`, `score_band`, `report_summary`,
+`analysis_summary`, `improvement_plan`, `eligibility_assessment`,
+`analysis_shared_date`, `admin_remarks`, `follow_up_date`, `status_notes`,
+`verified_by` or `verified_at`. A new request starts at **Enquiry Received**.
+Only an administrator can record the bureau reference, report date, score and
+analysis after the authorised bureau supplies the information and it is
+verified. Dhanvi Finserv does not guarantee a score increase, the removal of a
+genuine default or loan approval. A report is requested only after the
+customer's explicit bureau consent and only through an authorised bureau
+process. Full reports are not stored in public URLs or written to ordinary
+logs; the database keeps the bureau reference and the advisory summary.
+
+Until `credit_health_details`, `credit_accounts` and `credit_enquiries` are
+tracked with `admin` select permission, `admin-applications.html` retries its
+dashboard query without the Credit Health fields. Existing application types
+keep loading normally, and Credit Health details appear automatically once
+tracking and the permission are complete.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -337,6 +378,9 @@ Under `public`:
 - `msme_promoters`
 - `msme_registrations`
 - `loan_insurance_details`
+- `credit_health_details`
+- `credit_accounts`
+- `credit_enquiries`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -369,6 +413,7 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_gst_application`
 - `submit_msme_application`
 - `submit_loan_insurance_application`
+- `submit_credit_health_application`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
@@ -419,6 +464,7 @@ Open **Data → [function] → Permissions**.
 | `submit_gst_application` | execute | execute | execute |
 | `submit_msme_application` | execute | execute | execute |
 | `submit_loan_insurance_application` | execute | execute | execute |
+| `submit_credit_health_application` | execute | execute | execute |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
@@ -461,6 +507,9 @@ Grant only what the admin panel uses:
 | `msme_promoters` | yes | no | no | no |
 | `msme_registrations` | yes | no | yes | no |
 | `loan_insurance_details` | yes | no | yes | no |
+| `credit_health_details` | yes | no | yes | no |
+| `credit_accounts` | yes | no | no | no |
+| `credit_enquiries` | yes | no | no | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -471,7 +520,8 @@ documents, follow-ups, callbacks, support requests and complaints. Grant
 `working_capital_facilities`, `itr_filing_details`, `itr_income_items`,
 `itr_tax_payments`, `gst_registration_details`, `gst_return_filings`,
 `msme_registration_details`, `msme_promoters`, `msme_registrations`,
-`loan_insurance_details` and `home_loan_emis`;
+`loan_insurance_details`, `credit_health_details`, `credit_accounts`,
+`credit_enquiries` and `home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
 must not be deletable from the admin UI.
@@ -501,6 +551,7 @@ admin panel:
 | `msme_registration_details` | `identity_verification_status`, `identity_verified_by`, `identity_verified_at`, `identity_notes`, `submission_status`, `submission_status_notes`, `submitted_at`, `submitted_by`, `approved_at`, `verified_at`, `verification_method`, `certificate_number`, `portal_reference`, `registration_remarks` |
 | `msme_registrations` | `status`, `application_number`, `submitted_at`, `approved_at`, `certificate_number`, `valid_until`, `portal_reference`, `remarks` |
 | `loan_insurance_details` | `proposal_status`, `insurer_name`, `proposal_number`, `proposal_date`, `quotation_reference`, `quotation_amount`, `quotation_date`, `quotation_valid_until`, `policy_status`, `policy_number`, `policy_start_date`, `policy_end_date`, `premium_amount`, `payment_mode`, `policy_remarks`, `status_notes`, `verified_by`, `verified_at` |
+| `credit_health_details` | `report_status`, `bureau_name`, `bureau_reference`, `bureau_request_sent_at`, `report_received_date`, `credit_score`, `score_date`, `score_band`, `report_summary`, `analysis_summary`, `improvement_plan`, `eligibility_assessment`, `analysis_shared_date`, `admin_remarks`, `follow_up_date`, `status_notes`, `verified_by`, `verified_at` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
@@ -515,15 +566,18 @@ per-registration status, application number, submission and approval dates,
 certificate number, validity, portal reference and remarks.
 `loan_insurance_details` allows the administrator-controlled insurer, proposal,
 quotation and policy fields listed above; the public wizard never writes them.
-The rest of the structured data is created by `submit_home_loan_application`,
-`submit_home_loan_topup_application`, `submit_home_loan_takeover_application`,
-`submit_lap_application`, `submit_business_loan_application`,
-`submit_working_capital_application`, `submit_itr_application`,
-`submit_gst_application`, `submit_msme_application` and
-`submit_loan_insurance_application` and must not be editable
-from the browser.
-`home_loan_emis`, `itr_income_items`, `itr_tax_payments` and `msme_promoters`
-have `select` only.
+`credit_health_details` allows the administrator-controlled bureau, report,
+score, analysis and follow-up fields listed above; the public wizard never
+writes them, and only a verified bureau reference and report date can support a
+report or analysis status. The rest of the structured data is created by
+`submit_home_loan_application`, `submit_home_loan_topup_application`,
+`submit_home_loan_takeover_application`, `submit_lap_application`,
+`submit_business_loan_application`, `submit_working_capital_application`,
+`submit_itr_application`, `submit_gst_application`, `submit_msme_application`,
+`submit_loan_insurance_application` and `submit_credit_health_application` and
+must not be editable from the browser.
+`home_loan_emis`, `itr_income_items`, `itr_tax_payments`, `msme_promoters`,
+`credit_accounts` and `credit_enquiries` have `select` only.
 
 Do not add `public` or `anonymous` permissions on any business table. Do not
 grant _any_ role a permission on `home_loan_drafts`.
@@ -697,9 +751,10 @@ Working Capital tables, functions and indexes added by migration `007`, the
 ITR Filing tables, functions and indexes added by migration `008`, the GST
 Registration & Filing tables, function and indexes added by migration `009`,
 the MSME / Udyam / Gumasta tables, function and indexes added by migration
-`010`, and the Loan Protection Insurance table, function and indexes added by
-migration `011`.
-The expected totals are **28 tables, 25 functions, 29 triggers and 86 indexes**.
+`010`, the Loan Protection Insurance table, function and indexes added by
+migration `011`, and the Credit Health / CIBIL tables, function and indexes
+added by migration `012`.
+The expected totals are **31 tables, 26 functions, 32 triggers and 99 indexes**.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -866,6 +921,36 @@ Then test the Loan Protection Insurance wizard (`loan-insurance-apply.html`):
    insurer proposal form, medical reports, existing policy and insurer
    quotation.
 
+Then test the Credit Health / CIBIL Advisory wizard (`credit-health-apply.html`):
+
+1. Complete the 6 steps. Verify that the overdue, settlement and existing-report
+   blocks appear only when selected, that account and enquiry rows can be added
+   and removed, and that a fully blank repeat row is ignored while a partially
+   completed row is validated. The review must list the applicant, requirement,
+   credit profile, accounts, enquiries, documents and declarations.
+2. Use **Save & continue later**, then open the resume link in a new private
+   window. The saved answers must load, except the PAN and the last four
+   characters of each account reference, which are intentionally not stored in
+   drafts and must be re-entered.
+3. Submit the request and confirm the lead status is **Application Received**
+   with report status **Enquiry Received**. The public form must never write the
+   bureau, report, score or analysis fields.
+4. Open **Applications** in the admin panel. The **Credit Health & CIBIL
+   Advisory — Applicant, Requirement & Credit Profile** section must show the
+   applicant profile, advisory requirement, credit profile, disclosed accounts,
+   enquiries and consent. The **Bureau, Report, Analysis & Follow-up Record**
+   section must refuse **Bureau Request Sent** or later without a bureau name,
+   and must refuse **Report Received** or later without the bureau reference and
+   the actual report received date.
+5. Record a bureau reference and report date, then enter the score (300–900 with
+   a score date) and the analysis. Confirm **Analysis Shared** or **Closed**
+   requires the analysis summary and the date it was shared. Move the request to
+   **On Hold** and confirm the verified report details are preserved.
+6. Confirm the upload page offers the Credit Health document types, including
+   the credit report, credit-card statement, bureau correspondence, No Dues
+   Certificate and settlement letter. Never upload a full credit report through
+   WhatsApp or email; use the private upload link.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -944,6 +1029,12 @@ Then test the general flow:
 | Applications list fails to load after adding migration `011` | `loan_insurance_details` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without insurance fields, but track the table and grant `select` to see the data. |
 | The insurance enquiry shows **Policy Issued** too early | Never record a quotation, proposal or policy before the authorised insurer confirms it and the policy document is verified. For a new policy the admin UI requires the insurer name, policy number and policy start date, and both the proposal and policy statuses must be set to Policy Issued. A quotation is not cover. |
 | The insurance policy cannot be marked **Lapsed** or **Cancelled** | Keep the proposal status at Policy Issued, choose Lapsed or Cancelled as the policy status, and keep the insurer name, policy number and start date from the issued policy. These post-issuance statuses preserve the verified policy record. |
+| `field 'submit_credit_health_application' not found` | Migration `012` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| Credit Health / CIBIL section does not appear in the admin modal | The lead is not a Credit Health application, or `credit_health_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| Applications list fails to load after adding migration `012` | `credit_health_details`, `credit_accounts` or `credit_enquiries` is not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without Credit Health fields, but track the tables and grant `select` to see the data. |
+| The Credit Health request shows **Report Received** too early | Never record a bureau reference, report date, score or analysis before the authorised bureau has actually supplied the report and it has been verified. The admin UI requires the bureau name, bureau reference and the actual report received date; a score also needs a score date and must be between 300 and 900. |
+| The Credit Health request cannot be marked **Analysis Shared** or **Closed** | Enter the analysis summary and the actual date it was shared. The shared date cannot be before the report received date, and no date can be in the future. |
+| A credit report or full bureau data appears in a public URL or log | Do not store full reports in public storage or paste them into emails, WhatsApp or ordinary logs. Keep only the bureau reference and the advisory summary in the database, and upload documents through the private `loan-documents` bucket. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |

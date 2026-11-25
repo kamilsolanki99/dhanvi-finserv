@@ -928,6 +928,135 @@
                         <p class="admin-note">Only record a quotation, proposal or policy after the authorised insurer confirms it and the policy document is verified. Recording a new policy requires the insurer name, policy number and policy start date, with both statuses set to <strong>Policy Issued</strong>. After issuance, keep the proposal at Policy Issued and the policy may move to <strong>Lapsed</strong> or <strong>Cancelled</strong> while preserving the issued policy details. A quotation is not a policy and no cover begins until the policy is issued and the premium is paid. Never record approval, coverage or claim settlement on the insurer's behalf.</p>
                         <button type="button" class="btn-save" id="saveInsuranceStatusBtn">Update insurance proposal &amp; policy status</button>
                     </div>
+                    <div class="detail-group" id="modalCreditHealthGroup" style="display:none;">
+                        <h6><i class="fa fa-line-chart" style="margin-right:6px;"></i>Credit Health &amp; CIBIL Advisory — Applicant, Requirement &amp; Credit Profile</h6>
+                        <div id="modalCreditHealth"></div>
+                    </div>
+                    <div class="detail-group" id="modalCreditHealthStatusGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>Bureau, Report, Analysis &amp; Follow-up Record</h6>
+                        <div class="detail-row"><span class="detail-label">Report status</span><span class="detail-value" id="modalCreditReportBadge">—</span></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Report status</label>
+                                    <select class="form-control" id="modalCreditReportStatus">
+                                        <option value="Enquiry Received">Enquiry Received</option>
+                                        <option value="Consent Received">Consent Received</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Bureau Request Sent">Bureau Request Sent</option>
+                                        <option value="Report Received">Report Received</option>
+                                        <option value="Analysis In Progress">Analysis In Progress</option>
+                                        <option value="Analysis Shared">Analysis Shared</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Authorised bureau</label>
+                                    <select class="form-control" id="modalCreditBureauName">
+                                        <option value="">Select bureau</option>
+                                        <option value="CIBIL">CIBIL</option>
+                                        <option value="Experian">Experian</option>
+                                        <option value="CRIF High Mark">CRIF High Mark</option>
+                                        <option value="Equifax">Equifax</option>
+                                        <option value="Other authorised bureau">Other authorised bureau</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bureau reference</label>
+                                    <input type="text" class="form-control" id="modalCreditBureauReference" maxlength="120" placeholder="Required before Report Received">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bureau request sent on</label>
+                                    <input type="date" class="form-control" id="modalCreditBureauRequestDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Report received on</label>
+                                    <input type="date" class="form-control" id="modalCreditReportDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Credit score</label>
+                                    <input type="number" class="form-control" id="modalCreditScore" min="300" max="900" step="1" placeholder="300-900, if supplied">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Score date</label>
+                                    <input type="date" class="form-control" id="modalCreditScoreDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Score band</label>
+                                    <select class="form-control" id="modalCreditScoreBand">
+                                        <option value="">Select band</option>
+                                        <option value="Poor">Poor</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Good">Good</option>
+                                        <option value="Very Good">Very Good</option>
+                                        <option value="Excellent">Excellent</option>
+                                        <option value="Not disclosed">Not disclosed</option>
+                                        <option value="Bureau-specific">Bureau-specific</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Report summary</label>
+                            <textarea class="form-control" id="modalCreditReportSummary" rows="2" placeholder="What the bureau report shows: accounts, DPD, status, enquiries, utilisation."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Analysis summary (required before Analysis Shared or Closed)</label>
+                            <textarea class="form-control" id="modalCreditAnalysisSummary" rows="3" placeholder="Findings and the explanation shared with the applicant."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Improvement plan</label>
+                            <textarea class="form-control" id="modalCreditImprovementPlan" rows="2" placeholder="Lawful, practical steps. Do not promise a score increase."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Loan eligibility assessment</label>
+                            <textarea class="form-control" id="modalCreditEligibility" rows="2" placeholder="Indicative only. Not an approval, sanction or guarantee."></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Analysis shared on</label>
+                                    <input type="date" class="form-control" id="modalCreditAnalysisSharedDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Follow-up date</label>
+                                    <input type="date" class="form-control" id="modalCreditFollowUpDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Administrator remarks</label>
+                            <textarea class="form-control" id="modalCreditAdminRemarks" rows="2" placeholder="Bureau query, dispute raised, documents received, applicant contacted, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Internal status notes</label>
+                            <textarea class="form-control" id="modalCreditStatusNotes" rows="2" placeholder="Internal notes. Do not paste the full credit report."></textarea>
+                        </div>
+                        <p class="admin-note">Only record a bureau reference, report date, score or analysis after the authorised bureau has actually supplied the information and it has been verified. <strong>Report Received</strong> or later requires the bureau name, bureau reference and report received date. <strong>Analysis Shared</strong> or <strong>Closed</strong> also requires the analysis summary and the date it was shared. Never promise a score increase, the removal of a genuine default or loan approval. Do not paste the full credit report into these notes or into ordinary email or WhatsApp.</p>
+                        <button type="button" class="btn-save" id="saveCreditHealthStatusBtn">Update credit health status</button>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -1213,6 +1342,27 @@
             '    policy_remarks status_notes verified_by verified_at' +
             '  }';
 
+        const APPLICATIONS_QUERY_CREDIT_HEALTH =
+            '  credit_health_details {' +
+            '    id loan_lead_id applicant_name date_of_birth gender mobile email pan_number occupation annual_income' +
+            '    address_line address_city address_district address_state address_pincode' +
+            '    service_type bureau_preference needs_report_help needs_profile_analysis needs_improvement_guidance needs_eligibility_assessment' +
+            '    current_score current_score_date score_source target_loan_type target_loan_amount target_lender target_timeline concerns' +
+            '    profile_status running_loans_count total_outstanding total_emi overdue_accounts overdue_details settlement_history settlement_details' +
+            '    existing_report_available existing_report_date existing_report_source' +
+            '    bureau_consent bureau_consent_at bureau_consent_version accuracy_declaration no_guarantee_declaration' +
+            '    report_status bureau_name bureau_reference bureau_request_sent_at report_received_date credit_score score_date score_band' +
+            '    report_summary analysis_summary improvement_plan eligibility_assessment analysis_shared_date admin_remarks follow_up_date status_notes' +
+            '    verified_by verified_at' +
+            '  }' +
+            '  credit_accounts {' +
+            '    id loan_lead_id sort_order account_type lender_name account_reference_last4 account_status' +
+            '    outstanding_amount emi_amount overdue_amount days_past_due opened_date closed_date settled_amount remarks' +
+            '  }' +
+            '  credit_enquiries {' +
+            '    id loan_lead_id sort_order bureau institution_name enquiry_date purpose status remarks' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -1222,7 +1372,8 @@
         const APPLICATIONS_QUERY =
             APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
             APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST +
-            APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_INSURANCE + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_INSURANCE +
+            APPLICATIONS_QUERY_CREDIT_HEALTH + APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -1333,18 +1484,20 @@
                 let gstAvailable = true;
                 let msmeAvailable = true;
                 let insuranceAvailable = true;
+                let creditHealthAvailable = true;
 
                 // Optional service tables are loaded progressively. Until the
                 // migration is applied and Hasura tracks the tables, retry
                 // without the missing group instead of failing the whole
                 // dashboard.
-                for (let attempt = 0; attempt < 8; attempt += 1) {
+                for (let attempt = 0; attempt < 9; attempt += 1) {
                     const query = APPLICATIONS_QUERY_HEAD +
                         (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
                         (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
                         (gstAvailable ? APPLICATIONS_QUERY_GST : '') +
                         (msmeAvailable ? APPLICATIONS_QUERY_MSME : '') +
                         (insuranceAvailable ? APPLICATIONS_QUERY_INSURANCE : '') +
+                        (creditHealthAvailable ? APPLICATIONS_QUERY_CREDIT_HEALTH : '') +
                         APPLICATIONS_QUERY_TAIL;
                     try {
                         data = await backend().adminGql(query);
@@ -1356,6 +1509,7 @@
                         const gstMissing = /field 'gst_(registration_details|return_filings)' not found in type: 'query_root'/i.test(queryMessage);
                         const msmeMissing = /field 'msme_(registration_details|promoters|registrations)' not found in type: 'query_root'/i.test(queryMessage);
                         const insuranceMissing = /field 'loan_insurance_details' not found in type: 'query_root'/i.test(queryMessage);
+                        const creditHealthMissing = /field 'credit_(health_details|accounts|enquiries)' not found in type: 'query_root'/i.test(queryMessage);
                         if (wcMissing && workingCapitalAvailable) {
                             workingCapitalAvailable = false;
                             continue;
@@ -1374,6 +1528,10 @@
                         }
                         if (insuranceMissing && insuranceAvailable) {
                             insuranceAvailable = false;
+                            continue;
+                        }
+                        if (creditHealthMissing && creditHealthAvailable) {
+                            creditHealthAvailable = false;
                             continue;
                         }
                         throw queryError;
@@ -1402,6 +1560,9 @@
                 const msmePromotersByLead = groupByLead(data && data.msme_promoters);
                 const msmeRegistrationsByLead = groupByLead(data && data.msme_registrations);
                 const insuranceByLead = groupByLead(data && data.loan_insurance_details);
+                const creditHealthByLead = groupByLead(data && data.credit_health_details);
+                const creditAccountsByLead = groupByLead(data && data.credit_accounts);
+                const creditEnquiriesByLead = groupByLead(data && data.credit_enquiries);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -1426,6 +1587,13 @@
                     });
                     lead.msme_registrations = msmeRegistrationsByLead[lead.id] || [];
                     lead.loan_insurance_details = (insuranceByLead[lead.id] || [])[0] || null;
+                    lead.credit_health_details = (creditHealthByLead[lead.id] || [])[0] || null;
+                    lead.credit_accounts = (creditAccountsByLead[lead.id] || []).sort(function (a, b) {
+                        return (a.sort_order || 0) - (b.sort_order || 0);
+                    });
+                    lead.credit_enquiries = (creditEnquiriesByLead[lead.id] || []).sort(function (a, b) {
+                        return (a.sort_order || 0) - (b.sort_order || 0);
+                    });
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -1445,6 +1613,9 @@
                 }
                 if (!insuranceAvailable) {
                     showPageAlert('warning', 'Loan Protection Insurance details will appear after migration 011 is applied and the new table is tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!creditHealthAvailable) {
+                    showPageAlert('warning', 'Credit Health / CIBIL details will appear after migration 012 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -3427,6 +3598,388 @@
             }
         }
 
+        // Credit Health / CIBIL advisory. The public wizard creates the
+        // enquiry and records consent; the bureau reference, report date,
+        // score and analysis are written here only after the authorised
+        // bureau supplies them and an administrator verifies them.
+        function creditReportClass(status) {
+            if (status === 'Analysis Shared' || status === 'Closed') { return 'badge-verified'; }
+            if (status === 'Cancelled') { return 'badge-rejected'; }
+            if (status === 'Consent Received' || status === 'Documents Pending' ||
+                status === 'Bureau Request Sent' || status === 'Report Received' ||
+                status === 'Analysis In Progress' || status === 'On Hold') {
+                return 'badge-progress';
+            }
+            return 'badge-pending';
+        }
+
+        function localTodayIso() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return now.getFullYear() + '-' + month + '-' + day;
+        }
+
+        function renderCreditHealthDetails(app) {
+            const d = app.credit_health_details;
+            const group = $('#modalCreditHealthGroup');
+            if (!d) {
+                group.hide();
+                $('#modalCreditHealth').empty();
+                return null;
+            }
+            group.show();
+
+            const address = [d.address_line, d.address_city, d.address_district, d.address_state, d.address_pincode]
+                .filter(Boolean).join(', ');
+            const accounts = Array.isArray(app.credit_accounts) ? app.credit_accounts : [];
+            const enquiries = Array.isArray(app.credit_enquiries) ? app.credit_enquiries : [];
+            const creditDocs = (app.loan_documents || []).filter(function (doc) {
+                return ['Credit Report', 'Credit Card Statement', 'Bureau Correspondence',
+                    'No Dues Certificate', 'Settlement Letter', 'Loan Statement',
+                    'Sanction Letter', 'Repayment History'].indexOf(doc.document_type) > -1;
+            });
+
+            let html = '';
+            html += subHeading('Applicant profile');
+            html += detailRow('Applicant', d.applicant_name);
+            html += detailRow('Date of birth', prettyDate(d.date_of_birth));
+            html += detailRow('Gender', d.gender);
+            html += detailRow('Mobile', d.mobile);
+            html += detailRow('Email', d.email);
+            html += detailRow('PAN', d.pan_number);
+            html += detailRow('Occupation', d.occupation);
+            html += detailRow('Annual income', money(d.annual_income));
+            html += detailRow('Address', address);
+
+            html += subHeading('Advisory requirement');
+            html += detailRow('Primary service', d.service_type);
+            html += detailRow('Bureau preference', d.bureau_preference);
+            const support = [];
+            if (d.needs_report_help) { support.push('Report help'); }
+            if (d.needs_profile_analysis) { support.push('Profile analysis'); }
+            if (d.needs_improvement_guidance) { support.push('Improvement guidance'); }
+            if (d.needs_eligibility_assessment) { support.push('Eligibility assessment'); }
+            html += detailRow('Additional support', support.join(', ') || 'None selected');
+            html += detailRow('Current score', d.current_score === null || d.current_score === undefined ? null : d.current_score);
+            html += detailRow('Score date', prettyDate(d.current_score_date));
+            html += detailRow('Score source', d.score_source);
+            html += detailRow('Target loan', d.target_loan_type);
+            html += detailRow('Expected amount', d.target_loan_amount === null || d.target_loan_amount === undefined ? null : money(d.target_loan_amount));
+            html += detailRow('Preferred lender', d.target_lender);
+            html += detailRow('Timeline', d.target_timeline);
+            html += detailRow('Concerns', d.concerns);
+
+            html += subHeading('Existing credit profile');
+            html += detailRow('Profile status', d.profile_status);
+            html += detailRow('Running loans / cards', d.running_loans_count);
+            html += detailRow('Total outstanding', d.total_outstanding === null || d.total_outstanding === undefined ? null : money(d.total_outstanding));
+            html += detailRow('Total monthly EMI', d.total_emi === null || d.total_emi === undefined ? null : money(d.total_emi));
+            html += detailRow('Overdue accounts', d.overdue_accounts);
+            html += detailRow('Overdue details', d.overdue_details);
+            html += detailRow('Settlement / write-off', d.settlement_history);
+            html += detailRow('Settlement details', d.settlement_details);
+            html += detailRow('Existing report', d.existing_report_available ? 'Yes' : 'No');
+            if (d.existing_report_available) {
+                html += detailRow('Existing report date', prettyDate(d.existing_report_date));
+                html += detailRow('Existing report source', d.existing_report_source);
+            }
+
+            html += subHeading('Disclosed credit accounts (' + accounts.length + ')');
+            if (!accounts.length) {
+                html += detailRow('Accounts', 'None disclosed');
+            } else {
+                accounts.forEach(function (account, index) {
+                    html += detailRow('Account ' + (index + 1), [
+                        account.account_type,
+                        account.lender_name,
+                        account.account_reference_last4 ? 'ref ••••' + account.account_reference_last4 : '',
+                        account.account_status
+                    ].filter(Boolean).join(' · '));
+                    const amounts = [];
+                    if (account.outstanding_amount !== null && account.outstanding_amount !== undefined) {
+                        amounts.push('Outstanding ' + money(account.outstanding_amount));
+                    }
+                    if (account.emi_amount !== null && account.emi_amount !== undefined) {
+                        amounts.push('EMI ' + money(account.emi_amount));
+                    }
+                    if (account.overdue_amount !== null && account.overdue_amount !== undefined) {
+                        amounts.push('Overdue ' + money(account.overdue_amount));
+                    }
+                    if (account.days_past_due !== null && account.days_past_due !== undefined) {
+                        amounts.push(account.days_past_due + ' days past due');
+                    }
+                    if (account.settled_amount !== null && account.settled_amount !== undefined) {
+                        amounts.push('Settled ' + money(account.settled_amount));
+                    }
+                    if (amounts.length) { html += detailRow('Amounts', amounts.join(' · ')); }
+                    if (account.opened_date || account.closed_date) {
+                        html += detailRow('Dates', [
+                            account.opened_date ? 'Opened ' + prettyDate(account.opened_date) : '',
+                            account.closed_date ? 'Closed ' + prettyDate(account.closed_date) : ''
+                        ].filter(Boolean).join(' · '));
+                    }
+                    if (account.remarks) { html += detailRow('Remarks', account.remarks); }
+                });
+            }
+
+            html += subHeading('Recent credit enquiries (' + enquiries.length + ')');
+            if (!enquiries.length) {
+                html += detailRow('Enquiries', 'None disclosed');
+            } else {
+                enquiries.forEach(function (enquiry, index) {
+                    html += detailRow('Enquiry ' + (index + 1), [
+                        enquiry.bureau,
+                        enquiry.institution_name,
+                        prettyDate(enquiry.enquiry_date),
+                        enquiry.purpose,
+                        enquiry.status
+                    ].filter(Boolean).join(' · '));
+                    if (enquiry.remarks) { html += detailRow('Remarks', enquiry.remarks); }
+                });
+            }
+
+            html += subHeading('Consent & declarations');
+            html += detailRow('Bureau consent', d.bureau_consent
+                ? 'Given on ' + prettyDate(d.bureau_consent_at) + (d.bureau_consent_version ? ' (v' + d.bureau_consent_version + ')' : '')
+                : 'Not recorded');
+            html += detailRow('Accuracy declaration', d.accuracy_declaration ? 'Accepted' : 'Not accepted');
+            html += detailRow('No-guarantee declaration', d.no_guarantee_declaration ? 'Accepted' : 'Not accepted');
+            html += detailRow('Documents on file', creditDocs.length
+                ? creditDocs.map(function (doc) {
+                    return doc.document_type + (doc.file_name ? ' (' + doc.file_name + ')' : '');
+                }).join(', ')
+                : 'None uploaded yet');
+
+            html += '<p class="admin-note">Credit report, PAN and account information is sensitive. Share it only with the authorised bureau and staff handling this request. Do not paste a full credit report into email, WhatsApp or public notes.</p>';
+
+            $('#modalCreditHealth').html(html);
+            return d;
+        }
+
+        function renderCreditHealthStatus(app) {
+            const d = app.credit_health_details;
+            const group = $('#modalCreditHealthStatusGroup');
+            if (!d) {
+                group.hide();
+                $('#modalCreditReportBadge').empty();
+                return null;
+            }
+            group.show();
+
+            const status = d.report_status || 'Enquiry Received';
+            let badge = '<span class="badge-status ' + creditReportClass(status) + '">' + esc(status) + '</span>';
+            if (d.bureau_name) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">' + esc(d.bureau_name) + '</span>';
+            }
+            if (d.credit_score !== null && d.credit_score !== undefined) {
+                badge += ' <span class="admin-note" style="display:inline;margin:0;">Score ' + esc(d.credit_score) + '</span>';
+            }
+            $('#modalCreditReportBadge').html(badge);
+
+            $('#modalCreditReportStatus').val(status);
+            $('#modalCreditBureauName').val(d.bureau_name || '');
+            $('#modalCreditBureauReference').val(d.bureau_reference || '');
+            $('#modalCreditBureauRequestDate').val(d.bureau_request_sent_at ? String(d.bureau_request_sent_at).slice(0, 10) : '');
+            $('#modalCreditReportDate').val(d.report_received_date ? String(d.report_received_date).slice(0, 10) : '');
+            $('#modalCreditScore').val((d.credit_score === null || d.credit_score === undefined) ? '' : d.credit_score);
+            $('#modalCreditScoreDate').val(d.score_date ? String(d.score_date).slice(0, 10) : '');
+            $('#modalCreditScoreBand').val(d.score_band || '');
+            $('#modalCreditReportSummary').val(d.report_summary || '');
+            $('#modalCreditAnalysisSummary').val(d.analysis_summary || '');
+            $('#modalCreditImprovementPlan').val(d.improvement_plan || '');
+            $('#modalCreditEligibility').val(d.eligibility_assessment || '');
+            $('#modalCreditAnalysisSharedDate').val(d.analysis_shared_date ? String(d.analysis_shared_date).slice(0, 10) : '');
+            $('#modalCreditFollowUpDate').val(d.follow_up_date ? String(d.follow_up_date).slice(0, 10) : '');
+            $('#modalCreditAdminRemarks').val(d.admin_remarks || '');
+            $('#modalCreditStatusNotes').val(d.status_notes || '');
+            return d;
+        }
+
+        async function saveCreditHealthStatus() {
+            const id = $('#viewModal').data('credit-health-detail-id');
+            if (!id) { return; }
+
+            const status = $('#modalCreditReportStatus').val();
+            const bureauName = $('#modalCreditBureauName').val();
+            const bureauReference = $('#modalCreditBureauReference').val().trim();
+            const bureauRequestDate = $('#modalCreditBureauRequestDate').val();
+            const reportDate = $('#modalCreditReportDate').val();
+            const scoreRaw = $('#modalCreditScore').val();
+            const scoreDate = $('#modalCreditScoreDate').val();
+            const scoreBand = $('#modalCreditScoreBand').val();
+            const reportSummary = $('#modalCreditReportSummary').val().trim();
+            const analysisSummary = $('#modalCreditAnalysisSummary').val().trim();
+            const improvementPlan = $('#modalCreditImprovementPlan').val().trim();
+            const eligibilityAssessment = $('#modalCreditEligibility').val().trim();
+            const analysisSharedDate = $('#modalCreditAnalysisSharedDate').val();
+            const followUpDate = $('#modalCreditFollowUpDate').val();
+            const adminRemarks = $('#modalCreditAdminRemarks').val().trim();
+            const notes = $('#modalCreditStatusNotes').val().trim();
+            const admin = (window.DhanviAdmin && window.DhanviAdmin.user) || null;
+
+            const reportStages = ['Report Received', 'Analysis In Progress', 'Analysis Shared', 'Closed'];
+            const bureauStages = ['Bureau Request Sent'].concat(reportStages);
+            const analysisStages = ['Analysis Shared', 'Closed'];
+            const reportReceived = reportStages.indexOf(status) > -1;
+            const analysisShared = analysisStages.indexOf(status) > -1;
+            const today = localTodayIso();
+
+            if (bureauStages.indexOf(status) > -1 && !bureauName) {
+                showModalAlert('warning', 'Select the authorised bureau before moving the request to Bureau Request Sent or later.');
+                $('#modalCreditBureauName').focus();
+                return;
+            }
+            if (reportReceived && !bureauReference) {
+                showModalAlert('warning', 'Enter the bureau reference supplied by the authorised bureau before recording Report Received or later.');
+                $('#modalCreditBureauReference').focus();
+                return;
+            }
+            if (reportReceived && !reportDate) {
+                showModalAlert('warning', 'Enter the date the bureau report was actually received before recording Report Received or later.');
+                $('#modalCreditReportDate').focus();
+                return;
+            }
+            if (reportDate && reportDate > today) {
+                showModalAlert('warning', 'The report received date cannot be in the future.');
+                $('#modalCreditReportDate').focus();
+                return;
+            }
+            if (bureauRequestDate && bureauRequestDate > today) {
+                showModalAlert('warning', 'The bureau request date cannot be in the future.');
+                $('#modalCreditBureauRequestDate').focus();
+                return;
+            }
+            if (reportDate && bureauRequestDate && reportDate < bureauRequestDate) {
+                showModalAlert('warning', 'The report received date cannot be before the bureau request date.');
+                $('#modalCreditReportDate').focus();
+                return;
+            }
+
+            const score = scoreRaw === '' ? null : Number(scoreRaw);
+            if (score !== null && (!isFinite(score) || Math.floor(score) !== score || score < 300 || score > 900)) {
+                showModalAlert('warning', 'A credit score must be a whole number between 300 and 900, or left blank.');
+                $('#modalCreditScore').focus();
+                return;
+            }
+            if (score !== null && !scoreDate) {
+                showModalAlert('warning', 'Enter the date of the score shown on the bureau report.');
+                $('#modalCreditScoreDate').focus();
+                return;
+            }
+            if (scoreDate && scoreDate > today) {
+                showModalAlert('warning', 'The score date cannot be in the future.');
+                $('#modalCreditScoreDate').focus();
+                return;
+            }
+            if (analysisShared && !analysisSummary) {
+                showModalAlert('warning', 'Enter the analysis summary before marking the request Analysis Shared or Closed.');
+                $('#modalCreditAnalysisSummary').focus();
+                return;
+            }
+            if (analysisShared && !analysisSharedDate) {
+                showModalAlert('warning', 'Enter the date the analysis was actually shared before marking the request Analysis Shared or Closed.');
+                $('#modalCreditAnalysisSharedDate').focus();
+                return;
+            }
+            if (analysisSharedDate && analysisSharedDate > today) {
+                showModalAlert('warning', 'The analysis shared date cannot be in the future.');
+                $('#modalCreditAnalysisSharedDate').focus();
+                return;
+            }
+            if (analysisSharedDate && reportDate && analysisSharedDate < reportDate) {
+                showModalAlert('warning', 'The analysis shared date cannot be before the report received date.');
+                $('#modalCreditAnalysisSharedDate').focus();
+                return;
+            }
+            if (followUpDate && followUpDate < today && status !== 'Closed' && status !== 'Cancelled') {
+                showModalAlert('warning', 'The follow-up date is in the past. Choose today or a future date, or close the request.');
+                $('#modalCreditFollowUpDate').focus();
+                return;
+            }
+
+            const app = applications.filter(function (item) {
+                return item.credit_health_details && item.credit_health_details.id === id;
+            })[0];
+            const existing = app ? app.credit_health_details : null;
+            const verifiedAt = reportReceived
+                ? ((existing && existing.verified_at) || new Date().toISOString())
+                : ((existing && existing.verified_at) || null);
+            const verifiedBy = reportReceived
+                ? ((existing && existing.verified_by) || (admin ? admin.id : null))
+                : ((existing && existing.verified_by) || null);
+            const btn = $('#saveCreditHealthStatusBtn');
+
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminGql(
+                    'mutation UpdateCreditHealthStatus($id: uuid!, $status: String!, $bureauName: String, $bureauReference: String, $bureauRequestSentAt: date, $reportReceivedDate: date, $creditScore: Int, $scoreDate: date, $scoreBand: String, $reportSummary: String, $analysisSummary: String, $improvementPlan: String, $eligibilityAssessment: String, $analysisSharedDate: date, $adminRemarks: String, $followUpDate: date, $notes: String, $verifiedBy: uuid, $verifiedAt: timestamptz) {' +
+                    '  update_credit_health_details_by_pk(pk_columns: {id: $id}, _set: {' +
+                    '    report_status: $status, bureau_name: $bureauName, bureau_reference: $bureauReference,' +
+                    '    bureau_request_sent_at: $bureauRequestSentAt, report_received_date: $reportReceivedDate,' +
+                    '    credit_score: $creditScore, score_date: $scoreDate, score_band: $scoreBand,' +
+                    '    report_summary: $reportSummary, analysis_summary: $analysisSummary,' +
+                    '    improvement_plan: $improvementPlan, eligibility_assessment: $eligibilityAssessment,' +
+                    '    analysis_shared_date: $analysisSharedDate, admin_remarks: $adminRemarks,' +
+                    '    follow_up_date: $followUpDate, status_notes: $notes,' +
+                    '    verified_by: $verifiedBy, verified_at: $verifiedAt' +
+                    '  }) { id }' +
+                    '}',
+                    {
+                        id: id,
+                        status: status,
+                        bureauName: bureauName || null,
+                        bureauReference: bureauReference || null,
+                        bureauRequestSentAt: bureauRequestDate || null,
+                        reportReceivedDate: reportDate || null,
+                        creditScore: score,
+                        scoreDate: scoreDate || null,
+                        scoreBand: scoreBand || null,
+                        reportSummary: reportSummary || null,
+                        analysisSummary: analysisSummary || null,
+                        improvementPlan: improvementPlan || null,
+                        eligibilityAssessment: eligibilityAssessment || null,
+                        analysisSharedDate: analysisSharedDate || null,
+                        adminRemarks: adminRemarks || null,
+                        followUpDate: followUpDate || null,
+                        notes: notes || null,
+                        verifiedBy: verifiedBy,
+                        verifiedAt: verifiedAt
+                    }
+                );
+
+                if (app) {
+                    const detail = app.credit_health_details;
+                    detail.report_status = status;
+                    detail.bureau_name = bureauName || null;
+                    detail.bureau_reference = bureauReference || null;
+                    detail.bureau_request_sent_at = bureauRequestDate || null;
+                    detail.report_received_date = reportDate || null;
+                    detail.credit_score = score;
+                    detail.score_date = scoreDate || null;
+                    detail.score_band = scoreBand || null;
+                    detail.report_summary = reportSummary || null;
+                    detail.analysis_summary = analysisSummary || null;
+                    detail.improvement_plan = improvementPlan || null;
+                    detail.eligibility_assessment = eligibilityAssessment || null;
+                    detail.analysis_shared_date = analysisSharedDate || null;
+                    detail.admin_remarks = adminRemarks || null;
+                    detail.follow_up_date = followUpDate || null;
+                    detail.status_notes = notes || null;
+                    detail.verified_by = verifiedBy;
+                    detail.verified_at = verifiedAt;
+                    renderCreditHealthDetails(app);
+                    renderCreditHealthStatus(app);
+                }
+                showModalAlert('success', 'Credit health report status and analysis updated.');
+            } catch (err) {
+                console.error('Credit health status update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the credit health status.');
+            } finally {
+                btn.prop('disabled', false).text('Update credit health status');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -3551,6 +4104,8 @@
             renderMsmeRegistrations(app);
             renderInsuranceDetails(app);
             renderInsuranceStatus(app);
+            renderCreditHealthDetails(app);
+            renderCreditHealthStatus(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
@@ -3561,6 +4116,7 @@
             $('#viewModal').data('gst-detail-id', app.gst_registration_details ? app.gst_registration_details.id : null);
             $('#viewModal').data('msme-detail-id', app.msme_registration_details ? app.msme_registration_details.id : null);
             $('#viewModal').data('insurance-detail-id', app.loan_insurance_details ? app.loan_insurance_details.id : null);
+            $('#viewModal').data('credit-health-detail-id', app.credit_health_details ? app.credit_health_details.id : null);
             $('#viewModal').modal('show');
         }
 
@@ -3642,6 +4198,7 @@
             $('#saveMsmeStatusBtn').on('click', saveMsmeStatus);
             $('#modalMsmeRegistrations').on('click', '.btn-save-msme-registration', saveMsmeRegistrationRow);
             $('#saveInsuranceStatusBtn').on('click', saveInsuranceStatus);
+            $('#saveCreditHealthStatusBtn').on('click', saveCreditHealthStatus);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');
