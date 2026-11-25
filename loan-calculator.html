@@ -27,7 +27,7 @@
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link href="css/notifications.css" rel="stylesheet">
     <script src="js/notifications.js"></script>
-    <link href="css/modern.css" rel="stylesheet">
+    <link href="css/modern.css?v=20261125-1" rel="stylesheet">
     <link href="css/layout.css?v=20261101-2" rel="stylesheet">
     <!-- Open Graph / social preview -->
     <meta property="og:type" content="website">
@@ -201,7 +201,8 @@
                                     <div class="bg-light pinside40 outline">
                                         <div class="emi-field">
                                             <label for="la">Loan amount <strong id="la_value"></strong></label>
-                                            <input type="range" class="emi-amount" id="la" min="100000" max="5000000" step="10000" value="2000000">
+                                            <input type="range" class="emi-amount" id="la" min="100000" max="100000000" step="1000" value="2000000" aria-describedby="la_hint">
+                                            <small class="emi-hint" id="la_hint">&#8377;1 lakh to &#8377;10 crore. Drag the slider, or double-click the highlighted amount to type a larger figure.</small>
                                         </div>
                                         <div class="emi-field">
                                             <label for="nm">Loan tenure <strong id="nm_value"></strong></label>
@@ -381,9 +382,9 @@
     <script type="text/javascript" src="js/sticky-header.js"></script>
     <!-- Back to top script -->
     <script src="js/back-to-top.js" type="text/javascript"></script>
-    <script type="text/javascript" src="js/calculator.js"></script>
+    <script type="text/javascript" src="js/calculator.js?v=20261125-1"></script>
     <script src="js/wa-forms.js"></script>
-    <script src="js/modern.js"></script>
+    <script src="js/modern.js?v=20261125-1"></script>
     <script src="js/interactions.js"></script>
 </body>
 

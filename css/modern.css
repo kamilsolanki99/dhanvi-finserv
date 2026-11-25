@@ -143,6 +143,7 @@
 .emi-result .emi-meta strong { color: #fff; }
 .emi-result .btn { margin-top: 22px; }
 .emi-disclaimer { display: block; margin-top: 18px; font-size: 12px; color: #8794a6; }
+.emi-hint { display: block; margin-top: 7px; font-size: 12px; line-height: 1.5; color: #8794a6; }
 
 /* Inline value editing --------------------------------------------------- */
 .emi-field label strong.emi-value-edit {

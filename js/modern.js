@@ -68,7 +68,8 @@
 
             function commitValue() {
                 if (!editor) { return; }
-                var value = parseFloat(editor.value);
+                var raw = String(editor.value).replace(/[,\s\u20B9]/g, '');
+                var value = parseFloat(raw);
                 if (isNaN(value)) { value = parseFloat(range.value); }
                 var min = parseFloat(range.getAttribute('min'));
                 var max = parseFloat(range.getAttribute('max'));

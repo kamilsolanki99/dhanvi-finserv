@@ -22,10 +22,18 @@ $(document).ready(function () {
     }
 
     function readValues() {
+        var amount = parseFloat($amount.val());
+        var months = Math.round(parseFloat($months.val()));
+        var rate = parseFloat($rate.val());
+
+        if (!isFinite(amount) || amount < 0) { amount = 0; }
+        if (!isFinite(months) || months < 1) { months = 1; }
+        if (!isFinite(rate) || rate < 0) { rate = 0; }
+
         return {
-            amount: parseFloat($amount.val()),
-            months: Math.round(parseFloat($months.val())),
-            rate: parseFloat($rate.val())
+            amount: amount,
+            months: months,
+            rate: rate
         };
     }
 
@@ -36,17 +44,25 @@ $(document).ready(function () {
         var rateOfInterest = values.rate;
         var monthlyInterestRatio = (rateOfInterest / 100) / 12;
 
-        var top = Math.pow((1 + monthlyInterestRatio), numberOfMonths);
-        var bottom = top - 1;
-        var sp = top / bottom;
-        var emi = ((loanAmount * monthlyInterestRatio) * sp);
+        var emi;
+        if (monthlyInterestRatio === 0) {
+            // Interest-free loan: the EMI is simply the principal split over the tenure.
+            emi = loanAmount / numberOfMonths;
+        } else {
+            var top = Math.pow((1 + monthlyInterestRatio), numberOfMonths);
+            var bottom = top - 1;
+            var sp = top / bottom;
+            emi = ((loanAmount * monthlyInterestRatio) * sp);
+        }
+
         var full = numberOfMonths * emi;
-        var interest = full - loanAmount;
-        var int_pge = (interest / full) * 100;
+        var interest = Math.max(0, full - loanAmount);
+        var int_pge = full > 0 ? (interest / full) * 100 : 0;
 
         $amountOut.text(formatINR(loanAmount));
         $monthsOut.text(numberOfMonths + (numberOfMonths === 1 ? ' month' : ' months'));
         $rateOut.text(rateOfInterest.toFixed(2) + '% p.a.');
+        $amount.attr('aria-valuetext', formatINR(loanAmount));
 
         $("#tbl_int_pge").html(int_pge.toFixed(2) + " %");
         $("#emi").html(formatMoney(emi));
@@ -56,7 +72,7 @@ $(document).ready(function () {
         // Update the "Apply for This Loan" button with the current loan amount
         var applyBtn = $('#apply-with-amount');
         if (applyBtn.length) {
-            applyBtn.attr('href', 'apply-loan.html?amount=' + loanAmount);
+            applyBtn.attr('href', 'apply-loan.html?amount=' + Math.round(loanAmount));
         }
 
         var detailDesc = "<table class='table table-striped table-bordered mb0'><thead><tr class='table-head'><th>Payment No.</th><th>Beginning Balance</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Ending Balance</th></tr></thead><tbody>";
