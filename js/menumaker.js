@@ -67,7 +67,7 @@
         if (settings.sticky === true) cssmenu.css('position', 'fixed');
 
         resizeFix = function() {
-          if ($(window).width() > settings.breakpoint) {
+          if (window.innerWidth > settings.breakpoint) {
             cssmenu.find('ul').show();
             cssmenu.removeClass('small-screen');
             if (settings.format === 'select') {
@@ -78,7 +78,7 @@
             }
           }
 
-          if ($(window).width() <= settings.breakpoint && !cssmenu.hasClass("small-screen")) {
+          if (window.innerWidth <= settings.breakpoint && !cssmenu.hasClass("small-screen")) {
             cssmenu.find('ul').hide().removeClass('open');
             cssmenu.addClass('small-screen');
             if (settings.format === 'select') {
@@ -95,7 +95,8 @@
 
 $("#navigation").menumaker({
   title: "Menu",
-  format: "multitoggle"
+  format: "multitoggle",
+  breakpoint: 991
 });
 $("#sub-nav").menumaker({
   title: "Quick Links",
