@@ -289,7 +289,6 @@ DECLARE
     v_emi NUMERIC := nullif(v_loan->>'emi_amount', '')::NUMERIC;
     v_remaining INTEGER := nullif(v_loan->>'remaining_tenure_months', '')::INTEGER;
 
-    v_coverage TEXT := btrim(coalesce(v_coverage->>'coverage_requirement', ''));
     v_cover_amount NUMERIC := nullif(v_coverage->>'desired_cover_amount', '')::NUMERIC;
     v_tenure INTEGER := nullif(v_coverage->>'policy_tenure_years', '')::INTEGER;
     v_budget NUMERIC := nullif(v_coverage->>'premium_budget', '')::NUMERIC;
