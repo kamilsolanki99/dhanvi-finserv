@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Administer the Dhanvi Finserv DSA and referral partner network: applications, verification, agreements, logins, leads, commissions and follow-ups.">
+    <title>Partner Network Administration | Dhanvi Finserv</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <link href="css/admin-delete.css" rel="stylesheet">
+    <link href="css/admin-notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fb;
+            color: #5d6b80;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 { color: #34415c; font-weight: 600; }
+        a { text-decoration: none; }
+
+        /* Sidebar */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #103f73;
+            z-index: 1040;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        .admin-sidebar .sidebar-logo {
+            padding: 24px 28px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .admin-sidebar .sidebar-logo img { max-width: 160px; height: auto; }
+        .admin-sidebar .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+        .admin-sidebar .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 13px 28px;
+            color: rgba(255,255,255,0.65);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .admin-sidebar .sidebar-nav a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+        .admin-sidebar .sidebar-nav a.active { color: #fff; background: rgba(255,255,255,0.1); border-left-color: #f5a623; }
+        .admin-sidebar .sidebar-nav a i { width: 22px; margin-right: 14px; font-size: 16px; text-align: center; }
+        .admin-sidebar .sidebar-footer { padding: 16px 28px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .admin-sidebar .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            color: rgba(255,255,255,0.55);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .admin-sidebar .sidebar-footer a:hover { color: #e14b4b; }
+        .admin-sidebar .sidebar-footer a i { margin-right: 12px; font-size: 16px; }
+
+        .admin-main { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s ease; }
+
+        /* Topbar */
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .admin-topbar .topbar-left { display: flex; align-items: center; gap: 14px; }
+        .admin-topbar .topbar-left h4 { margin: 0; font-size: 18px; font-weight: 600; }
+        .topbar-hamburger { display: none; background: none; border: none; font-size: 20px; color: #34415c; cursor: pointer; padding: 4px 8px; }
+        .admin-topbar .topbar-right { display: flex; align-items: center; gap: 20px; }
+        .topbar-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .topbar-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #15549a;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .topbar-profile-name { font-size: 14px; font-weight: 500; color: #34415c; }
+
+        /* Content */
+        .admin-content { padding: 24px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .page-title h2 { margin: 0; font-size: 22px; }
+        .page-title p { margin: 4px 0 0; font-size: 13px; color: #8e9ab4; max-width: 760px; }
+        .page-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid transparent;
+        }
+        .stat-card.orange { border-left-color: #f5a623; }
+        .stat-card.blue { border-left-color: #2196f3; }
+        .stat-card.green { border-left-color: #10a874; }
+        .stat-card.purple { border-left-color: #7c5cd6; }
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+        .stat-card.orange .stat-icon { background: rgba(245,166,35,0.14); color: #c98200; }
+        .stat-card.blue .stat-icon { background: rgba(33,150,243,0.12); color: #2196f3; }
+        .stat-card.green .stat-icon { background: rgba(16,168,116,0.12); color: #10a874; }
+        .stat-card.purple .stat-icon { background: rgba(124,92,214,0.12); color: #7c5cd6; }
+        .stat-info h4 { margin: 0 0 2px; font-size: 22px; line-height: 1.2; }
+        .stat-info span { font-size: 12px; color: #8e9ab4; }
+
+        /* Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 10px 14px 0;
+            border-bottom: 1px solid #edf0f5;
+        }
+        .admin-tab {
+            border: none;
+            background: transparent;
+            padding: 11px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #8e9ab4;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .admin-tab:hover { color: #15549a; }
+        .admin-tab.active { color: #15549a; border-bottom-color: #15549a; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Cards and tables */
+        .dash-card {
+            background: #fff;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .tab-panel .dash-card { border-radius: 10px; margin-top: 18px; }
+        .dash-card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dash-card-header h4 { margin: 0; font-size: 16px; font-weight: 600; }
+        .dash-card-header p { margin: 3px 0 0; font-size: 12px; color: #8e9ab4; }
+        .dash-card-body { padding: 22px; }
+        .dash-card-body.no-pad { padding: 0; }
+        .table-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        .table-filters input[type="text"], .table-filters select {
+            border: 1px solid #dce1ea;
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            background: #fff;
+        }
+        .table-filters input[type="text"] { width: 210px; }
+        .table-responsive { overflow-x: auto; }
+        .app-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        .app-table thead th {
+            background: #f8fafc;
+            padding: 11px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #5d6b80;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #edf0f5;
+            text-align: left;
+        }
+        .app-table tbody td {
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #34415c;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+        }
+        .app-table tbody tr:hover { background: #f8fafc; }
+        .row-actions { white-space: nowrap; }
+
+        /* Badges */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .badge-pending { background: rgba(245,166,35,0.12); color: #c98a10; }
+        .badge-progress { background: rgba(33,150,243,0.12); color: #1670bd; }
+        .badge-approved { background: rgba(16,168,116,0.12); color: #10a874; }
+        .badge-verified { background: rgba(16,168,116,0.16); color: #0b8a5e; }
+        .badge-docs-pending { background: rgba(245,166,35,0.16); color: #a86b00; }
+        .badge-rejected { background: rgba(225,75,75,0.12); color: #e14b4b; }
+        .badge-closed { background: #eef1f6; color: #5d6b80; }
+        .badge-new { background: rgba(33,150,243,0.12); color: #1670bd; }
+
+        /* Buttons */
+        .btn-action {
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-view { background: #15549a; color: #fff; }
+        .btn-view:hover { background: #103f73; color: #fff; }
+        .btn-complete { background: #10a874; color: #fff; }
+        .btn-complete:hover { background: #0d8e63; }
+        .btn-cancel { background: #e14b4b; color: #fff; }
+        .btn-cancel:hover { background: #c93030; }
+        .btn-add {
+            background: #15549a;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-add:hover { background: #103f73; }
+        .btn-refresh {
+            background: #fff;
+            border: 1px solid #dce1ea;
+            color: #5d6b80;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-refresh:hover { border-color: #15549a; color: #15549a; }
+
+        /* Modal */
+        .modal-content { border: none; border-radius: 10px; }
+        .modal-header {
+            background: #15549a;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 16px 22px;
+        }
+        .modal-header .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-header .close { color: #fff; opacity: 0.8; }
+        .modal-body { padding: 24px; }
+        .modal-footer { border-top: 1px solid #edf0f5; padding: 14px 22px; }
+        .detail-group { margin-bottom: 22px; }
+        .detail-group > h6, .partner-subhead {
+            font-size: 14px;
+            font-weight: 600;
+            color: #15549a;
+            margin: 0 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #edf0f5;
+        }
+        .partner-subhead { margin-top: 20px; }
+        .detail-row { display: flex; margin-bottom: 8px; font-size: 13px; gap: 14px; }
+        .detail-label { width: 160px; color: #5d6b80; font-weight: 500; flex-shrink: 0; }
+        .detail-value { color: #34415c; font-weight: 500; word-break: break-word; }
+        .btn-save {
+            background: #10a874;
+            color: #fff;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-save:hover { background: #0d8e63; }
+        .btn-save[disabled] { opacity: 0.65; cursor: not-allowed; }
+        .btn-close-modal {
+            background: #edf0f5;
+            color: #5d6b80;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .admin-alert {
+            display: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            border: 1px solid transparent;
+            line-height: 1.6;
+        }
+        .admin-alert.show { display: block; }
+        .admin-alert-error { background: #fdf0f0; border-color: #f3c9c9; color: #a12f2f; }
+        .admin-alert-success { background: #eefaf4; border-color: #c5ecd9; color: #0d7a53; }
+        .admin-alert-warning { background: #fff8e8; border-color: #f3dfb2; color: #8a5c00; }
+        .empty-state { text-align: center; padding: 42px 20px; color: #8e9ab4; font-size: 13px; }
+        .empty-state i { display: block; font-size: 30px; color: #c3cdda; margin-bottom: 10px; }
+        .empty-state strong { display: block; color: #5d6b80; margin-bottom: 4px; }
+        .loading-state { text-align: center; padding: 40px 20px; color: #8e9ab4; font-size: 13px; }
+        .loading-state i { margin-right: 8px; }
+        .muted { color: #8e9ab4; font-size: 12px; font-weight: 400; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .3px; }
+        .admin-note { font-size: 12px; color: #8e9ab4; line-height: 1.7; margin: 8px 0 0; }
+        .input-sm { padding: 5px 8px; font-size: 12px; height: auto; }
+        .readiness-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; }
+        .readiness-list li { font-size: 13px; }
+        .readiness-list li.ok { color: #0b8a5e; }
+        .readiness-list li.missing { color: #c93030; }
+        .readiness-list li i { margin-right: 6px; }
+        .table-review th, .table-review td { white-space: normal; vertical-align: top; }
+        .table-review .form-control { min-width: 110px; }
+
+        /* Responsive */
+        @media (max-width: 1199px) {
+            .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 991px) {
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+            .topbar-hamburger { display: block; }
+            .readiness-list { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 767px) {
+            .admin-content { padding: 16px; }
+            .stat-grid { grid-template-columns: 1fr; }
+            .table-filters input[type="text"] { width: 100%; }
+            .detail-row { flex-direction: column; gap: 2px; }
+            .detail-label { width: auto; }
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1035;
+        }
+        .sidebar-overlay.show { display: block; }
+    </style>
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body>
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box"><div class="loader-spinner-ring"></div></div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},2000);</script>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-logo">
+            <a href="admin-dashboard.html"><img src="images/logo.png" alt="Dhanvi Finserv"></a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a>
+            <a href="admin-notifications.html"><i class="fa fa-bell-o"></i> Notifications</a>
+            <a href="admin-applications.html"><i class="fa fa-file-text"></i> Loan Applications</a>
+            <a href="admin-partners.html" class="active"><i class="fa fa-handshake-o"></i> Partner Network</a>
+            <a href="admin-leads.html"><i class="fa fa-users"></i> Customer Leads</a>
+            <a href="admin-documents.html"><i class="fa fa-folder-open"></i> Documents</a>
+            <a href="admin-followups.html"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
+            <a href="admin-callbacks.html"><i class="fa fa-phone"></i> Callbacks</a>
+            <a href="admin-support.html"><i class="fa fa-life-ring"></i> Support Requests</a>
+            <a href="admin-complaints.html"><i class="fa fa-exclamation-circle"></i> Complaints</a>
+            <a href="admin-settings.html"><i class="fa fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="partner-program.html" style="margin-bottom: 12px;"><i class="fa fa-globe"></i> View Partner Page</a>
+            <a href="admin-login.html"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="topbar-hamburger" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+                <h4>Partner Network</h4>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile">
+                    <div class="topbar-avatar">...</div>
+                    <span class="topbar-profile-name">Loading...</span>
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>DSA &amp; Referral Partner Administration</h2>
+                    <p>Review onboarding applications, verify documents and records, record agreements, provision logins, assign leads and manage commissions. Approval, a signed effective agreement and a matching auth user are required before a partner can sign in.</p>
+                </div>
+                <div class="page-actions">
+                    <button type="button" class="btn-refresh" id="refreshPartnersBtn"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+            </div>
+
+            <div class="admin-alert" id="partnersAlert" role="status" aria-live="polite"></div>
+
+            <div class="stat-grid">
+                <div class="stat-card orange">
+                    <div class="stat-icon"><i class="fa fa-file-text-o"></i></div>
+                    <div class="stat-info"><h4 id="statPendingReview">—</h4><span>Applications in review</span></div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon"><i class="fa fa-users"></i></div>
+                    <div class="stat-info"><h4 id="statActivePartners">—</h4><span>Active partners</span></div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-icon"><i class="fa fa-briefcase"></i></div>
+                    <div class="stat-info"><h4 id="statOpenLeads">—</h4><span>Open assigned leads</span></div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-icon"><i class="fa fa-inr"></i></div>
+                    <div class="stat-info"><h4 id="statCommissionPending">—</h4><span>Commission in process</span></div>
+                </div>
+            </div>
+
+            <div class="admin-tabs" role="tablist">
+                <button type="button" class="admin-tab active" data-tab="applications" role="tab">Applications</button>
+                <button type="button" class="admin-tab" data-tab="partners" role="tab">Partners</button>
+                <button type="button" class="admin-tab" data-tab="leads" role="tab">Lead Assignments</button>
+                <button type="button" class="admin-tab" data-tab="commissions" role="tab">Commissions</button>
+                <button type="button" class="admin-tab" data-tab="followups" role="tab">Follow-ups</button>
+            </div>
+
+            <!-- Applications -->
+            <section class="tab-panel active" id="tab-applications" role="tabpanel">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h4>Partner Applications</h4>
+                            <p>Open an application to check documents, record verifications, save the agreement and take a review decision.</p>
+                        </div>
+                        <div class="table-filters">
+                            <input type="text" id="applicationSearch" placeholder="Search applicant, firm, reference…">
+                            <select id="applicationStatusFilter">
+                                <option value="">All statuses</option>
+                                <option>Application Received</option>
+                                <option>Under Review</option>
+                                <option>Documents Pending</option>
+                                <option>Verification In Progress</option>
+                                <option>Approved</option>
+                                <option>Rejected</option>
+                                <option>On Hold</option>
+                                <option>Withdrawn</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dash-card-body no-pad">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Applicant</th>
+                                        <th>Firm / Type</th>
+                                        <th>City / State</th>
+                                        <th>Status</th>
+                                        <th>Partner login</th>
+                                        <th>Submitted</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="applicationsBody">
+                                    <tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading partner applications…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Partners -->
+            <section class="tab-panel" id="tab-partners" role="tabpanel">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h4>Provisioned Partners</h4>
+                            <p>Active, suspended and pending-agreement partner profiles with recorded performance.</p>
+                        </div>
+                        <div class="table-filters">
+                            <input type="text" id="partnerSearch" placeholder="Search partner, code, firm…">
+                            <select id="partnerStatusFilter">
+                                <option value="">All statuses</option>
+                                <option>Pending Agreement</option>
+                                <option>Active</option>
+                                <option>Suspended</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dash-card-body no-pad">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Partner</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Leads</th>
+                                        <th>Sanctioned</th>
+                                        <th>Disbursed</th>
+                                        <th>Commission paid</th>
+                                        <th>Activated</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partnersBody">
+                                    <tr><td colspan="10" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading partner profiles…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leads -->
+            <section class="tab-panel" id="tab-leads" role="tabpanel">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h4>Partner Lead Assignments</h4>
+                            <p>Only the assigned partner can see these customer records. Partners may update progress to Contacted, Documents Pending or Submitted to Lender.</p>
+                        </div>
+                        <div class="table-filters">
+                            <input type="text" id="leadSearch" placeholder="Search reference, customer, partner…">
+                            <select id="leadPartnerFilter"><option value="">All partners</option></select>
+                            <select id="leadStatusFilter">
+                                <option value="">All statuses</option>
+                                <option>Assigned</option>
+                                <option>Contacted</option>
+                                <option>Documents Pending</option>
+                                <option>Submitted to Lender</option>
+                                <option>Sanctioned</option>
+                                <option>Disbursed</option>
+                                <option>Rejected</option>
+                                <option>Closed</option>
+                            </select>
+                            <button type="button" class="btn-add" id="addLeadBtn"><i class="fa fa-plus"></i> Assign lead</button>
+                        </div>
+                    </div>
+                    <div class="dash-card-body no-pad">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Partner</th>
+                                        <th>Customer</th>
+                                        <th>Product</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Lender</th>
+                                        <th>Assigned</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadsBody">
+                                    <tr><td colspan="9" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading assigned leads…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Commissions -->
+            <section class="tab-panel" id="tab-commissions" role="tabpanel">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h4>Partner Commission Records</h4>
+                            <p>Record commission only against an actual disbursal and the signed agreement. TDS and net payable are shown separately.</p>
+                        </div>
+                        <div class="table-filters">
+                            <select id="commissionPartnerFilter"><option value="">All partners</option></select>
+                            <select id="commissionStatusFilter">
+                                <option value="">All statuses</option>
+                                <option>Pending</option>
+                                <option>Approved</option>
+                                <option>Invoiced</option>
+                                <option>Paid</option>
+                                <option>On Hold</option>
+                                <option>Cancelled</option>
+                            </select>
+                            <button type="button" class="btn-add" id="addCommissionBtn"><i class="fa fa-plus"></i> Add commission</button>
+                        </div>
+                    </div>
+                    <div class="dash-card-body no-pad">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Recorded</th>
+                                        <th>Partner</th>
+                                        <th>Assignment</th>
+                                        <th>Type</th>
+                                        <th>Basis</th>
+                                        <th>Rate</th>
+                                        <th>Gross</th>
+                                        <th>TDS</th>
+                                        <th>Net payable</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commissionsBody">
+                                    <tr><td colspan="11" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading commission records…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Follow-ups -->
+            <section class="tab-panel" id="tab-followups" role="tabpanel">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h4>Partner Follow-ups</h4>
+                            <p>Scheduled interactions with partners and assigned leads. Partners see only their own follow-up records.</p>
+                        </div>
+                        <div class="table-filters">
+                            <input type="text" id="followupSearch" placeholder="Search partner, notes, reference…">
+                            <select id="followupStatusFilter">
+                                <option value="">All statuses</option>
+                                <option>Pending</option>
+                                <option>Completed</option>
+                                <option>Cancelled</option>
+                            </select>
+                            <button type="button" class="btn-add" id="addFollowupBtn"><i class="fa fa-plus"></i> Schedule follow-up</button>
+                        </div>
+                    </div>
+                    <div class="dash-card-body no-pad">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Scheduled</th>
+                                        <th>Partner</th>
+                                        <th>Assignment</th>
+                                        <th>Interaction</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                        <th>Completed</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="followupsBody">
+                                    <tr><td colspan="8" class="loading-state"><i class="fa fa-circle-o-notch fa-spin"></i>Loading partner follow-ups…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ================= Review application modal ================= -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewTitle">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-handshake-o" style="margin-right:8px;"></i> <span id="reviewTitle">Partner application</span></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="reviewModalAlert" role="alert"></div>
+
+                    <div class="detail-group">
+                        <div class="detail-row"><span class="detail-label">Reference</span><span class="detail-value mono" id="reviewReference">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Current status</span><span class="detail-value" id="reviewStatusBadge">—</span></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-user" style="margin-right:6px;"></i>Application, firm and network details</h6>
+                        <div id="reviewDetails"></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-folder-open" style="margin-right:6px;"></i>Documents</h6>
+                        <p class="admin-note" id="reviewDocumentsCount" style="margin:0 0 10px;"></p>
+                        <div class="table-responsive">
+                            <table class="app-table table-review">
+                                <thead>
+                                    <tr><th>Document</th><th>File</th><th>Status</th><th>Verification / notes</th></tr>
+                                </thead>
+                                <tbody id="reviewDocumentsBody"></tbody>
+                            </table>
+                        </div>
+                        <p class="admin-note">Document verification is completed in the <a href="admin-documents.html" target="_blank" rel="noopener">Documents module</a>. The partner document mirror updates automatically when the loan document status changes. Upload and verify the PAN Card, Address Proof, Photograph and, when the firm is registered, the Business Registration document before approval.</p>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>Verification records</h6>
+                        <div class="table-responsive">
+                            <table class="app-table table-review">
+                                <thead>
+                                    <tr><th>Verification</th><th>Status</th><th>Reference</th><th>Findings</th><th>Remarks</th><th>Action</th></tr>
+                                </thead>
+                                <tbody id="reviewVerificationsBody"></tbody>
+                            </table>
+                        </div>
+                        <p class="admin-note">Record what was actually checked. Approval requires a Verified PAN, address, photograph and overall review, plus a Verified business registration check when the firm is registered. A Failed or Pending check blocks approval.</p>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-file-text-o" style="margin-right:6px;"></i>Partner agreement</h6>
+                        <div id="reviewAgreementHistory" style="margin-bottom:14px;"></div>
+                        <input type="hidden" id="reviewAgreementId">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewAgreementType">Agreement type</label>
+                                    <select class="form-control" id="reviewAgreementType">
+                                        <option>DSA Agreement</option>
+                                        <option>Referral Agreement</option>
+                                        <option>Sub-DSA Agreement</option>
+                                        <option>Commission Addendum</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewAgreementStatus">Agreement status</label>
+                                    <select class="form-control" id="reviewAgreementStatus">
+                                        <option>Not Started</option>
+                                        <option>Draft</option>
+                                        <option>Sent for Signature</option>
+                                        <option>Signed</option>
+                                        <option>Active</option>
+                                        <option>Expired</option>
+                                        <option>Terminated</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewAgreementReference">Agreement reference</label>
+                                    <input type="text" class="form-control" id="reviewAgreementReference" maxlength="120" placeholder="Agreement / file reference">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewSignedDate">Signed date</label>
+                                    <input type="date" class="form-control" id="reviewSignedDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewEffectiveFrom">Effective from</label>
+                                    <input type="date" class="form-control" id="reviewEffectiveFrom">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reviewEffectiveTo">Effective to</label>
+                                    <input type="date" class="form-control" id="reviewEffectiveTo">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewDocumentName">Signed document name / storage reference</label>
+                            <input type="text" class="form-control" id="reviewDocumentName" maxlength="255" placeholder="File name of the signed agreement">
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewCommissionTerms">Commission terms</label>
+                            <textarea class="form-control" id="reviewCommissionTerms" rows="3" placeholder="Commission type, basis, rate, payment process and TDS as recorded in the signed agreement."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewAgreementRemarks">Agreement remarks</label>
+                            <textarea class="form-control" id="reviewAgreementRemarks" rows="2" placeholder="Signature pending, addendum issued, expiry reminder, etc."></textarea>
+                        </div>
+                        <p class="admin-note" id="reviewAgreementNote"></p>
+                        <button type="button" class="btn-save" id="reviewSaveAgreementBtn">Save agreement</button>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-gavel" style="margin-right:6px;"></i>Review decision</h6>
+                        <div id="reviewDecisionReadiness" style="margin-bottom:14px;"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reviewAction">Review action</label>
+                                    <select class="form-control" id="reviewAction">
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Verification In Progress">Verification In Progress</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="On Hold">On Hold</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reviewExecutive">Assigned executive</label>
+                                    <select class="form-control" id="reviewExecutive">
+                                        <option value="">Select executive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewRemarks">Review remarks / rejection reason</label>
+                            <textarea class="form-control" id="reviewRemarks" rows="3" placeholder="Review notes, document follow-up, approval conditions, rejection reason, etc."></textarea>
+                        </div>
+                        <p class="admin-note">Approval requires every required document and verification to be Verified and an executive to be assigned. The database validates these conditions again. Rejection requires a written reason. No lead volume, loan approval, sanction, disbursal or commission is guaranteed by approval.</p>
+                        <button type="button" class="btn-save" id="reviewSaveDecisionBtn">Save review decision</button>
+                    </div>
+
+                    <div class="detail-group">
+                        <h6><i class="fa fa-key" style="margin-right:6px;"></i>Partner login provisioning</h6>
+                        <div id="reviewProfileSummary" style="margin-bottom:12px;"></div>
+                        <div class="form-group">
+                            <label for="reviewProvisionUserId">Auth user UUID</label>
+                            <input type="text" class="form-control mono" id="reviewProvisionUserId" placeholder="Create the auth user in Nhost, then paste the user UUID">
+                        </div>
+                        <p class="admin-note">Provisioning requires an Approved application, a Signed or Active agreement with a signed date and an effective-from date that has arrived, and an auth user whose email exactly matches the application email. The function grants the partner role and activates the profile. Never provision a login before the agreement is effective.</p>
+                        <button type="button" class="btn-save" id="reviewProvisionBtn">Provision partner login</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Partner profile modal ================= -->
+    <div class="modal fade" id="partnerModal" tabindex="-1" role="dialog" aria-labelledby="partnerModalTitle">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="partnerModalTitle"><i class="fa fa-user" style="margin-right:8px;"></i>Partner profile</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="partnerModalAlert" role="alert"></div>
+                    <div class="detail-group">
+                        <h6>Profile and performance</h6>
+                        <div id="partnerDetails"></div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Account status</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="partnerStatus">Status</label>
+                                    <select class="form-control" id="partnerStatus">
+                                        <option>Pending Agreement</option>
+                                        <option>Active</option>
+                                        <option>Suspended</option>
+                                        <option>Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerSuspensionReason">Suspension reason</label>
+                            <input type="text" class="form-control" id="partnerSuspensionReason" maxlength="255" placeholder="Required when the account is suspended">
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerAdminNotes">Administrator notes</label>
+                            <textarea class="form-control" id="partnerAdminNotes" rows="3" placeholder="Internal notes about the partner account. Do not record customer secrets."></textarea>
+                        </div>
+                        <p class="admin-note">Suspending or inactivating a profile does not delete leads, agreements or commission records. The partner portal checks the status on every sign-in. Reactivating restores access only if the auth account and agreement remain valid.</p>
+                        <button type="button" class="btn-save" id="partnerSaveBtn">Save partner status</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Lead assignment modal ================= -->
+    <div class="modal fade" id="leadModal" tabindex="-1" role="dialog" aria-labelledby="leadModalTitle">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="leadModalTitle">Assign a lead to a partner</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="leadModalAlert" role="alert"></div>
+                    <input type="hidden" id="leadId">
+                    <div class="detail-group">
+                        <h6>Assignment</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="leadPartner">Partner</label>
+                                    <select class="form-control" id="leadPartner"><option value="">Select partner</option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Assignment reference</label>
+                                    <input type="text" class="form-control mono" id="leadReferenceDisplay" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Customer</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadCustomerName">Customer name</label>
+                                    <input type="text" class="form-control" id="leadCustomerName" maxlength="200">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadCustomerMobile">Mobile</label>
+                                    <input type="tel" class="form-control" id="leadCustomerMobile" maxlength="10" placeholder="10-digit mobile">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadCustomerEmail">Email</label>
+                                    <input type="email" class="form-control" id="leadCustomerEmail" maxlength="200">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadProduct">Product / service</label>
+                                    <input type="text" class="form-control" id="leadProduct" maxlength="120" placeholder="Home Loan, Business Loan, ITR Filing…">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadAmount">Requested amount</label>
+                                    <input type="number" class="form-control" id="leadAmount" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="leadCity">City</label>
+                                    <input type="text" class="form-control" id="leadCity" maxlength="120">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="leadState">State</label>
+                                    <input type="text" class="form-control" id="leadState" maxlength="120">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-group">
+                        <h6>Progress and lender outcome</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadStatus">Status</label>
+                                    <select class="form-control" id="leadStatus">
+                                        <option>Assigned</option>
+                                        <option>Contacted</option>
+                                        <option>Documents Pending</option>
+                                        <option>Submitted to Lender</option>
+                                        <option>Sanctioned</option>
+                                        <option>Disbursed</option>
+                                        <option>Rejected</option>
+                                        <option>Closed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadLenderName">Lender name</label>
+                                    <input type="text" class="form-control" id="leadLenderName" maxlength="160">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadLenderReference">Lender reference</label>
+                                    <input type="text" class="form-control" id="leadLenderReference" maxlength="160">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadSanctionedAmount">Sanctioned amount</label>
+                                    <input type="number" class="form-control" id="leadSanctionedAmount" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadDisbursedAmount">Disbursed amount</label>
+                                    <input type="number" class="form-control" id="leadDisbursedAmount" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="leadDisbursedDate">Disbursement date</label>
+                                    <input type="date" class="form-control" id="leadDisbursedDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadStatusNotes">Status notes (partner-visible)</label>
+                            <textarea class="form-control" id="leadStatusNotes" rows="2" placeholder="Customer contacted, documents collected, submitted to lender, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadAdminRemarks">Internal administrator remarks</label>
+                            <textarea class="form-control" id="leadAdminRemarks" rows="2" placeholder="Internal notes. Do not paste OTPs, card PINs or full account numbers."></textarea>
+                        </div>
+                        <p class="admin-note">Sanction and disbursal are recorded only from the lender's written outcome. A partner may not set these statuses. The assignment record controls what the partner can see; never assign a customer without their knowledge and consent.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn-save" id="leadSaveBtn">Save lead</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Commission modal ================= -->
+    <div class="modal fade" id="commissionModal" tabindex="-1" role="dialog" aria-labelledby="commissionModalTitle">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="commissionModalTitle">Add commission record</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="commissionModalAlert" role="alert"></div>
+                    <input type="hidden" id="commissionId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="commissionPartner">Partner</label>
+                                <select class="form-control" id="commissionPartner"><option value="">Select partner</option></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="commissionAssignment">Lead assignment</label>
+                                <select class="form-control" id="commissionAssignment"><option value="">Not linked to an assignment</option></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="commissionType">Commission type</label>
+                                <select class="form-control" id="commissionType">
+                                    <option>Referral Fee</option>
+                                    <option>DSA Commission</option>
+                                    <option>Trail Commission</option>
+                                    <option>Processing Fee Share</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="commissionStatus">Status</label>
+                                <select class="form-control" id="commissionStatus">
+                                    <option>Pending</option>
+                                    <option>Approved</option>
+                                    <option>Invoiced</option>
+                                    <option>Paid</option>
+                                    <option>On Hold</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="commissionBasis">Basis amount</label>
+                                <input type="number" class="form-control" id="commissionBasis" min="0" step="0.01" placeholder="Disbursed amount">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="commissionRate">Rate %</label>
+                                <input type="number" class="form-control" id="commissionRate" min="0" max="100" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="commissionAmount">Commission amount</label>
+                                <input type="number" class="form-control" id="commissionAmount" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="commissionTds">TDS</label>
+                                <input type="number" class="form-control" id="commissionTds" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="commissionNet">Net payable</label>
+                                <input type="text" class="form-control" id="commissionNet" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="commissionInvoiceNo">Invoice number</label>
+                                <input type="text" class="form-control" id="commissionInvoiceNo" maxlength="120">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="commissionInvoiceDate">Invoice date</label>
+                                <input type="date" class="form-control" id="commissionInvoiceDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="commissionPaymentReference">Payment reference</label>
+                        <input type="text" class="form-control" id="commissionPaymentReference" maxlength="160" placeholder="Required when the status is Paid">
+                    </div>
+                    <div class="form-group">
+                        <label for="commissionRemarks">Remarks</label>
+                        <textarea class="form-control" id="commissionRemarks" rows="2" placeholder="Agreement clause, disbursal reference, reconciliation note, recovery reason, etc."></textarea>
+                    </div>
+                    <p class="admin-note">A commission is recorded only against an actual disbursal and the signed agreement. Do not record a commission merely because a lead was assigned or an application was submitted. TDS is deducted where the law requires it. If a loan is cancelled, reversed or repaid early, revise or cancel the commission as the agreement provides.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn-save" id="commissionSaveBtn">Save commission</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Follow-up modal ================= -->
+    <div class="modal fade" id="followupModal" tabindex="-1" role="dialog" aria-labelledby="followupModalTitle">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="followupModalTitle">Schedule partner follow-up</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-alert" id="followupModalAlert" role="alert"></div>
+                    <input type="hidden" id="followupId">
+                    <div class="form-group">
+                        <label for="followupPartner">Partner</label>
+                        <select class="form-control" id="followupPartner"><option value="">Select partner</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="followupAssignment">Lead assignment (optional)</label>
+                        <select class="form-control" id="followupAssignment"><option value="">Not linked to an assignment</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="followupScheduled">Scheduled date and time</label>
+                        <input type="datetime-local" class="form-control" id="followupScheduled">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="followupType">Interaction type</label>
+                                <select class="form-control" id="followupType">
+                                    <option>Phone call</option>
+                                    <option>WhatsApp</option>
+                                    <option>Email</option>
+                                    <option>Office meeting</option>
+                                    <option>Video call</option>
+                                    <option>Document review</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="followupStatus">Status</label>
+                                <select class="form-control" id="followupStatus">
+                                    <option>Pending</option>
+                                    <option>Completed</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="followupNotes">Notes</label>
+                        <textarea class="form-control" id="followupNotes" rows="3" placeholder="Purpose of the follow-up and any preparation required."></textarea>
+                    </div>
+                    <p class="admin-note">Do not record OTPs, card PINs, net-banking passwords or full account numbers in follow-up notes.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn-save" id="followupSaveBtn">Save follow-up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js?v=4"></script>
+    <script src="js/admin-layout.js"></script>
+    <script src="js/admin-delete.js?v=2"></script>
+    <script src="js/admin-notifications.js?v=1"></script>
+    <script src="js/admin-partners.js?v=20261125-1"></script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

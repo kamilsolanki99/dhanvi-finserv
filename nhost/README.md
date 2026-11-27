@@ -331,6 +331,70 @@ dashboard query without the Credit Health fields. Existing application types
 keep loading normally, and Credit Health details appear automatically once
 tracking and the permission are complete.
 
+### DSA Partner Network (migration 013)
+
+[`migrations/013_partner_network.sql`](migrations/013_partner_network.sql) adds
+the **DSA Partner Network** behind `partner-apply.html`, `partner-login.html`
+and `partner-portal.html`.
+
+- `partner_application_details` — one structured onboarding row per partner
+  lead: applicant, firm, office, PAN, business registration, experience,
+  products, expected referrals, preferred locations, bank / DSA associations
+  and the three declarations.
+- `partner_profiles` — the provisioned partner account, linked 1:1 to the lead
+  and to the Nhost auth user. It carries the partner code, account status and
+  activation / suspension record.
+- `partner_documents` — a metadata mirror of `loan_documents`. Files stay in the
+  private `loan-documents` bucket and verification still happens in the admin
+  Documents module.
+- `partner_verifications` — PAN, business registration, address, photograph,
+  bank / DSA association and overall review checks.
+- `partner_agreements` — agreement type, status, reference, signed and
+  effective dates, document name and commission terms.
+- `partner_lead_assignments` — customer leads assigned to a partner, with the
+  lender outcome and sanction / disbursal record.
+- `partner_commissions` — commission records per assignment, including TDS,
+  net payable, invoice and payment reference.
+- `partner_followups` — partner and assigned-lead follow-ups.
+
+The migration also adds four callable functions:
+
+- `submit_partner_application` — the public 5-step onboarding submission.
+- `review_partner_application` — admin-only approval, rejection and review
+  status changes.
+- `provision_partner_login` — admin-only login provisioning.
+- `update_partner_lead_status` — partner-only progress update for an assigned
+  lead.
+
+Partner applications reuse `loan_leads` with
+`loan_type = 'DSA Partner Network'` and `loan_amount = 0`, the shared
+`home_loan_drafts` / `save_home_loan_draft` / `get_home_loan_draft` functions
+and the private `loan-documents` bucket. The document types
+`Business Registration` and `Onboarding Document` are added to the shared
+`loan_documents` check and `register_document`.
+
+The public form never sets review, verification, agreement, profile or
+commission data. Approval requires verified PAN, address, photograph and, when
+the firm is registered, business registration documents; matching verification
+rows; and an assigned executive. Login provisioning requires an Approved
+application, a Signed or Active agreement with a signed date and an
+effective-from date that has arrived, and an auth user whose email matches the
+application email. The function inserts the `partner` role into
+`auth.user_roles` and sets `auth.users.default_role`.
+
+The eight partner tables enable Postgres RLS as defence-in-depth; Hasura row
+filters are still the primary boundary. The `partner` role can only select its
+own rows and can only write through `update_partner_lead_status`. It has no
+access to `loan_leads`, `loan_documents` or any other customer table, so a
+partner never sees another partner's customers, documents, agreements or
+commissions.
+
+Until the partner tables are tracked and the `admin` permissions are saved,
+`admin-applications.html` retries without the partner fields and shows a
+warning; `admin-partners.html` shows its own setup warning. The public wizard
+itself only needs `submit_partner_application`, the draft functions and
+`register_document`.
+
 All application wizards reuse the existing `home_loan_drafts` table and the
 `save_home_loan_draft` / `get_home_loan_draft` functions for save/resume, and the
 shared `loan_applicants` table for co-applicants / guarantors.
@@ -338,8 +402,11 @@ shared `loan_applicants` table for co-applicants / guarantors.
 The other loan types are untouched: they keep using
 `submit_loan_application_v2` through `apply-loan.html`.
 
-Do **not** enable Postgres RLS on these tables. Access is enforced by Hasura
-permissions, which is how Nhost is designed to work.
+Do **not** enable Postgres RLS on the original business tables. Access is
+enforced by Hasura permissions, which is how Nhost is designed to work. The
+eight partner tables are the deliberate exception: migration `013` enables RLS
+with own-row and admin policies as defence-in-depth, while Hasura row filters
+remain the primary boundary.
 
 ---
 
@@ -381,6 +448,14 @@ Under `public`:
 - `credit_health_details`
 - `credit_accounts`
 - `credit_enquiries`
+- `partner_application_details`
+- `partner_profiles`
+- `partner_documents`
+- `partner_verifications`
+- `partner_agreements`
+- `partner_lead_assignments`
+- `partner_commissions`
+- `partner_followups`
 - `api_result`
 
 `api_result` is only a return-type carrier for the functions. It is never
@@ -414,10 +489,15 @@ Under **Data → SQL → Track** (or the “Untracked functions” list):
 - `submit_msme_application`
 - `submit_loan_insurance_application`
 - `submit_credit_health_application`
+- `submit_partner_application`
+- `review_partner_application`
+- `provision_partner_login`
+- `update_partner_lead_status`
 
 Hasura needs each function to return `SETOF public.api_result`, which the
 migration already does. `VOLATILE` functions are mutations; `STABLE` functions
-are queries.
+are queries. `sync_partner_document` and `validate_partner_application_status`
+are trigger functions and do not need to be tracked.
 
 ---
 
@@ -434,6 +514,7 @@ access.
 | `public` | yes | no | no | no |
 | `anonymous` | yes | no | no | no |
 | `admin` | yes | no | no | no |
+| `partner` | yes | no | no | no |
 
 `api_result` only needs `select`; the functions are `SECURITY DEFINER` and
 insert nothing into it.
@@ -465,11 +546,19 @@ Open **Data → [function] → Permissions**.
 | `submit_msme_application` | execute | execute | execute |
 | `submit_loan_insurance_application` | execute | execute | execute |
 | `submit_credit_health_application` | execute | execute | execute |
+| `submit_partner_application` | execute | execute | execute |
+| `review_partner_application` | **no** | **no** | execute |
+| `provision_partner_login` | **no** | **no** | execute |
+| `update_partner_lead_status` | **no** | **no** | **no** |
 | `register_document` | **no** | execute | execute |
 
 `register_document` requires an authenticated Nhost session, so it must not be
 available to the unauthenticated `public` role. It is limited to `anonymous`
 (the public upload page) and `admin`.
+
+The `partner` role must have execute on `update_partner_lead_status` only. It
+must not execute any other function, and the function itself rejects any
+session whose role is not `partner`.
 
 The `user` role intentionally has no execute permissions. A customer who has
 signed up through the Nhost API (there is no signup form on the site) must sign
@@ -510,6 +599,14 @@ Grant only what the admin panel uses:
 | `credit_health_details` | yes | no | yes | no |
 | `credit_accounts` | yes | no | no | no |
 | `credit_enquiries` | yes | no | no | no |
+| `partner_application_details` | yes | no | no | no |
+| `partner_profiles` | yes | no | yes | no |
+| `partner_documents` | yes | no | no | no |
+| `partner_verifications` | yes | yes | yes | no |
+| `partner_agreements` | yes | yes | yes | no |
+| `partner_lead_assignments` | yes | yes | yes | no |
+| `partner_commissions` | yes | yes | yes | no |
+| `partner_followups` | yes | yes | yes | no |
 
 The admin panel exposes a confirmed, permanent delete action for leads,
 documents, follow-ups, callbacks, support requests and complaints. Grant
@@ -521,10 +618,15 @@ documents, follow-ups, callbacks, support requests and complaints. Grant
 `itr_tax_payments`, `gst_registration_details`, `gst_return_filings`,
 `msme_registration_details`, `msme_promoters`, `msme_registrations`,
 `loan_insurance_details`, `credit_health_details`, `credit_accounts`,
-`credit_enquiries` and `home_loan_emis`;
+`credit_enquiries`, `partner_application_details`, `partner_profiles`,
+`partner_documents`, `partner_verifications`, `partner_agreements`,
+`partner_lead_assignments`, `partner_commissions`, `partner_followups` and
+`home_loan_emis`;
 linked callbacks, complaints and support requests are kept with `loan_lead_id`
 set to `NULL` (`ON DELETE SET NULL`). `admin_profiles` and `loan_applicants`
-must not be deletable from the admin UI.
+must not be deletable from the admin UI. Deleting a partner profile cascades to
+its lead assignments, commissions and follow-ups; deleting a `loan_documents`
+row cascades to the matching `partner_documents` mirror row.
 
 For `admin_profiles` update, allow only `full_name` (and `updated_at` is
 maintained by the trigger). Restrict the update columns per table to match the
@@ -552,6 +654,12 @@ admin panel:
 | `msme_registrations` | `status`, `application_number`, `submitted_at`, `approved_at`, `certificate_number`, `valid_until`, `portal_reference`, `remarks` |
 | `loan_insurance_details` | `proposal_status`, `insurer_name`, `proposal_number`, `proposal_date`, `quotation_reference`, `quotation_amount`, `quotation_date`, `quotation_valid_until`, `policy_status`, `policy_number`, `policy_start_date`, `policy_end_date`, `premium_amount`, `payment_mode`, `policy_remarks`, `status_notes`, `verified_by`, `verified_at` |
 | `credit_health_details` | `report_status`, `bureau_name`, `bureau_reference`, `bureau_request_sent_at`, `report_received_date`, `credit_score`, `score_date`, `score_band`, `report_summary`, `analysis_summary`, `improvement_plan`, `eligibility_assessment`, `analysis_shared_date`, `admin_remarks`, `follow_up_date`, `status_notes`, `verified_by`, `verified_at` |
+| `partner_profiles` | `status`, `activated_at`, `suspended_at`, `suspension_reason`, `admin_notes` |
+| `partner_verifications` | `status`, `reference_no`, `findings`, `remarks`, `verified_by`, `verified_at` |
+| `partner_agreements` | `agreement_type`, `agreement_status`, `agreement_reference`, `signed_date`, `effective_from`, `effective_to`, `document_name`, `commission_terms`, `admin_remarks` |
+| `partner_lead_assignments` | `partner_profile_id`, `customer_name`, `customer_mobile`, `customer_email`, `product_type`, `requested_amount`, `customer_city`, `customer_state`, `lender_name`, `lender_reference`, `status`, `status_notes`, `sanctioned_amount`, `disbursed_amount`, `disbursed_date`, `admin_remarks` |
+| `partner_commissions` | `partner_profile_id`, `lead_assignment_id`, `loan_lead_id`, `commission_type`, `basis_amount`, `rate_percent`, `commission_amount`, `tds_amount`, `net_payable`, `status`, `invoice_no`, `invoice_date`, `payment_reference`, `remarks`, `approved_by`, `approved_at`, `paid_at` |
+| `partner_followups` | `partner_profile_id`, `lead_assignment_id`, `scheduled_at`, `interaction_type`, `status`, `notes`, `completed_at`, `created_by` |
 
 `home_loan_details`, `home_loan_topup_details`, `home_loan_takeover_details`,
 `lap_details`, `business_loan_details`, `working_capital_details` and
@@ -574,13 +682,22 @@ report or analysis status. The rest of the structured data is created by
 `submit_home_loan_takeover_application`, `submit_lap_application`,
 `submit_business_loan_application`, `submit_working_capital_application`,
 `submit_itr_application`, `submit_gst_application`, `submit_msme_application`,
-`submit_loan_insurance_application` and `submit_credit_health_application` and
-must not be editable from the browser.
+`submit_loan_insurance_application`, `submit_credit_health_application` and
+`submit_partner_application` and must not be editable from the browser.
 `home_loan_emis`, `itr_income_items`, `itr_tax_payments`, `msme_promoters`,
-`credit_accounts` and `credit_enquiries` have `select` only.
+`credit_accounts`, `credit_enquiries`, `partner_application_details` and
+`partner_documents` have `select` only for the admin panel.
+`partner_application_details` is changed only by
+`review_partner_application`; `partner_documents` is a trigger-maintained
+mirror of `loan_documents`. Those functions are `SECURITY DEFINER`, so the
+admin role does not need direct insert/update permission on either table.
 
-Do not add `public` or `anonymous` permissions on any business table. Do not
-grant _any_ role a permission on `home_loan_drafts`.
+Do not add `public` or `anonymous` permissions on any business table. The
+`partner` role gets its own select-only permissions and row filters in section
+4.6; it must never be granted access to `loan_leads`, `loan_documents`,
+`loan_followups`, `admin_profiles` or any other customer table.
+
+Do not grant _any_ role a permission on `home_loan_drafts`.
 
 ### 4.4 `admin_notifications` permissions
 
@@ -623,6 +740,57 @@ exists yet, it writes one shared row so the event is not lost.
 No column presets are needed on the business tables because the public site
 never inserts into them directly. All public writes go through the
 `SECURITY DEFINER` functions.
+
+### 4.6 Partner role, relationships and row filters
+
+The migration seeds the custom `partner` role. A partner signs in at
+`partner-login.html` with a normal Nhost email/password account. The account
+must contain the `partner` role and a matching `partner_profiles` row with
+status `Active`. `provision_partner_login` adds the role and sets
+`auth.users.default_role = 'partner'`.
+
+The partner portal sends `x-hasura-role: partner`. Grant the role **select
+only** on the eight partner tables. Do not grant insert, update or delete to
+`partner`; the only write path is the `update_partner_lead_status` function.
+
+Hasura row filters can only traverse relationships, so create these object
+relationships first in **Data → [table] → Relationships → Add relationship**:
+
+| Source table | Relationship name | Type | Source column | Remote table | Remote column |
+| --- | --- | --- | --- | --- | --- |
+| `partner_application_details` | `partner_profile` | object | `loan_lead_id` | `partner_profiles` | `loan_lead_id` |
+| `partner_documents` | `partner_profile` | object | `partner_lead_id` | `partner_profiles` | `loan_lead_id` |
+| `partner_verifications` | `partner_profile` | object | `partner_lead_id` | `partner_profiles` | `loan_lead_id` |
+| `partner_agreements` | `partner_profile` | object | `partner_lead_id` | `partner_profiles` | `loan_lead_id` |
+| `partner_lead_assignments` | `partner_profile` | object | `partner_profile_id` | `partner_profiles` | `id` |
+| `partner_commissions` | `partner_profile` | object | `partner_profile_id` | `partner_profiles` | `id` |
+| `partner_followups` | `partner_profile` | object | `partner_profile_id` | `partner_profiles` | `id` |
+
+Then set these select row filters for the `partner` role:
+
+| Table | Row filter |
+| --- | --- |
+| `partner_profiles` | `{"user_id":{"_eq":"X-Hasura-User-Id"}}` |
+| `partner_application_details` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_documents` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_verifications` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_agreements` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_lead_assignments` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_commissions` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+| `partner_followups` | `{"partner_profile":{"user_id":{"_eq":"X-Hasura-User-Id"}}}` |
+
+The partner portal also needs select on `api_result` (for the RPC return) and
+execute on `update_partner_lead_status`. No other function execute permission.
+
+The database RLS policies repeat the same rule: a partner sees only rows
+belonging to the profile whose `user_id` matches the verified session user. If
+a row filter is missing, Hasura returns no rows; if the relationship is
+missing, the permission cannot be saved. Never test the partner portal with an
+admin session: sign in with the partner account.
+
+The admin role needs the partner table permissions in section 4.3, plus execute
+on `review_partner_application`, `provision_partner_login` and
+`submit_partner_application`.
 
 ---
 
@@ -741,8 +909,8 @@ The admin pages send `x-hasura-role: admin` explicitly. The JWT must contain
 
 First run [`verify_setup.sql`](verify_setup.sql) in **Database → SQL Editor**.
 It is read-only and returns a single JSON report confirming the tables, columns,
-functions, triggers, indexes, private bucket, `admin` role, sequence and
-`api_result` grant. Every expected object should show `OK`. The report includes
+functions, triggers, indexes, private bucket, `admin` and `partner` roles, RLS
+policies, sequence and `api_result` grant. Every expected object should show `OK`. The report includes
 `admin_notifications`, the notification triggers and their indexes, and the
 Home Loan tables, functions, triggers and indexes added by migration `004`,
 plus the Top-Up / Takeover tables and functions added by migration `005`, the
@@ -752,9 +920,10 @@ ITR Filing tables, functions and indexes added by migration `008`, the GST
 Registration & Filing tables, function and indexes added by migration `009`,
 the MSME / Udyam / Gumasta tables, function and indexes added by migration
 `010`, the Loan Protection Insurance table, function and indexes added by
-migration `011`, and the Credit Health / CIBIL tables, function and indexes
-added by migration `012`.
-The expected totals are **31 tables, 26 functions, 32 triggers and 99 indexes**.
+migration `011`, the Credit Health / CIBIL tables, function and indexes added
+by migration `012`, and the DSA Partner Network tables, functions, triggers,
+indexes, `partner` role and RLS policies added by migration `013`.
+The expected totals are **39 tables, 32 functions, 42 triggers and 130 indexes**.
 
 Test the Home Loan wizard (`home-loan-apply.html`) separately:
 
@@ -951,6 +1120,49 @@ Then test the Credit Health / CIBIL Advisory wizard (`credit-health-apply.html`)
    Certificate and settlement letter. Never upload a full credit report through
    WhatsApp or email; use the private upload link.
 
+Then test the DSA Partner Network (`partner-program.html`,
+`partner-apply.html`, `partner-login.html`, `partner-portal.html` and
+`admin-partners.html`):
+
+1. Open `partner-program.html`. The page must show the benefits, eligibility,
+   products, five-stage onboarding process, commission-status explanation,
+   document requirements, FAQs and **Apply Now** without promising leads, loan
+   approval, sanction, disbursal or commission.
+2. Complete the 5-step application. The business-registration number block must
+   appear only for a registered firm, at least one product must be selected,
+   and all three declarations plus consent are required. The review must show
+   the applicant, firm, network and declaration sections.
+3. Use **Save & continue later**, then open the resume link in a new private
+   window. The saved answers must load, except the PAN and business registration
+   number, which are intentionally not stored in drafts and must be re-entered.
+4. Submit the application. Confirm a `DF-2026-xxxxx` reference, a
+   `partner_application_details` row with status **Application Received**, and a
+   `loan_leads` row with `loan_type = 'DSA Partner Network'` and
+   `loan_amount = 0`. The public form must never write verification, agreement,
+   profile or commission fields.
+5. Upload the PAN Card, Address Proof, Photograph and, when registered, the
+   Business Registration document through the private upload link. Confirm the
+   `partner_documents` mirror rows appear and that verification in the admin
+   Documents module updates the mirror status.
+6. Sign in as an administrator and open **Partner Network**. Record each
+   verification, save the agreement with the signed date and effective-from
+   date, assign an executive, then approve. Approval must be refused until
+   every required document and verification is **Verified**.
+7. Create the partner auth user in Nhost with the exact application email.
+   Provision the login from the application. Confirm `auth.user_roles` contains
+   `partner`, `auth.users.default_role` is `partner`, and `partner_profiles` is
+   **Active**. Provisioning must be refused before approval or before a signed,
+   effective agreement.
+8. Sign in at `partner-login.html`. The portal must show only that partner's
+   profile, documents, agreement, lead assignments, commissions and follow-ups.
+   Try another partner's lead or profile identifiers in the query; Hasura must
+   return no rows. The only permitted update is **Contacted**, **Documents
+   Pending** or **Submitted to Lender** on an assigned, open lead.
+9. Suspend the partner and confirm the portal guard denies access. Reactivating
+   requires a signed agreement whose effective-from date has arrived.
+10. Confirm the `partner` role cannot select `loan_leads`, `loan_documents` or
+    `loan_followups`, and cannot read another partner's rows.
+
 Then test the general flow:
 
 1. Open the public site and submit a loan application. It should return a
@@ -1035,6 +1247,16 @@ Then test the general flow:
 | The Credit Health request shows **Report Received** too early | Never record a bureau reference, report date, score or analysis before the authorised bureau has actually supplied the report and it has been verified. The admin UI requires the bureau name, bureau reference and the actual report received date; a score also needs a score date and must be between 300 and 900. |
 | The Credit Health request cannot be marked **Analysis Shared** or **Closed** | Enter the analysis summary and the actual date it was shared. The shared date cannot be before the report received date, and no date can be in the future. |
 | A credit report or full bureau data appears in a public URL or log | Do not store full reports in public storage or paste them into emails, WhatsApp or ordinary logs. Keep only the bureau reference and the advisory summary in the database, and upload documents through the private `loan-documents` bucket. |
+| `field 'submit_partner_application' not found` | Migration `013` has not been run, or the function is not tracked in Hasura. Run the migration and track the function under Data → SQL. |
+| DSA Partner Network section does not appear in the admin application modal | The lead is not a partner application, or `partner_application_details` was not created. Confirm the row exists and rerun `verify_setup.sql`. |
+| Applications list fails to load after adding migration `013` | One or more partner tables are not tracked in Hasura, or the `admin` select permission is missing. The dashboard automatically retries without the partner fields, but track all eight tables and grant `select` to see the data. |
+| `admin-partners.html` shows the partner setup warning | The eight partner tables are not tracked in Hasura, or the `admin` permissions are missing. Apply migration `013`, track the tables and functions, and grant the permissions in sections 3 and 4.3. |
+| Partner approval is refused | Verify the PAN, address, photograph and, when registered, business registration documents; complete the matching verification rows as **Verified**; and assign an executive. The database trigger validates all of them again. |
+| Partner login cannot be provisioned | The application must be **Approved**, the agreement must be **Signed** or **Active** with a signed date and an effective-from date that has arrived, and the auth user email must exactly match the application email. |
+| Partner login says the account is not active | `partner_profiles.status` must be **Active**. Suspended, Inactive and Pending Agreement profiles are denied. Reactivation requires a signed, effective agreement. |
+| The partner portal shows no rows | The Hasura relationship or the partner select row filter is missing. Create the relationships and filters in section 4.6. |
+| A partner can see another partner's records | Remove the partner select permission immediately and correct the row filter in section 4.6. Never rely on the portal query alone; Hasura row filters and the partner RLS policies are the boundary. |
+| The partner cannot update an assigned lead | The `partner` role needs execute on `update_partner_lead_status`, and the lead must be assigned to that partner and still open. Only Contacted, Documents Pending and Submitted to Lender are permitted. |
 | `permission denied for table admin_notifications` | The `admin` select/update/delete permissions or the recipient row filter are missing. See section 4.4. |
 | The bell says **Notifications unavailable** | The table is missing, untracked, the `admin` select permission is missing, or **Allow aggregations** is off. Run `verify_setup.sql` and check section 4.4. |
 | New records do not create notifications | Run migration `003` and confirm the seven notification triggers exist. The trigger needs at least one row in `admin_profiles`; without one it writes a shared notification instead. |
@@ -1075,4 +1297,9 @@ Never upload `nhost/` to a public web root. Only the site files (`*.html`,
 - [ ] `home_loan_topup_details` / `home_loan_takeover_details` admin update is limited to the identity-verification columns.
 - [ ] `lap_details` / `business_loan_details` admin update is limited to the identity-verification columns.
 - [ ] Aadhaar is masked server-side; only the last 4 digits are stored.
-- [ ] RLS is not enabled; Hasura permissions are the access-control layer.
+- [ ] RLS is disabled on the original business tables; Hasura permissions are the access-control layer.
+- [ ] RLS is enabled on the eight partner tables and the partner RLS policies are present.
+- [ ] The `partner` role has select only on its own rows and execute only on `update_partner_lead_status`.
+- [ ] The `partner` role has no access to `loan_leads`, `loan_documents`, `loan_followups` or admin tables.
+- [ ] The partner relationships and row filters in section 4.6 are configured and tested with a partner account.
+- [ ] Partner logins are provisioned only after approval and a signed, effective agreement.

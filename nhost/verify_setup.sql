@@ -5,21 +5,23 @@
 -- It returns one JSON report. Paste the whole result back for review.
 --
 -- The report checks:
---   * all 31 tracked tables (including admin_notifications and the twenty-one
---     structured service / loan tables added by migrations 004 to 012)
+--   * all 39 tracked tables (including admin_notifications and the twenty-nine
+--     structured service / loan tables added by migrations 004 to 013)
 --   * every column in those tables
---   * all 26 tracked functions (including the helpers)
---   * all 24 updated_at triggers, the 7 notification triggers and the
---     notification read-state trigger
+--   * all 32 tracked functions (including the helpers)
+--   * all 32 updated_at triggers, the 7 notification triggers, the
+--     notification read-state trigger, the partner document mirror trigger
+--     and the partner approval validation trigger
 --   * all named indexes (including the notification, Home Loan, Top-Up /
 --     Takeover, LAP, Business Loan, Working Capital, ITR Filing, GST
---     Registration & Filing, MSME / Udyam, Loan Protection Insurance and
---     Credit Health / CIBIL indexes)
+--     Registration & Filing, MSME / Udyam, Loan Protection Insurance,
+--     Credit Health / CIBIL and DSA Partner Network indexes)
 --   * the private loan-documents bucket and its settings
---   * the custom admin auth role
+--   * the custom admin and partner auth roles
 --   * the reference sequence
 --   * the api_result SELECT grant
---   * that Postgres RLS is still disabled
+--   * that Postgres RLS is disabled on the original tables and enabled with
+--     policies on the eight partner tables
 -- =============================================================================
 
 WITH expected_tables(name) AS (
@@ -54,7 +56,15 @@ WITH expected_tables(name) AS (
         ('loan_insurance_details'),
         ('credit_health_details'),
         ('credit_accounts'),
-        ('credit_enquiries')
+        ('credit_enquiries'),
+        ('partner_application_details'),
+        ('partner_profiles'),
+        ('partner_documents'),
+        ('partner_verifications'),
+        ('partner_agreements'),
+        ('partner_lead_assignments'),
+        ('partner_commissions'),
+        ('partner_followups')
 ),
 expected_functions(name, signature) AS (
     VALUES
@@ -82,6 +92,12 @@ expected_functions(name, signature) AS (
         ('submit_msme_application', 'public.submit_msme_application(jsonb,uuid,uuid)'),
         ('submit_loan_insurance_application', 'public.submit_loan_insurance_application(jsonb,uuid,uuid)'),
         ('submit_credit_health_application', 'public.submit_credit_health_application(jsonb,uuid,uuid)'),
+        ('sync_partner_document', 'public.sync_partner_document()'),
+        ('validate_partner_application_status', 'public.validate_partner_application_status()'),
+        ('submit_partner_application', 'public.submit_partner_application(jsonb,uuid,uuid)'),
+        ('review_partner_application', 'public.review_partner_application(uuid,text,uuid,text)'),
+        ('provision_partner_login', 'public.provision_partner_login(uuid,uuid)'),
+        ('update_partner_lead_status', 'public.update_partner_lead_status(uuid,text,text)'),
         ('set_admin_notification_read_state', 'public.set_admin_notification_read_state()'),
         ('notify_admin_event', 'public.notify_admin_event()')
 ),
@@ -111,6 +127,16 @@ expected_triggers(trigger_name, table_name) AS (
         ('update_credit_health_details_modtime', 'credit_health_details'),
         ('update_credit_accounts_modtime', 'credit_accounts'),
         ('update_credit_enquiries_modtime', 'credit_enquiries'),
+        ('update_partner_application_details_modtime', 'partner_application_details'),
+        ('update_partner_profiles_modtime', 'partner_profiles'),
+        ('update_partner_documents_modtime', 'partner_documents'),
+        ('update_partner_verifications_modtime', 'partner_verifications'),
+        ('update_partner_agreements_modtime', 'partner_agreements'),
+        ('update_partner_lead_assignments_modtime', 'partner_lead_assignments'),
+        ('update_partner_commissions_modtime', 'partner_commissions'),
+        ('update_partner_followups_modtime', 'partner_followups'),
+        ('mirror_partner_document', 'loan_documents'),
+        ('validate_partner_application_status', 'partner_application_details'),
         ('notify_admin_new_lead', 'loan_leads'),
         ('notify_admin_new_callback', 'callback_bookings'),
         ('notify_admin_new_post_disbursal', 'post_disbursal_requests'),
@@ -220,7 +246,38 @@ expected_indexes(name) AS (
         ('credit_accounts_status_idx'),
         ('credit_enquiries_lead_idx'),
         ('credit_enquiries_date_idx'),
-        ('credit_enquiries_bureau_idx')
+        ('credit_enquiries_bureau_idx'),
+        ('partner_application_details_lead_idx'),
+        ('partner_application_details_status_idx'),
+        ('partner_application_details_type_idx'),
+        ('partner_application_details_city_idx'),
+        ('partner_application_details_state_idx'),
+        ('partner_application_details_exec_idx'),
+        ('partner_profiles_lead_idx'),
+        ('partner_profiles_user_idx'),
+        ('partner_profiles_status_idx'),
+        ('partner_documents_lead_idx'),
+        ('partner_documents_type_idx'),
+        ('partner_documents_status_idx'),
+        ('partner_verifications_lead_idx'),
+        ('partner_verifications_type_idx'),
+        ('partner_verifications_status_idx'),
+        ('partner_agreements_lead_idx'),
+        ('partner_agreements_status_idx'),
+        ('partner_agreements_effective_idx'),
+        ('partner_lead_assignments_partner_idx'),
+        ('partner_lead_assignments_lead_idx'),
+        ('partner_lead_assignments_status_idx'),
+        ('partner_lead_assignments_assigned_idx'),
+        ('partner_commissions_partner_idx'),
+        ('partner_commissions_assignment_idx'),
+        ('partner_commissions_lead_idx'),
+        ('partner_commissions_status_idx'),
+        ('partner_commissions_paid_idx'),
+        ('partner_followups_partner_idx'),
+        ('partner_followups_lead_idx'),
+        ('partner_followups_scheduled_idx'),
+        ('partner_followups_status_idx')
 )
 SELECT jsonb_pretty(jsonb_build_object(
     'tables', (
@@ -302,6 +359,28 @@ SELECT jsonb_pretty(jsonb_build_object(
     ), '{"status":"MISSING"}'::jsonb),
     'admin_role', EXISTS (
         SELECT 1 FROM auth.roles WHERE role = 'admin'
+    ),
+    'partner_role', EXISTS (
+        SELECT 1 FROM auth.roles WHERE role = 'partner'
+    ),
+    'partner_rls_policies', (
+        SELECT COALESCE(jsonb_object_agg(t.name, COALESCE(p.policies, '[]'::jsonb)), '{}'::jsonb)
+        FROM (VALUES
+            ('partner_application_details'),
+            ('partner_profiles'),
+            ('partner_documents'),
+            ('partner_verifications'),
+            ('partner_agreements'),
+            ('partner_lead_assignments'),
+            ('partner_commissions'),
+            ('partner_followups')
+        ) AS t(name)
+        LEFT JOIN (
+            SELECT tablename, jsonb_agg(policyname ORDER BY policyname) AS policies
+            FROM pg_policies
+            WHERE schemaname = 'public'
+            GROUP BY tablename
+        ) p ON p.tablename = t.name
     ),
     'reference_sequence', to_regclass('public.df_reference_seq') IS NOT NULL,
     'api_result_grants', (

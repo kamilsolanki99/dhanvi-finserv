@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Dhanvi Finserv partner portal for approved DSA and referral partners. View your profile, documents, agreement, assigned leads, commissions and follow-ups.">
+    <title>Partner Portal | Dhanvi Finserv</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <link href="css/partner-portal.css?v=20261125-1" rel="stylesheet">
+</head>
+<body class="pp-body">
+
+    <!-- Access gate: shown until the partner session and profile are verified. -->
+    <div class="pp-gate" id="portalGate">
+        <div class="pp-gate-card" id="gateLoading">
+            <div class="pp-spinner" style="margin:0 auto 16px;"></div>
+            <h2>Verifying your partner access</h2>
+            <p>Please wait while we confirm your session and partner profile.</p>
+        </div>
+        <div class="pp-gate-card" id="gateDenied" style="display:none;">
+            <i class="fa fa-lock"></i>
+            <h2 id="gateTitle">Access unavailable</h2>
+            <p id="gateMessage">Your partner access could not be verified.</p>
+            <a href="partner-login.html" class="pp-btn" id="gateAction">Go to partner login</a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="pp-sidebar" id="portalSidebar">
+        <div class="pp-sidebar-logo">
+            <img src="images/logo.png" alt="Dhanvi Finserv">
+            <div class="pp-sidebar-code" id="sidebarPartnerCode">Partner</div>
+        </div>
+        <nav class="pp-sidebar-nav" aria-label="Partner portal sections">
+            <a data-section="dashboard" class="active"><i class="fa fa-dashboard"></i> Dashboard</a>
+            <a data-section="profile"><i class="fa fa-user"></i> My Profile</a>
+            <a data-section="documents"><i class="fa fa-folder-open"></i> Documents</a>
+            <a data-section="agreement"><i class="fa fa-file-text-o"></i> Agreement</a>
+            <a data-section="leads"><i class="fa fa-users"></i> Assigned Leads</a>
+            <a data-section="commissions"><i class="fa fa-inr"></i> Commissions</a>
+            <a data-section="followups"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
+        </nav>
+        <div class="pp-sidebar-footer">
+            <a id="sidebarLogout"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+    </aside>
+    <div class="pp-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main -->
+    <div class="pp-main">
+        <header class="pp-topbar">
+            <div class="pp-topbar-left">
+                <button type="button" class="pp-hamburger" id="sidebarToggle" aria-label="Open menu"><i class="fa fa-bars"></i></button>
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+            <div class="pp-topbar-right">
+                <div class="pp-topbar-profile">
+                    <div class="pp-avatar" id="topbarAvatar">DP</div>
+                    <div class="pp-topbar-profile-text">
+                        <span class="pp-topbar-profile-name" id="topbarName">Partner</span>
+                        <span class="pp-topbar-profile-code" id="topbarCode">Verifying...</span>
+                    </div>
+                </div>
+                <button type="button" class="pp-topbar-logout" id="topbarLogout" title="Logout">
+                    <i class="fa fa-sign-out"></i> <span>Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="pp-content">
+            <div class="pp-alert" id="portalAlert" role="status" aria-live="polite"></div>
+
+            <!-- Dashboard -->
+            <section class="pp-section active" id="section-dashboard" aria-label="Dashboard">
+                <div class="pp-welcome">
+                    <h2>Welcome, <span id="welcomeName">Partner</span></h2>
+                    <p>This portal shows only the leads, documents, agreement, commissions and follow-ups connected to your own partner profile. Lead allocation depends on customer location, product fit, partner capacity and lender requirements. No lead volume, loan approval, disbursal or commission is guaranteed.</p>
+                    <div class="pp-welcome-meta">
+                        <span id="welcomeCode">Partner code: -</span>
+                        <span id="welcomeStatus">Status: -</span>
+                        <span id="welcomeSince">Active since: -</span>
+                    </div>
+                </div>
+
+                <div class="pp-stat-grid">
+                    <div class="pp-stat blue">
+                        <div class="pp-stat-icon"><i class="fa fa-users"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashAssigned">-</h4><span>Assigned leads</span></div>
+                    </div>
+                    <div class="pp-stat orange">
+                        <div class="pp-stat-icon"><i class="fa fa-spinner"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashActive">-</h4><span>Files in progress</span></div>
+                    </div>
+                    <div class="pp-stat teal">
+                        <div class="pp-stat-icon"><i class="fa fa-check-circle"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashSanctioned">-</h4><span>Sanctioned</span></div>
+                    </div>
+                    <div class="pp-stat green">
+                        <div class="pp-stat-icon"><i class="fa fa-money"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashDisbursed">-</h4><span>Disbursed</span></div>
+                    </div>
+                    <div class="pp-stat orange">
+                        <div class="pp-stat-icon"><i class="fa fa-hourglass-half"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashCommissionPending">-</h4><span>Commission in process</span></div>
+                    </div>
+                    <div class="pp-stat green">
+                        <div class="pp-stat-icon"><i class="fa fa-inr"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashCommissionPaid">-</h4><span>Commission paid</span></div>
+                    </div>
+                    <div class="pp-stat purple">
+                        <div class="pp-stat-icon"><i class="fa fa-calendar-check-o"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashFollowups">-</h4><span>Pending follow-ups</span></div>
+                    </div>
+                    <div class="pp-stat blue">
+                        <div class="pp-stat-icon"><i class="fa fa-folder-open"></i></div>
+                        <div class="pp-stat-info"><h4 id="dashDocsPending">-</h4><span>Documents pending</span></div>
+                    </div>
+                </div>
+
+                <div class="pp-grid-2">
+                    <div class="pp-card">
+                        <div class="pp-card-head">
+                            <div>
+                                <h2>Recent assigned leads</h2>
+                                <p>The latest customer files assigned to you.</p>
+                            </div>
+                            <div class="pp-card-head-actions">
+                                <button type="button" class="pp-btn pp-btn-outline pp-btn-sm" data-goto="leads">View all</button>
+                            </div>
+                        </div>
+                        <div class="pp-table-wrap">
+                            <table class="pp-table">
+                                <thead>
+                                    <tr><th>Reference</th><th>Customer</th><th>Product</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="recentLeadsBody">
+                                    <tr><td colspan="4"><div class="pp-loading"><span class="pp-spinner"></span> Loading leads...</div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pp-card">
+                        <div class="pp-card-head">
+                            <div>
+                                <h2>Upcoming follow-ups</h2>
+                                <p>Scheduled calls and reviews connected to your files.</p>
+                            </div>
+                            <div class="pp-card-head-actions">
+                                <button type="button" class="pp-btn pp-btn-outline pp-btn-sm" data-goto="followups">View all</button>
+                            </div>
+                        </div>
+                        <div class="pp-table-wrap">
+                            <table class="pp-table">
+                                <thead>
+                                    <tr><th>When</th><th>Type</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="upcomingFollowupsBody">
+                                    <tr><td colspan="3"><div class="pp-loading"><span class="pp-spinner"></span> Loading follow-ups...</div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pp-alert info show" style="margin-top:4px;">
+                    <strong>Reminder.</strong> Use customer information only for the assigned file. Do not copy it into personal storage or messaging apps, and do not promise a loan approval, sanction, disbursal, rate, timeline or commission. Update a lead only to Contacted, Documents Pending or Submitted to Lender. The Dhanvi Finserv team records sanction, disbursal and commission outcomes.
+                </div>
+            </section>
+
+            <!-- Profile -->
+            <section class="pp-section" id="section-profile" aria-label="My profile">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Partner profile</h2>
+                            <p>Your provisioned partner account details.</p>
+                        </div>
+                    </div>
+                    <div class="pp-detail-grid" id="profileDetails">
+                        <div class="pp-loading"><span class="pp-spinner"></span> Loading profile...</div>
+                    </div>
+                </div>
+
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Onboarding application</h2>
+                            <p>The application recorded when you joined the network.</p>
+                        </div>
+                    </div>
+                    <div class="pp-detail-grid" id="applicationDetails">
+                        <div class="pp-loading"><span class="pp-spinner"></span> Loading application...</div>
+                    </div>
+                </div>
+
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Verification summary</h2>
+                            <p>Verification checks recorded by the Dhanvi Finserv team.</p>
+                        </div>
+                    </div>
+                    <div class="pp-table-wrap">
+                        <table class="pp-table">
+                            <thead>
+                                <tr><th>Verification</th><th>Status</th><th>Reference</th><th>Verified on</th><th>Remarks</th></tr>
+                            </thead>
+                            <tbody id="verificationBody">
+                                <tr><td colspan="5"><div class="pp-loading"><span class="pp-spinner"></span> Loading verification records...</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents -->
+            <section class="pp-section" id="section-documents" aria-label="Documents">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>My documents</h2>
+                            <p id="documentsCount">Documents uploaded against your partner application.</p>
+                        </div>
+                    </div>
+                    <div class="pp-table-wrap">
+                        <table class="pp-table">
+                            <thead>
+                                <tr><th>Document</th><th>File</th><th>Status</th><th>Uploaded</th><th>Verification notes</th></tr>
+                            </thead>
+                            <tbody id="documentsBody">
+                                <tr><td colspan="5"><div class="pp-loading"><span class="pp-spinner"></span> Loading documents...</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pp-alert info show" style="margin-top:18px;">
+                        <strong>Document security.</strong> Documents are stored in a private bucket and are visible only to you and authorised Dhanvi Finserv staff. If a document is marked Rejected, contact your assigned executive and upload a clear replacement through the private link provided. Do not send documents over WhatsApp or email.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agreement -->
+            <section class="pp-section" id="section-agreement" aria-label="Agreement">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Partner agreement</h2>
+                            <p>Agreement status, dates and commission terms recorded by Dhanvi Finserv.</p>
+                        </div>
+                    </div>
+                    <div id="agreementContent">
+                        <div class="pp-loading"><span class="pp-spinner"></span> Loading agreement...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leads -->
+            <section class="pp-section" id="section-leads" aria-label="Assigned leads">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Assigned leads</h2>
+                            <p id="leadsCount">Customer files assigned to your partner profile.</p>
+                        </div>
+                        <div class="pp-card-head-actions">
+                            <select class="form-control" id="leadStatusFilter" style="min-width:190px;border:1px solid #d7e0ea;border-radius:8px;padding:8px 10px;font-family:'Poppins',sans-serif;font-size:12px;color:#34415c;background:#fff;">
+                                <option value="">All statuses</option>
+                                <option>Assigned</option>
+                                <option>Contacted</option>
+                                <option>Documents Pending</option>
+                                <option>Submitted to Lender</option>
+                                <option>Sanctioned</option>
+                                <option>Disbursed</option>
+                                <option>Rejected</option>
+                                <option>Closed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pp-table-wrap">
+                        <table class="pp-table">
+                            <thead>
+                                <tr><th>Reference</th><th>Customer</th><th>Product</th><th>Amount</th><th>Lender</th><th>Status</th><th>Assigned</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="leadsBody">
+                                <tr><td colspan="8"><div class="pp-loading"><span class="pp-spinner"></span> Loading leads...</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pp-alert info show" style="margin-top:18px;">
+                        <strong>What you can update.</strong> You may set an open lead to Contacted, Documents Pending or Submitted to Lender and add a short note. Sanctioned, Disbursed, Rejected and Closed are recorded by the Dhanvi Finserv team from the lender's outcome. Do not promise an approval, sanction, disbursal, rate or timeline to the customer.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Commissions -->
+            <section class="pp-section" id="section-commissions" aria-label="Commissions">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Commission summary</h2>
+                            <p>Commission is governed by your signed agreement and the actual disbursal.</p>
+                        </div>
+                    </div>
+                    <div class="pp-grid-3">
+                        <div class="pp-stat orange" style="margin:0;">
+                            <div class="pp-stat-icon"><i class="fa fa-hourglass-half"></i></div>
+                            <div class="pp-stat-info"><h4 id="commissionPendingTotal">-</h4><span>In process</span></div>
+                        </div>
+                        <div class="pp-stat blue" style="margin:0;">
+                            <div class="pp-stat-icon"><i class="fa fa-check-circle"></i></div>
+                            <div class="pp-stat-info"><h4 id="commissionApprovedTotal">-</h4><span>Approved / invoiced</span></div>
+                        </div>
+                        <div class="pp-stat green" style="margin:0;">
+                            <div class="pp-stat-icon"><i class="fa fa-inr"></i></div>
+                            <div class="pp-stat-info"><h4 id="commissionPaidTotal">-</h4><span>Paid (net)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Commission records</h2>
+                            <p>Every record is linked to an assigned lead and the agreement terms.</p>
+                        </div>
+                    </div>
+                    <div class="pp-table-wrap">
+                        <table class="pp-table">
+                            <thead>
+                                <tr><th>Recorded</th><th>Type</th><th>Basis</th><th>Rate</th><th>Gross</th><th>TDS</th><th>Net payable</th><th>Status</th><th>Payment reference</th></tr>
+                            </thead>
+                            <tbody id="commissionsBody">
+                                <tr><td colspan="9"><div class="pp-loading"><span class="pp-spinner"></span> Loading commissions...</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pp-alert warning show" style="margin-top:18px;">
+                        <strong>No guaranteed payout.</strong> A commission is not payable merely because a lead was assigned or an application was submitted. Payment depends on the lender's disbursal and payment, the agreement terms, tax deduction and reconciliation. If a loan is cancelled, reversed or repaid early, the commission may be revised or recovered as the agreement provides.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Follow-ups -->
+            <section class="pp-section" id="section-followups" aria-label="Follow-ups">
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <div>
+                            <h2>Follow-ups</h2>
+                            <p>Scheduled interactions connected to your partner profile and assigned leads.</p>
+                        </div>
+                    </div>
+                    <div class="pp-table-wrap">
+                        <table class="pp-table">
+                            <thead>
+                                <tr><th>Scheduled</th><th>Interaction</th><th>Status</th><th>Notes</th><th>Completed</th></tr>
+                            </thead>
+                            <tbody id="followupsBody">
+                                <tr><td colspan="5"><div class="pp-loading"><span class="pp-spinner"></span> Loading follow-ups...</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Lead status modal -->
+    <div class="pp-modal-backdrop" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadModalTitle">
+        <div class="pp-modal">
+            <div class="pp-modal-head">
+                <div>
+                    <h3 id="leadModalTitle">Update lead progress</h3>
+                    <p style="margin:4px 0 0;font-size:12px;color:#8a97a8;" id="leadModalSubtitle">-</p>
+                </div>
+                <button type="button" class="pp-modal-close" id="leadModalClose" aria-label="Close">&times;</button>
+            </div>
+            <div class="pp-modal-body">
+                <div class="pp-modal-error" id="leadModalError"></div>
+                <input type="hidden" id="leadAssignmentId">
+                <div class="pp-field">
+                    <label for="leadStatusSelect">New status</label>
+                    <select class="form-control" id="leadStatusSelect">
+                        <option value="Contacted">Contacted</option>
+                        <option value="Documents Pending">Documents Pending</option>
+                        <option value="Submitted to Lender">Submitted to Lender</option>
+                    </select>
+                </div>
+                <div class="pp-field">
+                    <label for="leadStatusNotes">Note for the Dhanvi Finserv team (optional)</label>
+                    <textarea class="form-control" id="leadStatusNotes" maxlength="1000" placeholder="Short update, for example: customer contacted on 25 Nov, documents being collected."></textarea>
+                    <p class="pp-help">Do not enter OTPs, card PINs, net-banking passwords or full account numbers.</p>
+                </div>
+            </div>
+            <div class="pp-modal-foot">
+                <button type="button" class="pp-btn pp-btn-outline" id="leadModalCancel">Cancel</button>
+                <button type="button" class="pp-btn" id="leadModalSave">Save update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js?v=4"></script>
+    <script src="js/public-api.js"></script>
+    <script src="js/partner-portal.js?v=20261125-1"></script>
+</body>
+</html>

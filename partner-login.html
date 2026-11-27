@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Secure sign-in to the Dhanvi Finserv partner portal for approved DSA and referral partners.">
+    <title>Partner Login | Dhanvi Finserv</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link href="css/notifications.css" rel="stylesheet">
+    <script src="js/notifications.js"></script>
+    <link href="css/partner-portal.css?v=20261125-1" rel="stylesheet">
+    <link href="css/loader.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body class="pp-login-body">
+    <!-- Page Preloader -->
+    <div id="page-loader" class="page-loader" aria-live="polite" role="status">
+        <div class="page-loader-inner">
+            <div class="loader-logo-area">
+                <img src="images/logo.png" alt="Dhanvi Finserv" class="loader-logo" width="160" height="60" onerror="handleDhanviLogoError(this)">
+                <div class="loader-logo-fallback">DHANVI FINSERV</div>
+            </div>
+            <div class="loader-spinner-box">
+                <div class="loader-spinner-ring"></div>
+            </div>
+            <div class="loader-subtitle">Quick &amp; Trusted Financial Solutions</div>
+            <div class="loader-shimmer-bar"></div>
+        </div>
+    </div>
+    <script src="js/loader.js"></script>
+    <script>setTimeout(function(){var p=document.getElementById('page-loader');if(p){p.classList.add('is-hidden');}},3000);</script>
+    <noscript><style>#page-loader { display: none !important; }</style></noscript>
+
+    <div class="pp-login-wrapper">
+        <div class="pp-login-card">
+            <div class="pp-login-logo">
+                <img src="images/logo.png" alt="Dhanvi Finserv">
+            </div>
+            <h1>Partner Portal</h1>
+            <p class="pp-login-sub">Sign in with the email address registered on your approved partner application.</p>
+
+            <form id="partnerLoginForm" autocomplete="off" novalidate>
+                <div class="pp-field">
+                    <label for="partnerEmail">Email address</label>
+                    <div class="pp-input-wrap">
+                        <i class="fa fa-envelope"></i>
+                        <input type="email" class="form-control" id="partnerEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <div class="pp-field">
+                    <label for="partnerPassword">Password</label>
+                    <div class="pp-input-wrap">
+                        <i class="fa fa-lock"></i>
+                        <input type="password" class="form-control" id="partnerPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+                    </div>
+                </div>
+
+                <div class="pp-login-row">
+                    <span style="font-size:12px;color:#8a97a8;">Approved partners only</span>
+                    <a href="contact-us.html">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="pp-login-btn" id="partnerLoginBtn">
+                    Sign In <i class="fa fa-arrow-right"></i>
+                </button>
+
+                <div class="pp-login-error" id="partnerLoginError" role="alert"></div>
+            </form>
+
+            <div class="pp-login-note">
+                <strong>Access is provisioned.</strong> A partner login is created only after the application is approved, the required documents and verifications are completed, and a signed partner agreement has taken effect. If you have not received your login, contact the partner desk. Never share your password or OTP with anyone.
+            </div>
+
+            <div class="pp-login-footer">
+                <a href="partner-program.html">Partner Program</a> &middot;
+                <a href="partner-apply.html">Apply to partner</a> &middot;
+                <a href="index.html">Back to website</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
+    <script src="js/nhost-client.js?v=4"></script>
+    <script>
+        (function () {
+            var form = document.getElementById('partnerLoginForm');
+            var errorBox = document.getElementById('partnerLoginError');
+            var submitBtn = document.getElementById('partnerLoginBtn');
+
+            function showError(message) {
+                var text = String(message || 'Invalid email or password.');
+                if (!errorBox) { return; }
+                errorBox.textContent = text;
+                errorBox.classList.add('show');
+            }
+
+            function hideError() {
+                if (!errorBox) { return; }
+                errorBox.classList.remove('show');
+                errorBox.textContent = '';
+            }
+
+            // Show the message left by the partner portal guard, if any.
+            try {
+                var guardMessage = window.sessionStorage.getItem('dhanviPartnerLoginMessage');
+                if (guardMessage) {
+                    window.sessionStorage.removeItem('dhanviPartnerLoginMessage');
+                    showError(guardMessage);
+                }
+            } catch (err) { /* sessionStorage may be unavailable */ }
+
+            function setBusy(busy) {
+                if (!submitBtn) { return; }
+                submitBtn.disabled = busy;
+                submitBtn.innerHTML = busy
+                    ? '<i class="fa fa-circle-o-notch fa-spin"></i> Signing in...'
+                    : 'Sign In <i class="fa fa-arrow-right"></i>';
+            }
+
+            async function checkPartnerProfile(backend, userId) {
+                var data = await backend.partnerGql(
+                    'query PartnerLoginProfile($userId: uuid!) {' +
+                    '  partner_profiles(where: {user_id: {_eq: $userId}}, limit: 1) {' +
+                    '    id status partner_code display_name' +
+                    '  }' +
+                    '}',
+                    { userId: userId }
+                );
+                var rows = data && data.partner_profiles ? data.partner_profiles : [];
+                return rows.length ? rows[0] : null;
+            }
+
+            function accessMessage(profile) {
+                if (!profile) {
+                    return 'This account is not linked to a partner profile. Partner logins are provisioned only after approval and a signed agreement. Please contact the partner desk.';
+                }
+                if (profile.status === 'Pending Agreement') {
+                    return 'Your partner application is approved, but the partner agreement is not yet signed and effective. The portal opens after provisioning. Please contact the partner desk.';
+                }
+                if (profile.status === 'Suspended') {
+                    return 'Your partner account is suspended. Please contact the partner desk for assistance.';
+                }
+                if (profile.status === 'Inactive') {
+                    return 'Your partner account is inactive. Please contact the partner desk for assistance.';
+                }
+                return 'Your partner account is not active. Please contact the partner desk.';
+            }
+
+            // If a provisioned partner session is already active, skip the form.
+            (async function redirectIfSignedIn() {
+                var backend = window.DhanviBackend;
+                var nhost = backend && backend.getClient();
+                if (!nhost) { return; }
+                var session = nhost.getUserSession();
+                if (!session || !session.user) { return; }
+                if (!Array.isArray(session.user.roles) || session.user.roles.indexOf('partner') === -1) { return; }
+
+                try {
+                    var profile = await checkPartnerProfile(backend, session.user.id);
+                    if (profile && profile.status === 'Active') {
+                        window.location.replace('partner-portal.html');
+                        return;
+                    }
+                    await backend.signOut();
+                } catch (err) {
+                    console.warn('Partner login pre-check failed:', err);
+                }
+            })();
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                hideError();
+
+                var email = String(document.getElementById('partnerEmail').value || '').trim();
+                var password = String(document.getElementById('partnerPassword').value || '');
+                if (!email || !password) {
+                    showError('Enter your email address and password.');
+                    return;
+                }
+
+                var backend = window.DhanviBackend;
+                if (!backend) {
+                    showError('The secure sign-in service could not be loaded. Please refresh the page.');
+                    return;
+                }
+                var nhost = backend.getClient();
+                if (!nhost) {
+                    showError('The secure sign-in service is not configured. Please contact the partner desk.');
+                    return;
+                }
+
+                setBusy(true);
+                try {
+                    var response = await nhost.auth.signInEmailPassword({
+                        email: email,
+                        password: password
+                    });
+                    var body = (response && response.body) || {};
+
+                    if (!body.session) {
+                        if (body.mfa) {
+                            throw new Error('Multi-factor authentication is enabled for this account. Please sign in through the Nhost account settings or contact the partner desk.');
+                        }
+                        throw new Error('Sign-in did not return a session. Please try again.');
+                    }
+
+                    var user = body.session.user;
+                    if (!user || !Array.isArray(user.roles) || user.roles.indexOf('partner') === -1) {
+                        await backend.signOut();
+                        throw new Error('Access denied. This account does not have partner access. Partner logins are issued only after approval and a signed agreement.');
+                    }
+
+                    var profile;
+                    try {
+                        profile = await checkPartnerProfile(backend, user.id);
+                    } catch (err) {
+                        await backend.signOut();
+                        console.error('Partner profile lookup failed:', err);
+                        throw new Error('Your partner profile could not be verified. Please contact the partner desk.');
+                    }
+
+                    if (!profile || profile.status !== 'Active') {
+                        await backend.signOut();
+                        throw new Error(accessMessage(profile));
+                    }
+
+                    window.location.href = 'partner-portal.html';
+                } catch (err) {
+                    console.error('Partner sign-in failed:', err);
+                    showError(backend.errorMessage(err));
+                } finally {
+                    setBusy(false);
+                }
+            });
+
+            ['partnerEmail', 'partnerPassword'].forEach(function (id) {
+                var field = document.getElementById(id);
+                if (field) { field.addEventListener('input', hideError); }
+            });
+        })();
+    </script>
+    <script src="js/interactions.js"></script>
+</body>
+</html>

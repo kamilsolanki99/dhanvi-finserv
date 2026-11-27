@@ -325,6 +325,12 @@
         .muted { color: #8e9ab4; font-size: 12px; font-weight: 400; }
         .admin-note { font-size: 12px; color: #8e9ab4; line-height: 1.6; }
         .admin-note a { color: #15549a; text-decoration: underline; }
+        .partner-readiness { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 18px; }
+        .partner-readiness li { font-size: 12px; }
+        .partner-readiness li.ok { color: #0b8a5e; }
+        .partner-readiness li.missing { color: #c93030; }
+        .partner-readiness li i { margin-right: 6px; }
+        @media (max-width: 767px) { .partner-readiness { grid-template-columns: 1fr; } }
         .admin-chip {
             display: inline-block;
             background: #eef5fd;
@@ -396,6 +402,7 @@
             <a href="admin-dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a>
             <a href="admin-notifications.html"><i class="fa fa-bell-o"></i> Notifications</a>
             <a href="admin-applications.html" class="active"><i class="fa fa-file-text"></i> Loan Applications</a>
+            <a href="admin-partners.html"><i class="fa fa-handshake-o"></i> Partner Network</a>
             <a href="admin-leads.html"><i class="fa fa-users"></i> Customer Leads</a>
             <a href="admin-documents.html"><i class="fa fa-folder-open"></i> Documents</a>
             <a href="admin-followups.html"><i class="fa fa-calendar-check-o"></i> Follow-ups</a>
@@ -1057,6 +1064,38 @@
                         <p class="admin-note">Only record a bureau reference, report date, score or analysis after the authorised bureau has actually supplied the information and it has been verified. <strong>Report Received</strong> or later requires the bureau name, bureau reference and report received date. <strong>Analysis Shared</strong> or <strong>Closed</strong> also requires the analysis summary and the date it was shared. Never promise a score increase, the removal of a genuine default or loan approval. Do not paste the full credit report into these notes or into ordinary email or WhatsApp.</p>
                         <button type="button" class="btn-save" id="saveCreditHealthStatusBtn">Update credit health status</button>
                     </div>
+                    <div class="detail-group" id="modalPartnerGroup" style="display:none;">
+                        <h6><i class="fa fa-handshake-o" style="margin-right:6px;"></i>DSA Partner Network — Application, Firm &amp; Referral Network</h6>
+                        <div id="modalPartner"></div>
+                    </div>
+                    <div class="detail-group" id="modalPartnerStatusGroup" style="display:none;">
+                        <h6><i class="fa fa-check-square-o" style="margin-right:6px;"></i>Partner Review &amp; Approval Readiness</h6>
+                        <div class="detail-row"><span class="detail-label">Application status</span><span class="detail-value" id="modalPartnerBadge">—</span></div>
+                        <div class="detail-row"><span class="detail-label">Partner login</span><span class="detail-value" id="modalPartnerLoginState">—</span></div>
+                        <div id="modalPartnerReadiness" style="margin-top:12px;"></div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Review action</label>
+                                    <select class="form-control" id="modalPartnerAction">
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Documents Pending">Documents Pending</option>
+                                        <option value="Verification In Progress">Verification In Progress</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="On Hold">On Hold</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Review remarks / rejection reason</label>
+                            <textarea class="form-control" id="modalPartnerRemarks" rows="3" placeholder="Review notes, document follow-up, approval conditions, rejection reason, etc."></textarea>
+                        </div>
+                        <p class="admin-note">Approval requires verified PAN, address, photograph and, where the firm is registered, business registration documents; verified PAN, address, photograph, business registration (where registered) and overall review checks; and an assigned executive. Use the full Partner Network module to record verifications, save the signed agreement and assign the executive. A partner login can be provisioned only after approval and a signed agreement whose effective date has arrived. Approval never guarantees leads, loan approval, sanction, disbursal or commission.</p>
+                        <button type="button" class="btn-save" id="savePartnerStatusBtn">Save partner review status</button>
+                        <a class="btn btn-default" id="openPartnerRecordBtn" href="admin-partners.html" target="_blank" rel="noopener" style="margin-left:8px;"><i class="fa fa-external-link"></i> Open full partner record</a>
+                    </div>
                     <div class="detail-group" id="modalEmiGroup" style="display:none;">
                         <h6>Existing EMIs</h6>
                         <div id="modalEmis"></div>
@@ -1128,7 +1167,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@4.9.0/dist/nhost-js.umd.js"></script>
-    <script src="js/nhost-client.js?v=3"></script>
+    <script src="js/nhost-client.js?v=4"></script>
     <script src="js/admin-layout.js"></script>
     <script src="js/admin-delete.js?v=2"></script>
     <script src="js/admin-notifications.js?v=1"></script>
@@ -1363,6 +1402,31 @@
             '    id loan_lead_id sort_order bureau institution_name enquiry_date purpose status remarks' +
             '  }';
 
+        // DSA Partner Network applications are ordinary loan_leads with
+        // loan_type "DSA Partner Network" plus their own detail, verification,
+        // profile and agreement rows. Partner approval and login provisioning
+        // are validated again by the database functions.
+        const APPLICATIONS_QUERY_PARTNER =
+            '  partner_application_details {' +
+            '    id loan_lead_id applicant_name mobile email applicant_city applicant_state pan_number' +
+            '    firm_name partner_type office_address office_city office_state office_pincode' +
+            '    business_registration_type business_registration_number gst_number' +
+            '    years_experience financial_services_experience existing_dsa_associations bank_associations' +
+            '    products expected_leads_per_month preferred_locations referral_source additional_notes' +
+            '    accuracy_declaration commission_declaration no_guarantee_declaration' +
+            '    application_status assigned_executive_id admin_remarks rejection_reason status_notes' +
+            '    reviewed_by reviewed_at created_at updated_at' +
+            '  }' +
+            '  partner_verifications {' +
+            '    id partner_lead_id verification_type status reference_no findings remarks verified_at' +
+            '  }' +
+            '  partner_profiles {' +
+            '    id loan_lead_id partner_code display_name status activated_at' +
+            '  }' +
+            '  partner_agreements {' +
+            '    id partner_lead_id agreement_type agreement_status agreement_reference signed_date effective_from effective_to' +
+            '  }';
+
         const APPLICATIONS_QUERY_TAIL =
             '  loan_followups {' +
             '    id loan_lead_id scheduled_at interaction_type status notes completed_at' +
@@ -1373,7 +1437,8 @@
             APPLICATIONS_QUERY_HEAD + APPLICATIONS_QUERY_WORKING_CAPITAL +
             APPLICATIONS_QUERY_ITR + APPLICATIONS_QUERY_GST +
             APPLICATIONS_QUERY_MSME + APPLICATIONS_QUERY_INSURANCE +
-            APPLICATIONS_QUERY_CREDIT_HEALTH + APPLICATIONS_QUERY_TAIL;
+            APPLICATIONS_QUERY_CREDIT_HEALTH + APPLICATIONS_QUERY_PARTNER +
+            APPLICATIONS_QUERY_TAIL;
 
         const UPDATE_APPLICATION_MUTATION =
             'mutation UpdateApplication($id: uuid!, $status: String!, $notes: String) {' +
@@ -1485,12 +1550,13 @@
                 let msmeAvailable = true;
                 let insuranceAvailable = true;
                 let creditHealthAvailable = true;
+                let partnerAvailable = true;
 
                 // Optional service tables are loaded progressively. Until the
                 // migration is applied and Hasura tracks the tables, retry
                 // without the missing group instead of failing the whole
                 // dashboard.
-                for (let attempt = 0; attempt < 9; attempt += 1) {
+                for (let attempt = 0; attempt < 10; attempt += 1) {
                     const query = APPLICATIONS_QUERY_HEAD +
                         (workingCapitalAvailable ? APPLICATIONS_QUERY_WORKING_CAPITAL : '') +
                         (itrAvailable ? APPLICATIONS_QUERY_ITR : '') +
@@ -1498,6 +1564,7 @@
                         (msmeAvailable ? APPLICATIONS_QUERY_MSME : '') +
                         (insuranceAvailable ? APPLICATIONS_QUERY_INSURANCE : '') +
                         (creditHealthAvailable ? APPLICATIONS_QUERY_CREDIT_HEALTH : '') +
+                        (partnerAvailable ? APPLICATIONS_QUERY_PARTNER : '') +
                         APPLICATIONS_QUERY_TAIL;
                     try {
                         data = await backend().adminGql(query);
@@ -1510,6 +1577,7 @@
                         const msmeMissing = /field 'msme_(registration_details|promoters|registrations)' not found in type: 'query_root'/i.test(queryMessage);
                         const insuranceMissing = /field 'loan_insurance_details' not found in type: 'query_root'/i.test(queryMessage);
                         const creditHealthMissing = /field 'credit_(health_details|accounts|enquiries)' not found in type: 'query_root'/i.test(queryMessage);
+                        const partnerMissing = /field 'partner_(application_details|verifications|profiles|agreements)' not found in type: 'query_root'/i.test(queryMessage);
                         if (wcMissing && workingCapitalAvailable) {
                             workingCapitalAvailable = false;
                             continue;
@@ -1532,6 +1600,10 @@
                         }
                         if (creditHealthMissing && creditHealthAvailable) {
                             creditHealthAvailable = false;
+                            continue;
+                        }
+                        if (partnerMissing && partnerAvailable) {
+                            partnerAvailable = false;
                             continue;
                         }
                         throw queryError;
@@ -1563,6 +1635,10 @@
                 const creditHealthByLead = groupByLead(data && data.credit_health_details);
                 const creditAccountsByLead = groupByLead(data && data.credit_accounts);
                 const creditEnquiriesByLead = groupByLead(data && data.credit_enquiries);
+                const partnerAppByLead = groupByLead(data && data.partner_application_details);
+                const partnerVerificationsByLead = groupByLead(data && data.partner_verifications);
+                const partnerProfilesByLead = groupByLead(data && data.partner_profiles);
+                const partnerAgreementsByLead = groupByLead(data && data.partner_agreements);
                 const emisByLead = groupByLead(data && data.home_loan_emis);
                 const followupsByLead = groupByLead(data && data.loan_followups);
 
@@ -1594,6 +1670,10 @@
                     lead.credit_enquiries = (creditEnquiriesByLead[lead.id] || []).sort(function (a, b) {
                         return (a.sort_order || 0) - (b.sort_order || 0);
                     });
+                    lead.partner_application_details = (partnerAppByLead[lead.id] || [])[0] || null;
+                    lead.partner_verifications = partnerVerificationsByLead[lead.id] || [];
+                    lead.partner_profile = (partnerProfilesByLead[lead.id] || [])[0] || null;
+                    lead.partner_agreements = partnerAgreementsByLead[lead.id] || [];
                     lead.home_loan_emis = emisByLead[lead.id] || [];
                     lead.loan_followups = followupsByLead[lead.id] || [];
                     return lead;
@@ -1616,6 +1696,9 @@
                 }
                 if (!creditHealthAvailable) {
                     showPageAlert('warning', 'Credit Health / CIBIL details will appear after migration 012 is applied and the new tables are tracked with admin access in Hasura. All other applications are unaffected.');
+                }
+                if (!partnerAvailable) {
+                    showPageAlert('warning', 'DSA Partner Network details will appear after migration 013 is applied and the partner tables are tracked with admin access in Hasura. All other applications are unaffected.');
                 }
             } catch (err) {
                 console.error('Error loading applications:', err);
@@ -3980,6 +4063,201 @@
             }
         }
 
+        function partnerStatusClass(status) {
+            switch (status) {
+                case 'Approved': return 'badge-approved';
+                case 'Under Review': return 'badge-under-review';
+                case 'Documents Pending': return 'badge-docs-pending';
+                case 'Verification In Progress': return 'badge-progress';
+                case 'Rejected': return 'badge-rejected';
+                case 'Withdrawn': return 'badge-closed';
+                default: return 'badge-pending';
+            }
+        }
+
+        function renderPartnerDetails(app) {
+            const d = app.partner_application_details;
+            const group = $('#modalPartnerGroup');
+            if (!d) {
+                group.hide();
+                $('#modalPartner').empty();
+                return null;
+            }
+            group.show();
+
+            const office = [d.office_address, d.office_city, d.office_state, d.office_pincode]
+                .filter(function (part) {
+                    return part !== null && part !== undefined && String(part).trim() !== '';
+                })
+                .join(', ');
+            const products = Array.isArray(d.products) ? d.products.join(', ') : '';
+            const registered = d.business_registration_type && d.business_registration_type !== 'Not registered';
+
+            $('#modalPartner').html(
+                subHeading('Applicant') +
+                detailRow('Reference', app.reference_no || null) +
+                detailRow('Applicant name', d.applicant_name) +
+                detailRow('Mobile', d.mobile) +
+                detailRow('Email', d.email) +
+                detailRow('City / state', [d.applicant_city, d.applicant_state].filter(Boolean).join(', ')) +
+                detailRow('PAN', d.pan_number) +
+                detailRow('Submitted', prettyDate(d.created_at)) +
+                subHeading('Firm and office') +
+                detailRow('Firm name', d.firm_name) +
+                detailRow('Partner type', d.partner_type) +
+                detailRow('Office address', office) +
+                detailRow('Business registration', d.business_registration_type) +
+                detailRow('Registration number', registered ? d.business_registration_number : 'Not applicable') +
+                detailRow('GSTIN', d.gst_number) +
+                detailRow('Years of experience', d.years_experience === null || d.years_experience === undefined ? null : String(d.years_experience)) +
+                detailRow('Financial services experience', d.financial_services_experience) +
+                detailRow('Existing DSA associations', d.existing_dsa_associations) +
+                detailRow('Bank / NBFC relationships', d.bank_associations) +
+                subHeading('Referral network') +
+                detailRow('Products', products) +
+                detailRow('Expected referrals / month', d.expected_leads_per_month === null || d.expected_leads_per_month === undefined ? null : String(d.expected_leads_per_month)) +
+                detailRow('Preferred locations', d.preferred_locations) +
+                detailRow('Referral source', d.referral_source) +
+                detailRow('Additional notes', d.additional_notes) +
+                subHeading('Declarations') +
+                detailRow('Accuracy', d.accuracy_declaration ? 'Accepted' : 'Not accepted') +
+                detailRow('Commission terms', d.commission_declaration ? 'Accepted' : 'Not accepted') +
+                detailRow('No guarantee', d.no_guarantee_declaration ? 'Accepted' : 'Not accepted')
+            );
+            return d;
+        }
+
+        function partnerReadiness(app) {
+            const d = app.partner_application_details;
+            if (!d) { return { items: [], ready: false }; }
+            const registered = d.business_registration_type && d.business_registration_type !== 'Not registered';
+            const requiredDocs = ['PAN Card', 'Address Proof', 'Photograph']
+                .concat(registered ? ['Business Registration'] : []);
+            const requiredChecks = ['PAN Verification', 'Address Verification', 'Photograph Verification', 'Overall Review']
+                .concat(registered ? ['Business Registration Verification'] : []);
+            const documents = Array.isArray(app.loan_documents) ? app.loan_documents : [];
+            const verifications = Array.isArray(app.partner_verifications) ? app.partner_verifications : [];
+            const items = [];
+
+            requiredDocs.forEach(function (type) {
+                items.push({
+                    label: type + ' document verified',
+                    ok: documents.some(function (doc) {
+                        return doc.document_type === type && doc.status === 'Verified';
+                    })
+                });
+            });
+            requiredChecks.forEach(function (type) {
+                items.push({
+                    label: type + ' completed',
+                    ok: verifications.some(function (row) {
+                        return row.verification_type === type && row.status === 'Verified';
+                    })
+                });
+            });
+            items.push({
+                label: 'Executive assigned',
+                ok: !!d.assigned_executive_id
+            });
+
+            return {
+                items: items,
+                ready: items.every(function (item) { return item.ok; })
+            };
+        }
+
+        function partnerReadinessHtml(app) {
+            const result = partnerReadiness(app);
+            const items = result.items.map(function (item) {
+                return '<li class="' + (item.ok ? 'ok' : 'missing') + '">' +
+                    '<i class="fa ' + (item.ok ? 'fa-check-circle' : 'fa-times-circle') + '"></i>' +
+                    esc(item.label) + '</li>';
+            }).join('');
+            return '<ul class="partner-readiness">' + items + '</ul>' +
+                '<p class="admin-note" style="margin:8px 0 0;">' +
+                (result.ready
+                    ? 'All recorded checks are complete. The database validates them again when approval is saved.'
+                    : 'Approval is blocked until every item is complete. Record verifications, verify documents and assign the executive in the Partner Network module.') +
+                '</p>';
+        }
+
+        function renderPartnerStatus(app) {
+            const d = app.partner_application_details;
+            const group = $('#modalPartnerStatusGroup');
+            if (!d) {
+                group.hide();
+                $('#modalPartnerBadge').empty();
+                $('#modalPartnerReadiness').empty();
+                return null;
+            }
+            group.show();
+
+            const status = d.application_status || 'Application Received';
+            $('#modalPartnerBadge').html('<span class="badge-status ' + partnerStatusClass(status) + '">' + esc(status) + '</span>');
+
+            const profile = app.partner_profile;
+            $('#modalPartnerLoginState').text(profile
+                ? (profile.partner_code || 'Partner') + ' · ' + (profile.status || 'Pending Agreement')
+                : 'Not provisioned');
+
+            $('#modalPartnerAction').val(
+                ['Under Review', 'Documents Pending', 'Verification In Progress', 'Approved', 'Rejected', 'On Hold'].indexOf(status) > -1
+                    ? status : 'Under Review'
+            );
+            $('#modalPartnerRemarks').val(d.status_notes || d.admin_remarks || d.rejection_reason || '');
+            $('#modalPartnerReadiness').html(partnerReadinessHtml(app));
+
+            const link = $('#openPartnerRecordBtn');
+            if (link.length) {
+                link.attr('href', 'admin-partners.html?lead=' + encodeURIComponent(app.id));
+            }
+            return d;
+        }
+
+        async function savePartnerStatus() {
+            const id = $('#viewModal').data('app-id');
+            const app = applications.filter(function (item) { return item.id === id; })[0];
+            const d = app && app.partner_application_details;
+            if (!app || !d) { return; }
+
+            const action = $('#modalPartnerAction').val();
+            const remarks = $('#modalPartnerRemarks').val().trim();
+            if (!action) {
+                showModalAlert('warning', 'Select a partner review action.');
+                return;
+            }
+            if (action === 'Rejected' && !remarks) {
+                showModalAlert('warning', 'Enter the rejection reason before rejecting this application.');
+                return;
+            }
+            if (action === 'Approved') {
+                const readiness = partnerReadiness(app);
+                if (!readiness.ready) {
+                    showModalAlert('warning', 'Complete every required document, verification and the executive assignment before approval.');
+                    return;
+                }
+            }
+
+            const btn = $('#savePartnerStatusBtn');
+            btn.prop('disabled', true).text('Saving…');
+            try {
+                await backend().adminRpc('review_partner_application', {
+                    p_lead_id: id,
+                    p_action: action,
+                    p_assigned_executive_id: d.assigned_executive_id || null,
+                    p_remarks: remarks || null
+                });
+                $('#viewModal').modal('hide');
+                await fetchApplications();
+                showPageAlert('success', 'Partner application status updated to ' + action + '.');
+            } catch (err) {
+                console.error('Partner review status update failed:', err);
+                showModalAlert('error', err.message || 'Could not update the partner application status.');
+            } finally {
+                btn.prop('disabled', false).text('Save partner review status');
+            }
+        }
+
         function renderEmis(app) {
             const list = Array.isArray(app.home_loan_emis) ? app.home_loan_emis : [];
             const group = $('#modalEmiGroup');
@@ -4106,6 +4384,8 @@
             renderInsuranceStatus(app);
             renderCreditHealthDetails(app);
             renderCreditHealthStatus(app);
+            renderPartnerDetails(app);
+            renderPartnerStatus(app);
             renderEmis(app);
             renderFollowups(app);
             const identitySrc = renderIdentity(app);
@@ -4199,6 +4479,7 @@
             $('#modalMsmeRegistrations').on('click', '.btn-save-msme-registration', saveMsmeRegistrationRow);
             $('#saveInsuranceStatusBtn').on('click', saveInsuranceStatus);
             $('#saveCreditHealthStatusBtn').on('click', saveCreditHealthStatus);
+            $('#savePartnerStatusBtn').on('click', savePartnerStatus);
 
             $('#sidebarToggle').on('click', function() {
                 $('#adminSidebar').toggleClass('open');

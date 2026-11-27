@@ -363,6 +363,40 @@
                 p_draft_id: 'uuid',
                 p_draft_token: 'uuid'
             }
+        },
+        // DSA Partner Network (migration 013). Reuses the shared draft
+        // functions for save / resume.
+        submit_partner_application: {
+            type: 'mutation',
+            args: {
+                p_payload: 'jsonb',
+                p_draft_id: 'uuid',
+                p_draft_token: 'uuid'
+            }
+        },
+        review_partner_application: {
+            type: 'mutation',
+            args: {
+                p_lead_id: 'uuid',
+                p_action: 'String',
+                p_assigned_executive_id: 'uuid',
+                p_remarks: 'String'
+            }
+        },
+        provision_partner_login: {
+            type: 'mutation',
+            args: {
+                p_lead_id: 'uuid',
+                p_user_id: 'uuid'
+            }
+        },
+        update_partner_lead_status: {
+            type: 'mutation',
+            args: {
+                p_assignment_id: 'uuid',
+                p_status: 'String',
+                p_notes: 'String'
+            }
         }
     };
 
@@ -370,8 +404,11 @@
      * Call a tracked Hasura custom function. Functions return SETOF api_result,
      * so the result is an array of { payload } rows. A single row is unwrapped
      * to its payload object; multiple rows are returned as an array of payloads.
+     *
+     * An optional role selects x-hasura-role explicitly. Public wizards omit it
+     * and run with the session's default role.
      */
-    async function rpc(name, params) {
+    async function rpc(name, params, role) {
         var definition = RPC_DEFINITIONS[name];
         if (!definition) {
             throw new Error('Unknown secure service operation: ' + name);
@@ -398,9 +435,10 @@
         var query = operation + ' DhanviRpc(' + variableDefinitions.join(', ') + ') { ' +
             name + '(args: { ' + argumentFields.join(', ') + ' }) { payload } }';
 
+        var options = role ? { headers: { 'x-hasura-role': role } } : undefined;
         var response;
         try {
-            response = await nhost.graphql.request({ query: query, variables: variables });
+            response = await nhost.graphql.request({ query: query, variables: variables }, options);
         } catch (err) {
             throw normalizeError(err);
         }
@@ -432,6 +470,35 @@
         } catch (err) {
             throw normalizeError(err);
         }
+    }
+
+    async function adminRpc(name, params) {
+        return rpc(name, params, 'admin');
+    }
+
+    /**
+     * Partner portal GraphQL. The x-hasura-role header selects the custom
+     * partner role; the JWT must contain the partner role and Hasura row
+     * filters restrict every table to the signed-in partner's own records.
+     */
+    async function partnerGql(query, variables) {
+        var nhost = getClient();
+        if (!nhost) {
+            throw new Error('The secure service could not be loaded. Please refresh the page.');
+        }
+        try {
+            var response = await nhost.graphql.request(
+                { query: query, variables: variables || {} },
+                { headers: { 'x-hasura-role': 'partner' } }
+            );
+            return response.body.data;
+        } catch (err) {
+            throw normalizeError(err);
+        }
+    }
+
+    async function partnerRpc(name, params) {
+        return rpc(name, params, 'partner');
     }
 
     async function uploadFile(file) {
@@ -515,6 +582,9 @@
         signOut: signOut,
         rpc: rpc,
         adminGql: adminGql,
+        adminRpc: adminRpc,
+        partnerGql: partnerGql,
+        partnerRpc: partnerRpc,
         uploadFile: uploadFile,
         deleteFile: deleteFile,
         getFileUrl: getFileUrl,
