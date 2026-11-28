@@ -20,6 +20,7 @@
     <script src="js/notifications.js"></script>
     <link href="css/modern.css" rel="stylesheet">
     <link href="css/layout.css?v=20261127-1" rel="stylesheet">
+    <link href="css/site-polish.css?v=20261128-1" rel="stylesheet">
     <link href="css/loader.css" rel="stylesheet">
     <link href="css/animations.css?v=20261101-2" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
@@ -234,6 +235,12 @@
         </div>
     </div>
     <script>
+    function fmtINR(value) {
+        return '₹' + Number(value.toFixed(2)).toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
     function calculateBT() {
         var P = parseFloat(document.getElementById('bt_principal').value);
         var r1 = parseFloat(document.getElementById('bt_curr_rate').value) / 1200;
@@ -245,18 +252,18 @@
         document.getElementById('bt_new_rate_val').innerText = document.getElementById('bt_new_rate').value + '%';
         document.getElementById('bt_tenure_val').innerText = document.getElementById('bt_tenure').value + ' Years';
 
-        var emi1 = (P * r1 * Math.pow(1 + r1, n)) / (Math.pow(1 + r1, n) - 1);
-        var emi2 = (P * r2 * Math.pow(1 + r2, n)) / (Math.pow(1 + r2, n) - 1);
+        var emi1 = r1 === 0 ? P / n : (P * r1 * Math.pow(1 + r1, n)) / (Math.pow(1 + r1, n) - 1);
+        var emi2 = r2 === 0 ? P / n : (P * r2 * Math.pow(1 + r2, n)) / (Math.pow(1 + r2, n) - 1);
 
         var totalPay1 = emi1 * n;
         var totalPay2 = emi2 * n;
         var totalSavings = Math.max(0, totalPay1 - totalPay2);
         var monthlySavings = Math.max(0, emi1 - emi2);
 
-        document.getElementById('res_curr_emi').innerText = '₹' + Math.round(emi1).toLocaleString('en-IN');
-        document.getElementById('res_new_emi').innerText = '₹' + Math.round(emi2).toLocaleString('en-IN');
-        document.getElementById('res_monthly_savings').innerText = '₹' + Math.round(monthlySavings).toLocaleString('en-IN') + ' / month';
-        document.getElementById('res_total_savings').innerText = '₹' + Math.round(totalSavings).toLocaleString('en-IN');
+        document.getElementById('res_curr_emi').innerText = fmtINR(emi1);
+        document.getElementById('res_new_emi').innerText = fmtINR(emi2);
+        document.getElementById('res_monthly_savings').innerText = fmtINR(monthlySavings) + ' / month';
+        document.getElementById('res_total_savings').innerText = fmtINR(totalSavings);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -282,7 +289,7 @@
                             <div class="newsletter-form">
                                 <form action="#" method="post">
                                     <div class="input-group">
-                                        <input type="email" class="form-control" id="newsletter" name="newsletter" placeholder="Write E-Mail Address" required>
+                                        <input type="email" class="form-control" id="newsletter" name="newsletter" placeholder="Enter email address" required>
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="submit">Go!</button>
                                         </span>

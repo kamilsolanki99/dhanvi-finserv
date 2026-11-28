@@ -1,0 +1,343 @@
+/* ==========================================================================
+   Dhanvi Finserv - site polish layer
+   Loaded after layout.css on all public pages.
+
+   Purpose:
+   - Balance full-width background bands with centered, readable content.
+   - Keep forms, cards and text at comfortable widths.
+   - Remove horizontal overflow on small screens.
+   - Keep buttons, inputs and section spacing consistent.
+   ========================================================================== */
+
+:root {
+    --ds-container: 1140px;
+    --ds-reading: 760px;
+    --ds-form: 920px;
+    --ds-gutter: clamp(18px, 4vw, 60px);
+}
+
+/* 1. Overflow guards ------------------------------------------------------ */
+html,
+body {
+    overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+    max-width: 100%;
+}
+
+/* Long unbroken strings (references, emails) must not widen the page. */
+p,
+li,
+td,
+th,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+    overflow-wrap: break-word;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 2. Full-width background bands -----------------------------------------
+   Sections that already carry a background become edge-to-edge bands.
+   Their inner content stays aligned with the centered page container so
+   text and cards do not stretch across the whole screen.
+   ------------------------------------------------------------------------ */
+@media (min-width: 992px) {
+    .wrapper-content > .bg-light.pinside60,
+    .wrapper-content > .bg-default.pinside80,
+    .wrapper-content > .section-scroll > .bg-light.pinside60 {
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: calc((100vw - 960px) / 2 + 60px);
+        padding-right: calc((100vw - 960px) / 2 + 60px);
+        border-radius: 0;
+    }
+}
+
+@media (min-width: 1200px) {
+    .wrapper-content > .bg-light.pinside60,
+    .wrapper-content > .bg-default.pinside80,
+    .wrapper-content > .section-scroll > .bg-light.pinside60 {
+        padding-left: calc((100vw - var(--ds-container)) / 2 + 60px);
+        padding-right: calc((100vw - var(--ds-container)) / 2 + 60px);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .wrapper-content > .bg-light.pinside60,
+    .wrapper-content > .bg-default.pinside80,
+    .wrapper-content > .section-scroll > .bg-light.pinside60 {
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: 24px;
+        padding-right: 24px;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .wrapper-content > .bg-light.pinside60,
+    .wrapper-content > .bg-default.pinside80,
+    .wrapper-content > .section-scroll > .bg-light.pinside60 {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+}
+
+/* Keep the full-width CTA band visually strong and centered. */
+.wrapper-content > .bg-default.pinside80 {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 56px;
+    padding-bottom: 56px;
+}
+
+.wrapper-content > .bg-default.pinside80 .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.wrapper-content > .bg-default.pinside80 h1,
+.wrapper-content > .bg-default.pinside80 h2 {
+    margin-bottom: 18px;
+}
+
+@media (max-width: 767.98px) {
+    .wrapper-content > .bg-default.pinside80 {
+        padding-top: 42px;
+        padding-bottom: 42px;
+    }
+}
+
+/* 3. Readable text widths ------------------------------------------------- */
+.wrapper-content .lead {
+    max-width: 900px;
+}
+
+.wrapper-content .section-title p {
+    max-width: var(--ds-reading);
+}
+
+.wrapper-content .section-title.text-center p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Intro copy that sits directly inside a padded section stays readable
+   instead of stretching across a very wide band. */
+.wrapper-content > .section-scroll > .pinside60 > p,
+.wrapper-content > .pinside60 > p {
+    max-width: 860px;
+}
+
+/* 4. Forms ---------------------------------------------------------------- */
+.form-control,
+select.form-control {
+    height: 50px;
+    border: 1.5px solid #dce5f0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--ink, #1e2d44);
+    background-color: #fff;
+}
+
+textarea.form-control {
+    min-height: 130px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label,
+.control-label {
+    display: inline-block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3b4b62;
+}
+
+.form-group .help-block {
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-size: 12px;
+    color: var(--muted, #7b8798);
+}
+
+/* Callback / enquiry forms inside bands stay focused instead of stretching. */
+.wrapper-content .bg-light form,
+.wrapper-content .bg-default form {
+    max-width: var(--ds-form);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Standalone application forms keep a comfortable width. */
+.wrapper-content > .apply-loan-form {
+    max-width: var(--ds-form);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Keep the simple apply form's fields consistent with the rest of the site.
+   Higher specificity is needed because this page also has a local <style>. */
+.wrapper-content .apply-loan-form .form-control {
+    height: 50px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.wrapper-content .apply-loan-form textarea.form-control {
+    min-height: 130px;
+}
+
+/* Multi-step application forms use the full card width, but never overflow. */
+.cp-grid {
+    width: 100%;
+}
+
+/* 5. Cards and buttons ---------------------------------------------------- */
+.feature-blurb,
+.feature-icon,
+.doc-card,
+.doc-note {
+    height: 100%;
+}
+
+.btn {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* 6. Responsive details --------------------------------------------------- */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* Keep the page title and actions on one row on tablet landscape.
+       Bootstrap's 5 + 8 columns wrap at this width, which looked broken. */
+    .page-header .bg-white > .row > .col-lg-5 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .page-header .bg-white > .row > .col-lg-8 {
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+
+    .page-header .rate-block {
+        display: none;
+    }
+
+    .page-header .bg-white .btn-action {
+        text-align: left;
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Stack the page banner title and actions on phones. */
+    .page-header .bg-white > .row > [class*="col-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .page-header .bg-white .btn-action {
+        margin-top: 14px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .wrapper-content {
+        margin-bottom: 60px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Use the available phone width for forms and content. */
+    .wrapper-content.pinside40 {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .wrapper-content.pinside30 {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* Prevent iOS zoom when a field receives focus. */
+    .form-control,
+    select.form-control,
+    textarea.form-control,
+    .wrapper-content .apply-loan-form .form-control {
+        font-size: 16px;
+    }
+
+    .wrapper-content .lead {
+        font-size: 15.5px;
+        max-width: 100%;
+    }
+
+    .wrapper-content .section-title p {
+        max-width: 100%;
+    }
+
+    .wrapper-content > .section-scroll > .pinside60 > p,
+    .wrapper-content > .pinside60 > p {
+        max-width: 100%;
+    }
+
+    .btn {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    /* Wide tables scroll inside their own box, not the page. */
+    .table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .wrapper-content {
+        border-radius: 14px;
+    }
+
+    .service-block,
+    .feature-blurb,
+    .feature-icon,
+    .doc-card,
+    .post-block .bg-white {
+        padding: 22px;
+    }
+}
+
+/* 7. Reduced motion ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
